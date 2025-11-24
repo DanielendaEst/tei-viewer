@@ -1,5 +1,8 @@
 /* static/styles.css - TEI Viewer Comprehensive Styles */
 
+/* Import Noto Sans with comprehensive Unicode support including Greek Extended */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Symbols:wght@400;600&family=Noto+Sans+Symbols+2:wght@400;600&display=swap");
+
 /* ============================================
    GLOBAL STYLES & RESET
    ============================================ */
@@ -10,8 +13,25 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    font-family: "Gentium Plus", Tahoma, Geneva, Verdana, sans-serif;
+    font-family:
+        "Noto Sans",
+        "Noto Sans Symbols",
+        "Noto Sans Symbols 2",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        "Helvetica Neue",
+        Arial,
+        sans-serif,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol";
     background-color: #101624;
     color: #eaf6fb;
     line-height: 1.6;
@@ -404,30 +424,78 @@ body {
 /* Person Names */
 .person-name {
     color: #9b59b6;
-    font-weight: 600;
-    font-style: italic;
-    padding: 2px 4px;
-    background-color: #f4ecf7;
-    border-radius: 3px;
+    background: rgba(155, 89, 182, 0.08);
     border-bottom: 2px solid #9b59b6;
+    font-weight: 600;
+    padding: 0 2px;
+    border-radius: 3px;
+    display: inline;
+    transition:
+        background 0.2s,
+        color 0.2s;
 }
 
 .person-name:hover {
-    background-color: #ebdcf0;
+    background: rgba(155, 89, 182, 0.18);
+    color: #b07cc6;
 }
 
 /* Place Names */
 .place-name {
     color: #e67e22;
-    font-weight: 600;
-    padding: 2px 4px;
-    background-color: #fef5e7;
-    border-radius: 3px;
+    background: rgba(230, 126, 34, 0.08);
     border-bottom: 2px solid #e67e22;
+    font-weight: 600;
+    padding: 0 2px;
+    border-radius: 3px;
+    display: inline;
+    transition:
+        background 0.2s,
+        color 0.2s;
 }
 
 .place-name:hover {
-    background-color: #2a3a5a;
+    background: rgba(230, 126, 34, 0.18);
+    color: #f39c12;
+}
+
+/* References */
+.ref {
+    color: #3498db;
+    background: rgba(52, 152, 219, 0.08);
+    border-bottom: 2px solid #3498db;
+    font-weight: 600;
+    padding: 0 2px;
+    border-radius: 3px;
+    display: inline;
+    transition:
+        background 0.2s,
+        color 0.2s;
+}
+
+.ref:hover {
+    background: rgba(52, 152, 219, 0.18);
+    color: #5dade2;
+}
+
+/* Unclear text */
+.unclear {
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.08);
+    border-bottom: 2px dotted #e74c3c;
+    font-weight: 600;
+    padding: 0 2px;
+    border-radius: 3px;
+    display: inline;
+    font-style: italic;
+    transition:
+        background 0.2s,
+        color 0.2s;
+}
+
+.unclear:hover {
+    background: rgba(231, 76, 60, 0.18);
+    color: #ec7063;
 }
 
 /* Referenced Types (divine, astral, etc.) */
@@ -452,19 +520,103 @@ body {
 
 /* Footnotes */
 .footnote-ref {
-    color: #4fc3f7;
+    color: #4fc3f7 !important;
+    background-color: rgba(79, 195, 247, 0.15);
     font-weight: bold;
     cursor: pointer;
-    padding: 0 2px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    display: inline-block;
+    line-height: 1;
 }
 
 .footnote-ref a {
     text-decoration: none;
-    color: inherit;
+    color: #4fc3f7 !important;
+    display: inline-block;
 }
 
 .footnote-ref:hover {
     text-decoration: underline;
+    background-color: rgba(79, 195, 247, 0.25);
+}
+
+.footnote-ref:hover a {
+    text-decoration: underline;
+}
+
+/* Highlight when note reference is targeted */
+.footnote-ref a:target {
+    background-color: rgba(79, 195, 247, 0.35);
+    padding: 2px 6px;
+    border-radius: 4px;
+    box-shadow: 0 0 8px rgba(79, 195, 247, 0.5);
+}
+
+/* Footnotes Section */
+.footnotes-section {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #3a8dde;
+}
+
+.footnotes-divider {
+    display: none;
+}
+
+.footnotes-section h4 {
+    font-size: 1.1rem;
+    color: #90caf9;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+}
+
+.footnotes-list {
+    list-style: none;
+    counter-reset: footnote-counter;
+    padding-left: 0;
+    margin: 0;
+}
+
+.footnote-item {
+    display: flex;
+    gap: 0.8rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #263238;
+    line-height: 1.6;
+    scroll-margin-top: 2rem;
+    scroll-margin-bottom: 2rem;
+}
+
+.footnote-item:target {
+    background-color: rgba(79, 195, 247, 0.15);
+    border-radius: 4px;
+    padding: 0.8rem;
+    margin: 0 -0.5rem;
+}
+
+.footnote-item:last-child {
+    border-bottom: none;
+}
+
+.footnote-number {
+    flex-shrink: 0;
+    color: #4fc3f7;
+    font-weight: bold;
+    min-width: 1.5rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.footnote-number:hover {
+    text-decoration: underline;
+    color: #81d4fa;
+}
+
+.footnote-content {
+    flex: 1;
+    color: #cfd8dc;
 }
 
 /* Highlighted/Rendered text */
@@ -532,6 +684,103 @@ body {
     color: #eaf6fb;
     font-size: 1.08rem;
     margin-bottom: 0.4rem;
+}
+
+/* ============================================
+   LEGEND PANEL
+   ============================================ */
+
+.legend-panel {
+    background: linear-gradient(135deg, #18223a 0%, #1a2844 100%);
+    border: 2px solid #3a8dde;
+    border-radius: 10px;
+    padding: 1.25rem 1.75rem;
+    margin: 1rem auto;
+    max-width: 1200px;
+    box-shadow:
+        0 4px 24px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(58, 141, 222, 0.1) inset;
+    color: #eaf6fb;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.legend-panel h3 {
+    font-size: 1.25rem;
+    color: #4fc3f7;
+    margin: 0 0 1rem 0;
+    border-bottom: 2px solid #3a8dde;
+    padding-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+}
+
+.legend-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.875rem 1.75rem;
+    align-items: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.legend-item:hover {
+    background-color: rgba(58, 141, 222, 0.1);
+    transform: translateX(4px);
+}
+
+.legend-swatch {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 46px;
+    height: 32px;
+    padding: 4px 10px;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: default;
+    flex-shrink: 0;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.legend-item:hover .legend-swatch {
+    transform: scale(1.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.legend-label {
+    color: #d4e9f7;
+    font-size: 0.975rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    transition: color 0.2s ease;
+}
+
+.legend-item:hover .legend-label {
+    color: #ffffff;
 }
 
 /* ============================================
@@ -745,6 +994,21 @@ body {
     .controls-panel {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .legend-panel {
+        padding: 1rem;
+        margin: 0.75rem 0.5rem;
+    }
+
+    .legend-items {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .legend-swatch {
+        min-width: 38px;
+        height: 28px;
     }
 
     .view-toggles,

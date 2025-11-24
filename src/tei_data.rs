@@ -7,6 +7,7 @@ pub struct TeiDocument {
     pub metadata: Metadata,
     pub facsimile: Facsimile,
     pub lines: Vec<Line>,
+    pub footnotes: Vec<Footnote>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -46,17 +47,63 @@ pub struct Line {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Footnote {
+    pub id: String,
+    pub n: String, // The note number/label
+    pub content: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "type")]
 pub enum TextNode {
-    Text { content: String },
-    Abbr { abbr: String, expan: String },
-    Choice { sic: String, corr: String },
-    Num { value: u32, text: String },
-    PersName { name: String },
-    PlaceName { name: String },
-    RsType { rs_type: String, content: String },
-    Note { content: String, note_id: String },
-    Hi { rend: String, content: String },
+    Text {
+        content: String,
+    },
+    Abbr {
+        abbr: String,
+        expan: String,
+    },
+    Choice {
+        sic: String,
+        corr: String,
+    },
+    Num {
+        value: u32,
+        tipo: String,
+        text: String,
+    },
+    PersName {
+        name: String,
+        tipo: String,
+    },
+    PlaceName {
+        name: String,
+    },
+    Ref {
+        ref_type: String,
+        target: String,
+        content: String,
+    },
+    Unclear {
+        reason: String,
+        content: String,
+    },
+    RsType {
+        rs_type: String,
+        content: String,
+    },
+    NoteRef {
+        note_id: String,
+        n: String, // The displayed number/marker
+    },
+    InlineNote {
+        content: String,
+        n: String, // The note number
+    },
+    Hi {
+        rend: String,
+        content: String,
+    },
 }
 
 impl TeiDocument {
@@ -65,6 +112,7 @@ impl TeiDocument {
             metadata: Metadata::default(),
             facsimile: Facsimile::default(),
             lines: Vec::new(),
+            footnotes: Vec::new(),
         }
     }
 }

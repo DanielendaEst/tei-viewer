@@ -16,11 +16,13 @@ pub fn parse_tei_xml(xml_content: &str) -> Result<TeiDocument, String> {
     let mut temp_facsimile = Facsimile::default();
     let mut zones = HashMap::new();
     let mut lines = Vec::new();
+    let mut footnotes = Vec::new();
 
     let mut current_line: Option<Line> = None;
     let mut text_buffer: Vec<String> = Vec::new();
     let mut in_body = false;
     let mut in_facsimile = false;
+    let mut in_notes_div = false;
 
     // SINGLE, FLAT EVENT LOOP - no nested parsers fighting each other
     loop {
@@ -108,19 +110,87 @@ pub fn parse_tei_xml(xml_content: &str) -> Result<TeiDocument, String> {
                                 facs = value.trim_start_matches('#').to_string();
                             }
                         }
-                        let facs_clone = facs.clone();
                         current_line = Some(Line {
                             facs,
                             content: Vec::new(),
                         });
                         text_buffer.clear();
                     }
-                    "ab" if in_body && current_line.is_some() => {
+                    "ab" if in_body && current_line.is_some() && !in_notes_div => {
                         // Parse inline content for <ab>
                         let ab_nodes = parse_inline_nodes(&mut reader, &mut buf, "ab");
                         if let Some(line) = current_line.as_mut() {
                             line.content.extend(ab_nodes);
                         }
+                    }
+                    "div" if in_body => {
+                        // Check if this is a notes div (accept both "notes" and "note")
+                        for attr in e.attributes().flatten() {
+                            let key = String::from_utf8_lossy(attr.key.as_ref()).to_string();
+                            let value = String::from_utf8_lossy(&attr.value).to_string();
+                            if key == "type" && (value == "notes" || value == "note") {
+                                in_notes_div = true;
+                                break;
+                            }
+                        }
+                    }
+                    "note" if in_notes_div => {
+                        // Parse a note in the notes div
+                        let mut note_id = String::new();
+                        let mut n = String::new();
+                        let mut note_counter = footnotes.len() + 1; // Auto-number if n not provided
+                        for attr in e.attributes().flatten() {
+                            let key = String::from_utf8_lossy(attr.key.as_ref()).to_string();
+                            let value = String::from_utf8_lossy(&attr.value).to_string();
+                            match key.as_str() {
+                                "xml:id" | "id" => note_id = value,
+                                "n" => n = value,
+                                _ => {}
+                            }
+                        }
+
+                        // If n is not provided, auto-generate from counter
+                        if n.is_empty() {
+                            n = note_counter.to_string();
+                        }
+
+                        // Parse note content
+                        let mut content = String::new();
+                        let mut note_buf = Vec::new();
+                        let mut depth = 1;
+                        loop {
+                            match reader.read_event_into(&mut note_buf) {
+                                Ok(Event::Start(ref ne)) => {
+                                    let nname = String::from_utf8_lossy(ne.local_name().as_ref())
+                                        .to_string();
+                                    if nname == "note" {
+                                        depth += 1;
+                                    }
+                                }
+                                Ok(Event::Text(ce)) => {
+                                    content.push_str(&ce.unescape().unwrap_or_default());
+                                }
+                                Ok(Event::End(ref ce)) => {
+                                    let cname = String::from_utf8_lossy(ce.local_name().as_ref())
+                                        .to_string();
+                                    if cname == "note" {
+                                        depth -= 1;
+                                        if depth == 0 {
+                                            break;
+                                        }
+                                    }
+                                }
+                                Ok(Event::Eof) => break,
+                                _ => {}
+                            }
+                            note_buf.clear();
+                        }
+
+                        footnotes.push(Footnote {
+                            id: note_id,
+                            n,
+                            content,
+                        });
                     }
 
                     // ===== METADATA SECTION =====
@@ -143,11 +213,17 @@ pub fn parse_tei_xml(xml_content: &str) -> Result<TeiDocument, String> {
                     "facsimile" => {
                         in_facsimile = false;
                     }
+                    "div" => {
+                        if in_notes_div {
+                            in_notes_div = false;
+                        }
+                    }
                     "body" => {
                         if let Some(line) = current_line.take() {
                             lines.push(line);
                         }
                         in_body = false;
+                        in_notes_div = false;
                     }
                     "title" => {
                         if !text_buffer.is_empty() {
@@ -290,6 +366,7 @@ pub fn parse_tei_xml(xml_content: &str) -> Result<TeiDocument, String> {
     doc.metadata = temp_metadata;
     doc.facsimile = temp_facsimile;
     doc.lines = lines;
+    doc.footnotes = footnotes;
 
     Ok(doc)
 }
@@ -391,11 +468,14 @@ fn parse_inline_nodes<R: std::io::BufRead>(
                     }
                     "num" => {
                         let mut value = 0;
+                        let mut tipo = String::new();
                         for attr in e.attributes().flatten() {
                             let key = String::from_utf8_lossy(attr.key.as_ref()).to_string();
                             let val = String::from_utf8_lossy(&attr.value).to_string();
                             if key == "value" {
                                 value = val.parse().unwrap_or(0);
+                            } else if key == "type" {
+                                tipo = val;
                             }
                         }
                         let mut num_text = String::new();
@@ -419,8 +499,235 @@ fn parse_inline_nodes<R: std::io::BufRead>(
                         }
                         nodes.push(TextNode::Num {
                             value,
+                            tipo,
                             text: num_text,
                         });
+                    }
+                    "persName" => {
+                        let mut tipo = String::new();
+                        for attr in e.attributes().flatten() {
+                            let key = String::from_utf8_lossy(attr.key.as_ref()).to_string();
+                            let val = String::from_utf8_lossy(&attr.value).to_string();
+                            if key == "type" {
+                                tipo = val;
+                            }
+                        }
+                        let mut name = String::new();
+                        let mut pers_buf = Vec::new();
+                        loop {
+                            match reader.read_event_into(&mut pers_buf) {
+                                Ok(Event::Text(ce)) => {
+                                    name.push_str(&ce.unescape().unwrap_or_default());
+                                }
+                                Ok(Event::End(ref ce)) => {
+                                    let cname = String::from_utf8_lossy(ce.local_name().as_ref())
+                                        .to_string();
+                                    if cname == "persName" {
+                                        break;
+                                    }
+                                }
+                                Ok(Event::Eof) => break,
+                                _ => {}
+                            }
+                            pers_buf.clear();
+                        }
+                        nodes.push(TextNode::PersName { name, tipo });
+                    }
+                    "placeName" => {
+                        let mut name = String::new();
+                        let mut place_buf = Vec::new();
+                        loop {
+                            match reader.read_event_into(&mut place_buf) {
+                                Ok(Event::Text(ce)) => {
+                                    name.push_str(&ce.unescape().unwrap_or_default());
+                                }
+                                Ok(Event::End(ref ce)) => {
+                                    let cname = String::from_utf8_lossy(ce.local_name().as_ref())
+                                        .to_string();
+                                    if cname == "placeName" {
+                                        break;
+                                    }
+                                }
+                                Ok(Event::Eof) => break,
+                                _ => {}
+                            }
+                            place_buf.clear();
+                        }
+                        nodes.push(TextNode::PlaceName { name });
+                    }
+                    "rs" => {
+                        let mut rs_type = String::new();
+                        for attr in e.attributes().flatten() {
+                            let key = String::from_utf8_lossy(attr.key.as_ref()).to_string();
+                            let val = String::from_utf8_lossy(&attr.value).to_string();
+                            if key == "type" {
+                                rs_type = val;
+                            }
+                        }
+                        let mut content = String::new();
+                        let mut rs_buf = Vec::new();
+                        loop {
+                            match reader.read_event_into(&mut rs_buf) {
+                                Ok(Event::Text(ce)) => {
+                                    content.push_str(&ce.unescape().unwrap_or_default());
+                                }
+                                Ok(Event::End(ref ce)) => {
+                                    let cname = String::from_utf8_lossy(ce.local_name().as_ref())
+                                        .to_string();
+                                    if cname == "rs" {
+                                        break;
+                                    }
+                                }
+                                Ok(Event::Eof) => break,
+                                _ => {}
+                            }
+                            rs_buf.clear();
+                        }
+                        nodes.push(TextNode::RsType { rs_type, content });
+                    }
+                    "note" => {
+                        // Could be inline note or note reference (with target attribute)
+                        let mut n = String::new();
+                        let mut target = String::new();
+                        for attr in e.attributes().flatten() {
+                            let key = String::from_utf8_lossy(attr.key.as_ref()).to_string();
+                            let val = String::from_utf8_lossy(&attr.value).to_string();
+                            match key.as_str() {
+                                "n" => n = val,
+                                "target" => target = val,
+                                _ => {}
+                            }
+                        }
+
+                        // If has target, it's a note reference
+                        if !target.is_empty() {
+                            let mut content = String::new();
+                            let mut note_buf = Vec::new();
+                            loop {
+                                match reader.read_event_into(&mut note_buf) {
+                                    Ok(Event::Text(ce)) => {
+                                        content.push_str(&ce.unescape().unwrap_or_default());
+                                    }
+                                    Ok(Event::End(ref ce)) => {
+                                        let cname =
+                                            String::from_utf8_lossy(ce.local_name().as_ref())
+                                                .to_string();
+                                        if cname == "note" {
+                                            break;
+                                        }
+                                    }
+                                    Ok(Event::Eof) => break,
+                                    _ => {}
+                                }
+                                note_buf.clear();
+                            }
+                            let note_id = target.trim_start_matches('#').to_string();
+                            let display_n = if !content.is_empty() { content } else { n };
+                            nodes.push(TextNode::NoteRef {
+                                note_id,
+                                n: display_n,
+                            });
+                        } else {
+                            // Inline note
+                            let mut content = String::new();
+                            let mut note_buf = Vec::new();
+                            loop {
+                                match reader.read_event_into(&mut note_buf) {
+                                    Ok(Event::Text(ce)) => {
+                                        content.push_str(&ce.unescape().unwrap_or_default());
+                                    }
+                                    Ok(Event::End(ref ce)) => {
+                                        let cname =
+                                            String::from_utf8_lossy(ce.local_name().as_ref())
+                                                .to_string();
+                                        if cname == "note" {
+                                            break;
+                                        }
+                                    }
+                                    Ok(Event::Eof) => break,
+                                    _ => {}
+                                }
+                                note_buf.clear();
+                            }
+                            nodes.push(TextNode::InlineNote { content, n });
+                        }
+                    }
+                    "ref" => {
+                        let mut ref_type = String::new();
+                        let mut target = String::new();
+                        for attr in e.attributes().flatten() {
+                            let key = String::from_utf8_lossy(attr.key.as_ref()).to_string();
+                            let val = String::from_utf8_lossy(&attr.value).to_string();
+                            if key == "type" {
+                                ref_type = val;
+                            } else if key == "target" {
+                                target = val;
+                            }
+                        }
+                        let mut content = String::new();
+                        let mut ref_buf = Vec::new();
+                        loop {
+                            match reader.read_event_into(&mut ref_buf) {
+                                Ok(Event::Text(ce)) => {
+                                    content.push_str(&ce.unescape().unwrap_or_default());
+                                }
+                                Ok(Event::End(ref ce)) => {
+                                    let cname = String::from_utf8_lossy(ce.local_name().as_ref())
+                                        .to_string();
+                                    if cname == "ref" {
+                                        break;
+                                    }
+                                }
+                                Ok(Event::Eof) => break,
+                                _ => {}
+                            }
+                            ref_buf.clear();
+                        }
+
+                        // Check if this is a note reference
+                        if ref_type == "note" && target.starts_with('#') {
+                            let note_id = target.trim_start_matches('#').to_string();
+                            nodes.push(TextNode::NoteRef {
+                                note_id,
+                                n: content,
+                            });
+                        } else {
+                            nodes.push(TextNode::Ref {
+                                ref_type,
+                                target,
+                                content,
+                            });
+                        }
+                    }
+                    "unclear" => {
+                        let mut reason = String::new();
+                        for attr in e.attributes().flatten() {
+                            let key = String::from_utf8_lossy(attr.key.as_ref()).to_string();
+                            let val = String::from_utf8_lossy(&attr.value).to_string();
+                            if key == "reason" {
+                                reason = val;
+                            }
+                        }
+                        let mut content = String::new();
+                        let mut unclear_buf = Vec::new();
+                        loop {
+                            match reader.read_event_into(&mut unclear_buf) {
+                                Ok(Event::Text(ce)) => {
+                                    content.push_str(&ce.unescape().unwrap_or_default());
+                                }
+                                Ok(Event::End(ref ce)) => {
+                                    let cname = String::from_utf8_lossy(ce.local_name().as_ref())
+                                        .to_string();
+                                    if cname == "unclear" {
+                                        break;
+                                    }
+                                }
+                                Ok(Event::Eof) => break,
+                                _ => {}
+                            }
+                            unclear_buf.clear();
+                        }
+                        nodes.push(TextNode::Unclear { reason, content });
                     }
                     _ => {
                         // Unknown tag: recurse

@@ -28,6 +28,7 @@ pub enum TeiViewerMsg {
     ToggleMetadata,
     ToggleMetadataDip,
     ToggleMetadataTrad,
+    ToggleLegend,
     ImageLoaded(u32, u32),
 }
 
@@ -59,6 +60,8 @@ pub struct TeiViewer {
     show_metadata_popup: bool,
     metadata_selected: Option<ViewType>,
     current_page: String,
+    // legend
+    show_legend: bool,
     // image intrinsic dimensions (natural)
     image_nat_w: u32,
     image_nat_h: u32,
@@ -98,6 +101,7 @@ impl Component for TeiViewer {
             show_metadata_popup: false,
             metadata_selected: None,
             current_page: page,
+            show_legend: false,
             image_nat_w: 0,
             image_nat_h: 0,
         }
@@ -300,6 +304,10 @@ impl Component for TeiViewer {
                 }
                 true
             }
+            TeiViewerMsg::ToggleLegend => {
+                self.show_legend = !self.show_legend;
+                true
+            }
             TeiViewerMsg::ImageLoaded(nw, nh) => {
                 self.image_nat_w = nw;
                 self.image_nat_h = nh;
@@ -323,6 +331,7 @@ impl Component for TeiViewer {
         html! {
             <div class="tei-viewer-container">
                 { self.render_controls(ctx) }
+                { self.render_legend(ctx) }
                 <div class="viewer-content">
                     { self.render_image_panel(ctx) }
                     { self.render_text_panels(ctx) }
@@ -347,6 +356,7 @@ impl TeiViewer {
         let zoom_in = ctx.link().callback(|_| TeiViewerMsg::UpdateImageScale(1.2));
         let zoom_out = ctx.link().callback(|_| TeiViewerMsg::UpdateImageScale(0.8));
         let toggle_meta = ctx.link().callback(|_| TeiViewerMsg::ToggleMetadata);
+        let toggle_legend = ctx.link().callback(|_| TeiViewerMsg::ToggleLegend);
 
         html! {
             <div class="controls-panel">
@@ -360,6 +370,7 @@ impl TeiViewer {
                     <button onclick={zoom_out}>{"🔍 -"}</button>
                     <span class="zoom-level">{format!("{}%", (self.image_scale * 100.0) as i32)}</span>
                     <button onclick={toggle_meta} title="Toggle Metadata">{ if self.show_metadata_popup { "Ocultar metadata" } else { "Mostrar metadata" } }</button>
+                    <button onclick={toggle_legend} title="Toggle Color Legend">{ if self.show_legend { "🎨 Ocultar leyenda" } else { "🎨 Mostrar leyenda" } }</button>
                 </div>
             </div>
         }
@@ -599,6 +610,7 @@ impl TeiViewer {
                     <h3>{"Edición diplomática"}</h3>
                     <div class="text-content">
                         { for doc.lines.iter().enumerate().map(|(idx, line)| self.render_line(ctx, line, idx)) }
+                        { self.render_footnotes(&doc.footnotes) }
                     </div>
                 </div>
             }
@@ -619,6 +631,7 @@ impl TeiViewer {
                     <h3>{"Traducción"}</h3>
                     <div class="text-content">
                         { for doc.lines.iter().enumerate().map(|(idx, line)| self.render_line(ctx, line, idx)) }
+                        { self.render_footnotes(&doc.footnotes) }
                     </div>
                 </div>
             }
@@ -661,32 +674,123 @@ impl TeiViewer {
         match node {
             TextNode::Text { content } => html! { <>{content}</> },
             TextNode::Abbr { abbr, expan } => html! {
-                <abbr title={expan.clone()} class="abbreviation">{ abbr }</abbr>
+                <abbr title={format!("[Abbreviation] {}", expan)} class="abbreviation">{ abbr }</abbr>
             },
             TextNode::Choice { sic, corr } => html! {
-                <span class="correction" title={format!("Original: {}", sic)}>{ corr }</span>
+                <span class="correction" title={format!("[Correction] Original: {}", sic)}>{ corr }</span>
             },
-            TextNode::Num { value, text } => html! {
-                <span class="number" title={format!("Value: {}", value)}>{ text }</span>
+            TextNode::Num { value, tipo, text } => html! {
+                <span class="number" title={format!("[Number] Value: {} | Type: {}", value, tipo)}>{ text }</span>
             },
-            TextNode::PersName { name } => html! {
-                <span class="person-name">{ name }</span>
+            TextNode::PersName { name, tipo } => html! {
+                <span class="person-name" title={if !tipo.is_empty() { format!("[Person] Type: {}", tipo) } else { "[Person]".to_string() }}>{ name }</span>
             },
             TextNode::PlaceName { name } => html! {
-                <span class="place-name">{ name }</span>
+                <span class="place-name" title="[Place]">{ name }</span>
+            },
+            TextNode::Ref {
+                ref_type,
+                target,
+                content,
+            } => html! {
+                <span class="ref" title={format!("[Reference] Type: {} | Target: {}", ref_type, target)}>{ content }</span>
+            },
+            TextNode::Unclear { reason, content } => html! {
+                <span class="unclear" title={format!("[Unclear] Reason: {}", reason)}>{ content }</span>
             },
             TextNode::RsType { rs_type, content } => html! {
-                <span class={format!("rs-type rs-{}", rs_type)}>{ content }</span>
+                <span class={format!("rs-type rs-{}", rs_type)} title={format!("[Reference String] Type: {}", rs_type)}>{ content }</span>
             },
-            TextNode::Note {
-                content: _,
-                note_id,
-            } => html! {
-                <sup class="footnote-ref"><a href={format!("#{}", note_id)}>{"*"}</a></sup>
+            TextNode::NoteRef { note_id, n } => html! {
+                <sup class="footnote-ref" title="[Footnote]">
+                    <a id={format!("ref_{}", note_id)} href={format!("#{}", note_id)}>{ n }</a>
+                </sup>
+            },
+            TextNode::InlineNote { content, n } => html! {
+                <sup class="footnote-ref" title={format!("[Footnote] {}", content)}>{ n }</sup>
             },
             TextNode::Hi { rend, content } => html! {
-                <span class={format!("hi-{}", rend)}>{ content }</span>
+                <span class={format!("hi-{}", rend)} title={format!("[Highlight] Style: {}", rend)}>{ content }</span>
             },
+        }
+    }
+
+    fn render_legend(&self, _ctx: &Context<Self>) -> Html {
+        if !self.show_legend {
+            return html! {};
+        }
+
+        html! {
+            <div class="legend-panel">
+                <h3>{"Leyenda de Colores"}</h3>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <span class="legend-swatch abbreviation">{"Ab"}</span>
+                        <span class="legend-label">{"Abreviatura"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch correction">{"Co"}</span>
+                        <span class="legend-label">{"Corrección"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch number">{"12"}</span>
+                        <span class="legend-label">{"Número"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch person-name">{"Pe"}</span>
+                        <span class="legend-label">{"Persona"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch place-name">{"Lu"}</span>
+                        <span class="legend-label">{"Lugar"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch ref">{"Rf"}</span>
+                        <span class="legend-label">{"Referencia"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch unclear">{"??"}</span>
+                        <span class="legend-label">{"Texto incierto"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch rs-divine">{"Dv"}</span>
+                        <span class="legend-label">{"Entidad divina"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch rs-astral">{"As"}</span>
+                        <span class="legend-label">{"Entidad astral"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch footnote-ref">{"1"}</span>
+                        <span class="legend-label">{"Nota al pie"}</span>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    fn render_footnotes(&self, footnotes: &[Footnote]) -> Html {
+        if footnotes.is_empty() {
+            return html! {};
+        }
+
+        html! {
+            <div class="footnotes-section">
+                <hr class="footnotes-divider" />
+                <h4>{"Notas"}</h4>
+                <ol class="footnotes-list">
+                    { for footnotes.iter().map(|note| {
+                        let note_num = note.n.clone();
+                        let note_id = note.id.clone();
+                        html! {
+                            <li id={note_id.clone()} class="footnote-item">
+                                <a href={format!("#ref_{}", note_id)} class="footnote-number">{ &note_num }</a>
+                                <span class="footnote-content">{ &note.content }</span>
+                            </li>
+                        }
+                    }) }
+                </ol>
+            </div>
         }
     }
 
