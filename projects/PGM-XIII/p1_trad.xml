@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+    <fileDesc>
+      <titleStmt>
+        <title>PGMXIII - Translation. p.1</title>
+        <author>Anonymous</author>
+        <editor>Robert W. Daniel</editor>
+        <respStmt>
+          <resp>Translation and digital edition preparation</resp>
+          <name>Federico Gaviria Zambrano</name>
+        </respStmt>
+      </titleStmt>
+      <editionStmt>
+        <edition>English Translation</edition>
+      </editionStmt>
+      <publicationStmt>
+        <publisher>Personal Research Project</publisher>
+        <date>2024</date>
+        <p>Unpublished translation for research and display.</p>
+      </publicationStmt>
+      <sourceDesc>
+        <msDesc>
+          <msIdentifier>
+            <country>Netherlands</country>
+            <settlement>Amsterdam</settlement>
+            <institution>Rijksmuseum</institution>
+            <collection>Papyri Graecae Magicae</collection>
+            <idno type="siglum">PGM XIII</idno>
+          </msIdentifier>
+        </msDesc>
+      </sourceDesc>
+    </fileDesc>
+    <encodingDesc>
+      <p>Translation with semantic annotations and commentary.</p>
+    </encodingDesc>
+    <profileDesc>
+      <langUsage>
+        <language ident="en">English</language>
+      </langUsage>
+    </profileDesc>
+  </teiHeader>
+  <facsimile>
+    <surface n="3r" xml:id="p1" type="recto">
+      <graphic url="images/p1.jpg" width="2479" height="3508" />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_3"
+                points="586,455 597,452 606,461 689,457 686,410 662,410 653,406 635,412 620,397 615,401 584,403"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_5"
+                points="584,506 595,506 606,517 678,515 678,479 640,479 624,464 584,464"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_6"
+                points="635,586 1547,579 1547,533 1333,517 635,517"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_7"
+                points="629,626 1663,637 1663,586 629,593"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_8"
+                points="591,675 631,700 1569,693 1569,644 591,649"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_9"
+                points="631,747 1589,749 1589,709 1375,691 631,704"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_10"
+                points="635,802 1643,807 1643,762 1536,753 635,769"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_11"
+                points="640,876 1210,851 1545,876 1645,865 1645,825 637,809"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_12"
+                points="633,923 1696,925 1694,885 1605,869 631,878"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_13"
+                points="640,990 1656,981 1656,945 1549,925 640,949"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_15"
+                points="631,1023 1368,1034 1415,1061 1565,1039 1565,994 631,1007"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_16"
+                points="640,1094 1585,1101 1585,1054 1551,1045 640,1059"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_17"
+                points="642,1154 1576,1157 1573,1114 1493,1103 640,1112"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_18"
+                points="635,1212 1609,1219 1609,1161 635,1186"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_19"
+                points="646,1282 1580,1275 1553,1228 646,1221"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_21"
+                points="637,1328 1582,1335 1582,1295 1502,1286 637,1295"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_22"
+                points="640,1391 1636,1389 1636,1351 1585,1335 640,1344"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_23"
+                points="651,1451 1652,1442 1652,1400 1565,1389 651,1409"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_24"
+                points="635,1493 1594,1500 1594,1464 1362,1469 1333,1444 635,1471"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_25"
+                points="631,1545 686,1571 1594,1565 1594,1509 1101,1527 778,1500 631,1529"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_27"
+                points="640,1618 1611,1620 1594,1580 640,1585"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_28"
+                points="637,1672 1516,1678 1516,1640 1422,1623 753,1640 718,1620 637,1645"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_29"
+                points="637,1736 1672,1738 1638,1687 635,1696"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_30"
+                points="644,1803 1660,1796 1634,1752 644,1743"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_31"
+                points="637,1843 1495,1854 1478,1812 1250,1801 934,1816 903,1790 865,1816 637,1819"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_33"
+                points="637,1914 1549,1917 1549,1872 1326,1852 637,1874"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_34"
+                points="651,1979 1442,1970 1442,1935 1386,1919 651,1935"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_35"
+                points="631,2019 847,2021 878,2050 1063,2021 1246,2050 1627,2030 1627,1993 1070,1999 909,1972 631,2001"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_36"
+                points="631,2071 691,2095 1027,2073 1533,2102 1533,2044 1500,2042 631,2053"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_37"
+                points="640,2146 1591,2149 1571,2099 640,2091"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_39"
+                points="644,2204 1616,2204 1616,2162 644,2149"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_40"
+                points="637,2255 1549,2260 1549,2224 1297,2206 637,2224"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_41"
+                points="631,2313 1005,2336 1473,2313 1580,2340 1580,2269 733,2284 689,2260 631,2284"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_42"
+                points="644,2380 1594,2380 1594,2345 1556,2336 644,2336"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_43"
+                points="631,2425 1692,2449 1692,2398 629,2398"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_45"
+                points="631,2481 981,2514 1081,2485 1678,2498 1678,2443 1634,2440 631,2465"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_46"
+                points="635,2552 1562,2556 1562,2507 635,2507"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_47"
+                points="635,2608 1547,2610 1547,2559 635,2565"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_48"
+                points="644,2674 1750,2668 1747,2617 642,2612"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_49"
+                points="631,2717 1602,2732 1582,2681 631,2697"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_51"
+                points="640,2779 1580,2788 1580,2744 1536,2741 640,2746"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_52"
+                points="631,2833 1594,2846 1594,2795 631,2810"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_53"
+                points="631,2891 1542,2902 1542,2851 1467,2848 1175,2864 1012,2837 631,2868"
+            />
+      <zone
+                type="line"
+                xml:id="z_tr_1_tl_54"
+                points="640,2955 1669,2955 1623,2902 640,2911"
+            />
+    </surface>
+  </facsimile>
+  <text>
+    <body>
+      <div type="translation" xml:lang="en">
+        <pb n="1" facs="#p1" />
+        <lb facs="#z_tr_1_tl_3" />
+        <ab>God.</ab>
+        <lb facs="#z_tr_1_tl_5" />
+        <ab>Gods.</ab>
+        <lb facs="#z_tr_1_tl_6" />
+        <ab>Sacred book called Monas or the eighth book of <persName
+                    >Moses</persName><note
+                    >Moses is traditionally considered the author of magical texts in the PGM corpus.</note></ab>
+        <lb facs="#z_tr_1_tl_7" />
+        <ab>Concerning the holy <choice><abbr>name</abbr><expan
+                        >name (ὄνομα)</expan></choice>, it contains thus: remain pure</ab>
+        <lb facs="#z_tr_1_tl_8" />
+        <ab>for <num
+                        type="cardinal"
+                        value="41"
+                    >forty-one</num> days, having <choice><sic
+                        >whispered</sic><corr
+                        >prophesied</corr></choice>, so that you may arrive at the conjunction in</ab>
+        <lb facs="#z_tr_1_tl_9" />
+        <ab><placeName>Aries</placeName>. Have a level house, where before</ab>
+        <lb facs="#z_tr_1_tl_10" />
+        <ab>no one died. Let the door face</ab>
+        <lb facs="#z_tr_1_tl_11" />
+        <ab
+                >west, and having erected in the middle of the house an earthen altar</ab>
+        <lb facs="#z_tr_1_tl_12" />
+        <ab>and cypress wood, right-twisted cones, ten cocks</ab>
+        <lb facs="#z_tr_1_tl_13" />
+        <ab>two white, uninjured, perfect, and two lamps</ab>
+        <lb facs="#z_tr_1_tl_15" />
+        <ab>quarter-sized, having <choice><sic>filled</sic><corr
+                        >filled</corr></choice> with good oil, and no longer</ab>
+        <lb facs="#z_tr_1_tl_16" />
+        <ab>pour in after entering. For the <rs
+                        type="divine"
+                    >god</rs> will be exalted more</ab>
+        <lb facs="#z_tr_1_tl_17" />
+        <ab>Let the table be supplied with these incense offerings</ab>
+        <lb facs="#z_tr_1_tl_18" />
+        <ab>which are congenial to the <rs
+                        type="divine"
+                    >god</rs>. From this</ab>
+        <lb facs="#z_tr_1_tl_19" />
+        <ab>book <persName
+                    >Hermes</persName>, having stolen the incense offerings, invoked</ab>
+        <lb facs="#z_tr_1_tl_21" />
+        <ab>his own sacred book, called Wing: for</ab>
+        <lb facs="#z_tr_1_tl_22" />
+        <ab><persName
+                    >Kronos</persName>, styrax, for it is heavy and fragrant; for <persName
+                    >Zeus</persName></ab>
+        <lb facs="#z_tr_1_tl_23" />
+        <ab>malabathrum; for <persName>Ares</persName>, costus; for <persName
+                    >Helios</persName>, frankincense</ab>
+        <lb facs="#z_tr_1_tl_24" />
+        <ab>for <persName>Aphrodite</persName>, Indian nard; for <persName
+                    >Hermes</persName>, cassia</ab>
+        <lb facs="#z_tr_1_tl_25" />
+        <ab>for the <rs
+                        type="astral"
+                    >Moon</rs>, myrrh. These are the secret incense offerings</ab>
+        <lb facs="#z_tr_1_tl_27" />
+        <ab>What it says in the Key of <persName
+                    >Moses</persName>: preparations for every</ab>
+        <lb facs="#z_tr_1_tl_28" />
+        <ab>vetch, solar, Egyptian bean. With these it says:</ab>
+        <lb facs="#z_tr_1_tl_29" />
+        <ab>And these <persName
+                    >Manetho</persName> said in his own book. From here</ab>
+        <lb facs="#z_tr_1_tl_30" />
+        <ab>taking the <num
+                        type="cardinal"
+                        value="7"
+                    >seven</num> flowers of the <num
+                        type="cardinal"
+                        value="7"
+                    >seven</num> stars which are: marjoram</ab>
+        <lb facs="#z_tr_1_tl_31" />
+        <ab>common garden, lotus, ivy leaf, narcissus</ab>
+        <lb facs="#z_tr_1_tl_33" />
+        <ab>lily, rose. These flowers before twenty</ab>
+        <lb facs="#z_tr_1_tl_34" />
+        <ab>one days before the rite, grind finely to white</ab>
+        <lb facs="#z_tr_1_tl_35" />
+        <ab>incense and dry in shade and have them ready for</ab>
+        <lb facs="#z_tr_1_tl_36" />
+        <ab>that day. But first establish friendship</ab>
+        <lb facs="#z_tr_1_tl_37" />
+        <ab>at any new moon according to the <rs
+                        type="divine"
+                    >god</rs> of the horoscope</ab>
+        <lb facs="#z_tr_1_tl_39" />
+        <ab>gods, which you have in the Key. You will be initiated to them</ab>
+        <lb facs="#z_tr_1_tl_40" />
+        <ab>thus: make from fine flour <num
+                        type="cardinal"
+                        value="3"
+                    >three</num> zodiac signs: bull-faced</ab>
+        <lb facs="#z_tr_1_tl_41" />
+        <ab><choice><abbr>figure</abbr><expan
+                        >figure (πρόσωπον)</expan></choice>, goat-faced <choice
+                    ><abbr>figure</abbr><expan
+                        >figure (πρόσωπον)</expan></choice>, ram-faced figure, each of them</ab>
+        <lb facs="#z_tr_1_tl_42" />
+        <ab>standing at the pole holding Egyptian whips, and</ab>
+        <lb facs="#z_tr_1_tl_43" />
+        <ab>having fumigated, consume speaking the horoscope</ab>
+        <lb facs="#z_tr_1_tl_45" />
+        <ab
+                >formula in the Key and the compelling formula and the hebdomadal</ab>
+        <lb facs="#z_tr_1_tl_46" />
+        <ab>appointed ones, and you will be initiated to them</ab>
+        <lb facs="#z_tr_1_tl_47" />
+        <ab>Then for the universal constitution, have square natron</ab>
+        <lb facs="#z_tr_1_tl_48" />
+        <ab>on which you write the great <choice><abbr>name</abbr><expan
+                        >name (ὄνομα)</expan></choice> with the seven vowels. Instead of</ab>
+        <lb facs="#z_tr_1_tl_49" />
+        <ab>the hissing and whistling, write on one side</ab>
+        <lb facs="#z_tr_1_tl_51" />
+        <ab>of the natron a crocodile, falcon-headed, and above it standing</ab>
+        <lb facs="#z_tr_1_tl_52" />
+        <ab>the nine-formed. For he himself, the falcon-headed</ab>
+        <lb facs="#z_tr_1_tl_53" />
+        <ab>crocodile, at the <num
+                        type="cardinal"
+                        value="4"
+                    >four</num> turnings greets the <rs
+                        type="divine"
+                    >god</rs></ab>
+        <lb facs="#z_tr_1_tl_54" />
+        <ab>with hissing. For having breathed, it hisses from the depths</ab>
+      </div>
+    </body>
+  </text>
+</TEI>

@@ -1,0 +1,800 @@
+// src/components/tei_viewer.rs
+use crate::tei_data::*;
+use gloo_net::http::Request;
+use wasm_bindgen::JsCast;
+use wasm_bindgen_futures::spawn_local;
+use web_sys::{Event as WebEvent, HtmlImageElement};
+use yew::prelude::*;
+
+#[derive(Properties, PartialEq)]
+pub struct TeiViewerProps {
+    pub project: String,
+    pub page: String,
+}
+
+pub enum TeiViewerMsg {
+    LoadDiplomatic(String),
+    LoadTranslation(String),
+    DiplomaticLoaded(Result<TeiDocument, String>),
+    TranslationLoaded(Result<TeiDocument, String>),
+    HoverLine(String),
+    ClickLine(String),
+    ClearHover,
+    ToggleView(ViewType),
+    UpdateImageScale(f32),
+    StartDrag(f32, f32),
+    DragImage(f32, f32),
+    EndDrag,
+    ToggleMetadata,
+    ToggleMetadataDip,
+    ToggleMetadataTrad,
+    ImageLoaded(u32, u32),
+}
+
+#[derive(Clone, PartialEq)]
+pub enum ViewType {
+    Diplomatic,
+    Translation,
+    Both,
+}
+
+pub struct TeiViewer {
+    diplomatic: Option<TeiDocument>,
+    translation: Option<TeiDocument>,
+    hovered_zone: Option<String>,
+    locked_zone: Option<String>,
+    active_view: ViewType,
+    show_image: bool,
+    loading: bool,
+    error: Option<String>,
+    // zoom and pan
+    image_scale: f32,
+    image_offset_x: f32,
+    image_offset_y: f32,
+    // dragging state
+    dragging: bool,
+    last_mouse_x: f32,
+    last_mouse_y: f32,
+    // metadata popup
+    show_metadata_popup: bool,
+    metadata_selected: Option<ViewType>,
+    current_page: String,
+    // image intrinsic dimensions (natural)
+    image_nat_w: u32,
+    image_nat_h: u32,
+}
+
+impl Component for TeiViewer {
+    type Message = TeiViewerMsg;
+    type Properties = TeiViewerProps;
+
+    fn create(ctx: &Context<Self>) -> Self {
+        let project = ctx.props().project.clone();
+        let page = ctx.props().page.clone();
+
+        // Kick off loads
+        let dip_path = format!("public/projects/{}/{}_dip.xml", project, page);
+        ctx.link()
+            .send_message(TeiViewerMsg::LoadDiplomatic(dip_path));
+        let trad_path = format!("public/projects/{}/{}_trad.xml", project, page);
+        ctx.link()
+            .send_message(TeiViewerMsg::LoadTranslation(trad_path));
+
+        Self {
+            diplomatic: None,
+            translation: None,
+            hovered_zone: None,
+            locked_zone: None,
+            active_view: ViewType::Both,
+            show_image: true,
+            loading: true,
+            error: None,
+            image_scale: 1.0,
+            image_offset_x: 0.0,
+            image_offset_y: 0.0,
+            dragging: false,
+            last_mouse_x: 0.0,
+            last_mouse_y: 0.0,
+            show_metadata_popup: false,
+            metadata_selected: None,
+            current_page: page,
+            image_nat_w: 0,
+            image_nat_h: 0,
+        }
+    }
+
+    fn changed(&mut self, ctx: &Context<Self>, _old: &Self::Properties) -> bool {
+        let new_page = ctx.props().page.clone();
+        if new_page != self.current_page {
+            self.current_page = new_page.clone();
+            self.diplomatic = None;
+            self.translation = None;
+            self.loading = true;
+            self.error = None;
+            self.hovered_zone = None;
+            self.locked_zone = None;
+            self.image_scale = 1.0;
+            self.image_offset_x = 0.0;
+            self.image_offset_y = 0.0;
+            self.image_nat_w = 0;
+            self.image_nat_h = 0;
+            // reload
+            let project = ctx.props().project.clone();
+            let cache_bust = js_sys::Date::now() as u64;
+            let dip_path = format!(
+                "public/projects/{}/{}_dip.xml?v={}",
+                project, new_page, cache_bust
+            );
+            ctx.link()
+                .send_message(TeiViewerMsg::LoadDiplomatic(dip_path));
+            let trad_path = format!(
+                "public/projects/{}/{}_trad.xml?v={}",
+                project, new_page, cache_bust
+            );
+            ctx.link()
+                .send_message(TeiViewerMsg::LoadTranslation(trad_path));
+            true
+        } else {
+            false
+        }
+    }
+
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
+        match msg {
+            TeiViewerMsg::LoadDiplomatic(path) => {
+                let link = ctx.link().clone();
+                spawn_local(async move {
+                    let result = match Request::get(&path).send().await {
+                        Ok(resp) => match resp.text().await {
+                            Ok(xml) => crate::tei_parser::parse_tei_xml(&xml),
+                            Err(e) => Err(format!("Failed to read response text: {:?}", e)),
+                        },
+                        Err(e) => Err(format!("Failed to load diplomatic: {:?}", e)),
+                    };
+                    link.send_message(TeiViewerMsg::DiplomaticLoaded(result));
+                });
+                false
+            }
+            TeiViewerMsg::LoadTranslation(path) => {
+                let link = ctx.link().clone();
+                spawn_local(async move {
+                    let result = match Request::get(&path).send().await {
+                        Ok(resp) => match resp.text().await {
+                            Ok(xml) => crate::tei_parser::parse_tei_xml(&xml),
+                            Err(e) => Err(format!("Failed to read response text: {:?}", e)),
+                        },
+                        Err(e) => Err(format!("Failed to load translation: {:?}", e)),
+                    };
+                    link.send_message(TeiViewerMsg::TranslationLoaded(result));
+                });
+                false
+            }
+            TeiViewerMsg::DiplomaticLoaded(res) => {
+                match res {
+                    Ok(doc) => {
+                        self.diplomatic = Some(doc);
+                        if self.translation.is_some() {
+                            self.loading = false;
+                        }
+                        if self.show_metadata_popup {
+                            self.metadata_selected = Some(ViewType::Diplomatic);
+                        }
+                    }
+                    Err(e) => {
+                        self.error = Some(e);
+                        self.loading = false;
+                    }
+                }
+                true
+            }
+            TeiViewerMsg::TranslationLoaded(res) => {
+                match res {
+                    Ok(doc) => {
+                        self.translation = Some(doc);
+                        if self.diplomatic.is_some() {
+                            self.loading = false;
+                        }
+                        if self.show_metadata_popup {
+                            if self.diplomatic.is_some() {
+                                self.metadata_selected = Some(ViewType::Diplomatic);
+                            } else {
+                                self.metadata_selected = Some(ViewType::Translation);
+                            }
+                        }
+                    }
+                    Err(e) => {
+                        self.error = Some(e);
+                        self.loading = false;
+                    }
+                }
+                true
+            }
+            TeiViewerMsg::HoverLine(zone) => {
+                if self.locked_zone.is_none() {
+                    self.hovered_zone = Some(zone);
+                    true
+                } else {
+                    false
+                }
+            }
+            TeiViewerMsg::ClickLine(zone) => {
+                if self.locked_zone.as_ref() == Some(&zone) {
+                    self.locked_zone = None;
+                } else {
+                    self.locked_zone = Some(zone);
+                }
+                true
+            }
+            TeiViewerMsg::ClearHover => {
+                if self.locked_zone.is_none() {
+                    self.hovered_zone = None;
+                    true
+                } else {
+                    false
+                }
+            }
+            TeiViewerMsg::ToggleView(view) => {
+                self.active_view = view;
+                true
+            }
+            TeiViewerMsg::UpdateImageScale(factor) => {
+                // multiplicative zoom
+                self.image_scale = (self.image_scale * factor).clamp(0.2, 8.0);
+                true
+            }
+            TeiViewerMsg::StartDrag(x, y) => {
+                self.dragging = true;
+                self.last_mouse_x = x;
+                self.last_mouse_y = y;
+                true
+            }
+            TeiViewerMsg::DragImage(x, y) => {
+                if self.dragging {
+                    let dx = x - self.last_mouse_x;
+                    let dy = y - self.last_mouse_y;
+                    // note: pan offsets are in pixels; when the container is scaled, the visual movement corresponds accordingly.
+                    self.image_offset_x += dx;
+                    self.image_offset_y += dy;
+                    self.last_mouse_x = x;
+                    self.last_mouse_y = y;
+                    true
+                } else {
+                    false
+                }
+            }
+            TeiViewerMsg::EndDrag => {
+                self.dragging = false;
+                true
+            }
+            TeiViewerMsg::ToggleMetadata => {
+                self.show_metadata_popup = !self.show_metadata_popup;
+                if self.show_metadata_popup {
+                    let preferred = match self.active_view {
+                        ViewType::Diplomatic => Some(ViewType::Diplomatic),
+                        ViewType::Translation => Some(ViewType::Translation),
+                        ViewType::Both => {
+                            if self.diplomatic.is_some() {
+                                Some(ViewType::Diplomatic)
+                            } else if self.translation.is_some() {
+                                Some(ViewType::Translation)
+                            } else {
+                                None
+                            }
+                        }
+                    };
+                    self.metadata_selected = preferred;
+                } else {
+                    self.metadata_selected = None;
+                }
+                true
+            }
+            TeiViewerMsg::ToggleMetadataDip => {
+                if self.diplomatic.is_some() {
+                    self.metadata_selected = Some(ViewType::Diplomatic);
+                }
+                true
+            }
+            TeiViewerMsg::ToggleMetadataTrad => {
+                if self.translation.is_some() {
+                    self.metadata_selected = Some(ViewType::Translation);
+                }
+                true
+            }
+            TeiViewerMsg::ImageLoaded(nw, nh) => {
+                self.image_nat_w = nw;
+                self.image_nat_h = nh;
+                true
+            }
+        }
+    }
+
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        if self.loading {
+            return html! {
+                <div class="loading"><p>{"Loading TEI documents..."}</p></div>
+            };
+        }
+        if let Some(err) = &self.error {
+            return html! {
+                <div class="error"><p>{format!("Error: {}", err)}</p></div>
+            };
+        }
+
+        html! {
+            <div class="tei-viewer-container">
+                { self.render_controls(ctx) }
+                <div class="viewer-content">
+                    { self.render_image_panel(ctx) }
+                    { self.render_text_panels(ctx) }
+                    { self.render_metadata_popup(ctx) }
+                </div>
+            </div>
+        }
+    }
+}
+
+impl TeiViewer {
+    fn render_controls(&self, ctx: &Context<Self>) -> Html {
+        let toggle_dip = ctx
+            .link()
+            .callback(|_| TeiViewerMsg::ToggleView(ViewType::Diplomatic));
+        let toggle_trad = ctx
+            .link()
+            .callback(|_| TeiViewerMsg::ToggleView(ViewType::Translation));
+        let toggle_both = ctx
+            .link()
+            .callback(|_| TeiViewerMsg::ToggleView(ViewType::Both));
+        let zoom_in = ctx.link().callback(|_| TeiViewerMsg::UpdateImageScale(1.2));
+        let zoom_out = ctx.link().callback(|_| TeiViewerMsg::UpdateImageScale(0.8));
+        let toggle_meta = ctx.link().callback(|_| TeiViewerMsg::ToggleMetadata);
+
+        html! {
+            <div class="controls-panel">
+                <div class="view-toggles">
+                    <button class={if self.active_view == ViewType::Diplomatic { "active" } else { "" }} onclick={toggle_dip}>{"Edición diplomática"}</button>
+                    <button class={if self.active_view == ViewType::Translation { "active" } else { "" }} onclick={toggle_trad}>{"Traducción"}</button>
+                    <button class={if self.active_view == ViewType::Both { "active" } else { "" }} onclick={toggle_both}>{"Ambas"}</button>
+                </div>
+                <div class="image-controls">
+                    <button onclick={zoom_in}>{"🔍 +"}</button>
+                    <button onclick={zoom_out}>{"🔍 -"}</button>
+                    <span class="zoom-level">{format!("{}%", (self.image_scale * 100.0) as i32)}</span>
+                    <button onclick={toggle_meta} title="Toggle Metadata">{ if self.show_metadata_popup { "Ocultar metadata" } else { "Mostrar metadata" } }</button>
+                </div>
+            </div>
+        }
+    }
+
+    fn render_image_panel(&self, ctx: &Context<Self>) -> Html {
+        if !self.show_image {
+            return html! {};
+        }
+        let doc = self.diplomatic.as_ref().or(self.translation.as_ref());
+        if let Some(doc) = doc {
+            // resolve image URL (robust): derive filename and prefer serving from project's images/ directory.
+            // If the TEI already contains a public path, use it as-is (but ensure it is an absolute path).
+            // If the facsimile image_url is empty, fall back to a page-based filename (e.g. "p1.jpg")
+            // derived from the current page prop.
+            let image_filename = if doc.facsimile.image_url.trim().is_empty() {
+                // use page-based fallback like "p1.jpg"
+                format!("{}.jpg", ctx.props().page)
+            } else {
+                doc.facsimile
+                    .image_url
+                    .rsplit('/')
+                    .next()
+                    .unwrap_or(doc.facsimile.image_url.as_str())
+                    .to_string()
+            };
+
+            // Build an absolute URL (leading slash) for browser requests.
+            // Cases handled:
+            // - If TEI provides a full http(s) URL, use it as-is.
+            // - If TEI provides a path starting with '/', use it as-is (already absolute).
+            // - If TEI provides a path starting with 'public/', prefix with '/' to make '/public/...'.
+            // - Otherwise, construct '/public/projects/{project}/images/{image_filename}'.
+            let image_url = if !doc.facsimile.image_url.trim().is_empty() {
+                let raw = doc.facsimile.image_url.trim();
+                if raw.starts_with("http://") || raw.starts_with("https://") {
+                    // external absolute URL, use directly
+                    raw.to_string()
+                } else if raw.starts_with('/') {
+                    // already absolute path, use directly
+                    raw.to_string()
+                } else if raw.starts_with("public/") {
+                    // make absolute by adding leading slash
+                    format!("/{}", raw)
+                } else {
+                    // treat as filename or relative path -> place under project images and make absolute
+                    format!(
+                        "/public/projects/{}/images/{}",
+                        ctx.props().project,
+                        image_filename
+                    )
+                }
+            } else {
+                // TEI didn't specify; use page-based fallback under project images
+                format!(
+                    "/public/projects/{}/images/{}",
+                    ctx.props().project,
+                    image_filename
+                )
+            };
+
+            // Debug: log resolved image URL and relevant sizes to help diagnose alignment issues
+            web_sys::console::log_1(
+                &format!(
+                    "Resolved image_url='{}' (original='{}'), declared={}x{}, nat={}x{}",
+                    image_url,
+                    doc.facsimile.image_url,
+                    doc.facsimile.width,
+                    doc.facsimile.height,
+                    self.image_nat_w,
+                    self.image_nat_h
+                )
+                .into(),
+            );
+
+            let onwheel = ctx.link().callback(|e: WheelEvent| {
+                e.prevent_default();
+                let delta = -e.delta_y() as f32;
+                let factor = if delta > 0.0 { 1.1 } else { 0.9 };
+                TeiViewerMsg::UpdateImageScale(factor)
+            });
+
+            let onmousedown = {
+                let link = ctx.link().clone();
+                Callback::from(move |e: MouseEvent| {
+                    e.prevent_default();
+                    link.send_message(TeiViewerMsg::StartDrag(
+                        e.client_x() as f32,
+                        e.client_y() as f32,
+                    ));
+                })
+            };
+            let onmousemove = {
+                let link = ctx.link().clone();
+                Callback::from(move |e: MouseEvent| {
+                    link.send_message(TeiViewerMsg::DragImage(
+                        e.client_x() as f32,
+                        e.client_y() as f32,
+                    ));
+                })
+            };
+            let onmouseup = ctx.link().callback(|_| TeiViewerMsg::EndDrag);
+            let onmouseleave = ctx.link().callback(|_| TeiViewerMsg::EndDrag);
+
+            // onload captures intrinsic natural size
+            let onload = {
+                let link = ctx.link().clone();
+                Callback::from(move |e: WebEvent| {
+                    if let Some(t) = e.target() {
+                        if let Ok(img) = t.dyn_into::<HtmlImageElement>() {
+                            let nat_w = img.natural_width() as u32;
+                            let nat_h = img.natural_height() as u32;
+                            web_sys::console::log_1(
+                                &format!("Image loaded: {}x{}", nat_w, nat_h).into(),
+                            );
+                            link.send_message(TeiViewerMsg::ImageLoaded(nat_w, nat_h));
+                        }
+                    }
+                })
+            };
+
+            // Active zone (hover or locked)
+            let active_zone = self.locked_zone.as_ref().or(self.hovered_zone.as_ref());
+
+            // We will render the image and the svg overlay inside the same container.
+            // The container receives the pan/zoom transform so both image and svg align perfectly.
+            // The SVG's viewBox will be set to natural image size (if available) and polygons converted
+            // from TEI facsimile coords into the natural image coordinate space.
+
+            // Create transform style: translate then scale, origin top-left
+            let transform_style = format!(
+                "transform-origin: 0 0; transform: translate({}px, {}px) scale({}); position: relative; display: inline-block;",
+                self.image_offset_x, self.image_offset_y, self.image_scale
+            );
+
+            html! {
+                <div class="image-panel">
+                    <div
+                        class="image-container"
+                        {onwheel}
+                        {onmousedown}
+                        {onmousemove}
+                        {onmouseup}
+                        {onmouseleave}
+                        style="position: relative; overflow: hidden;"
+                    >
+                        <div class="image-and-overlay" style={transform_style}>
+                            <img
+                                src={image_url.clone()}
+                                onload={onload}
+                                style={"display:block; width: auto; height: auto; max-width: none; max-height: none;"}
+                            />
+                            { self.render_zone_overlays(&doc.facsimile, active_zone) }
+                        </div>
+                    </div>
+                </div>
+            }
+        } else {
+            html! {
+                <div class="image-panel"><p>{"No image available"}</p></div>
+            }
+        }
+    }
+
+    /// Render overlays using shared transformed container strategy (SVG inside same container as <img>)
+    fn render_zone_overlays(&self, facsimile: &Facsimile, active_zone: Option<&String>) -> Html {
+        // Map TEI `points` (declared facsimile coordinate space) into the actual displayed image pixels.
+        // Prefer the intrinsic/natural image size for display when available so overlay coordinates
+        // match the rendered image. Fall back to the declared TEI facsimile size only if natural size unavailable.
+        let disp_w = if self.image_nat_w > 0 {
+            self.image_nat_w
+        } else if facsimile.width > 0 {
+            facsimile.width
+        } else {
+            0
+        };
+        let disp_h = if self.image_nat_h > 0 {
+            self.image_nat_h
+        } else if facsimile.height > 0 {
+            facsimile.height
+        } else {
+            0
+        };
+        if disp_w == 0 || disp_h == 0 {
+            return html! {};
+        }
+
+        if let Some(zone_id) = active_zone {
+            if let Some(zone) = facsimile.zones.get(zone_id) {
+                if zone.points.is_empty() {
+                    return html! {};
+                }
+
+                // Compute scale factors from TEI-declared facsimile coords -> displayed pixels
+                let factor_x = if facsimile.width > 0 {
+                    (disp_w as f32) / (facsimile.width as f32)
+                } else {
+                    1.0
+                };
+                let factor_y = if facsimile.height > 0 {
+                    (disp_h as f32) / (facsimile.height as f32)
+                } else {
+                    1.0
+                };
+
+                // Convert TEI points into displayed pixel coordinates
+                let points_str = zone
+                    .points
+                    .iter()
+                    .map(|(x, y)| {
+                        let px = (*x as f32) * factor_x;
+                        let py = (*y as f32) * factor_y;
+                        format!("{:.2},{:.2}", px, py)
+                    })
+                    .collect::<Vec<_>>()
+                    .join(" ");
+
+                // Use the displayed pixel dimensions as the SVG coordinate space so polygon coordinates map 1:1.
+                let svg_w = disp_w;
+                let svg_h = disp_h;
+
+                return html! {
+                    <svg
+                        class="overlay-svg"
+                        style="position: absolute; top: 0; left: 0; pointer-events: none;"
+                        width="100%"
+                        height="100%"
+                        viewBox={format!("0 0 {} {}", svg_w, svg_h)}
+                        preserveAspectRatio="xMinYMin meet"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <polygon
+                            points={points_str}
+                            fill="rgba(255, 255, 0, 0.35)"
+                            stroke="yellow"
+                            stroke-width="2"
+                        />
+                    </svg>
+                };
+            }
+        }
+
+        html! {}
+    }
+
+    fn render_text_panels(&self, ctx: &Context<Self>) -> Html {
+        html! {
+            <div class="text-panels">
+                { if self.active_view == ViewType::Diplomatic || self.active_view == ViewType::Both {
+                    self.render_diplomatic_panel(ctx)
+                } else {
+                    html!{}
+                } }
+                { if self.active_view == ViewType::Translation || self.active_view == ViewType::Both {
+                    self.render_translation_panel(ctx)
+                } else {
+                    html!{}
+                } }
+            </div>
+        }
+    }
+
+    fn render_diplomatic_panel(&self, ctx: &Context<Self>) -> Html {
+        if let Some(doc) = &self.diplomatic {
+            html! {
+                <div class="text-panel diplomatic-panel">
+                    <h3>{"Edición diplomática"}</h3>
+                    <div class="text-content">
+                        { for doc.lines.iter().enumerate().map(|(idx, line)| self.render_line(ctx, line, idx)) }
+                    </div>
+                </div>
+            }
+        } else {
+            html! {
+                <div class="text-panel diplomatic-panel">
+                    <h3>{"Edición diplomática"}</h3>
+                    <p>{"Loading..."}</p>
+                </div>
+            }
+        }
+    }
+
+    fn render_translation_panel(&self, ctx: &Context<Self>) -> Html {
+        if let Some(doc) = &self.translation {
+            html! {
+                <div class="text-panel translation-panel">
+                    <h3>{"Traducción"}</h3>
+                    <div class="text-content">
+                        { for doc.lines.iter().enumerate().map(|(idx, line)| self.render_line(ctx, line, idx)) }
+                    </div>
+                </div>
+            }
+        } else {
+            html! {
+                <div class="text-panel translation-panel">
+                    <h3>{"Traducción"}</h3>
+                    <p>{"Loading..."}</p>
+                </div>
+            }
+        }
+    }
+
+    fn render_line(&self, ctx: &Context<Self>, line: &Line, idx: usize) -> Html {
+        let zone_id = line.facs.clone();
+        let is_active = self.locked_zone.as_ref() == Some(&zone_id)
+            || self.hovered_zone.as_ref() == Some(&zone_id);
+        let onmouseenter = {
+            let zid = zone_id.clone();
+            ctx.link()
+                .callback(move |_| TeiViewerMsg::HoverLine(zid.clone()))
+        };
+        let onmouseleave = ctx.link().callback(|_| TeiViewerMsg::ClearHover);
+        let onclick = {
+            let zid = zone_id.clone();
+            ctx.link()
+                .callback(move |_| TeiViewerMsg::ClickLine(zid.clone()))
+        };
+        let class = if is_active { "line active" } else { "line" };
+
+        html! {
+            <div class={class} {onmouseenter} {onmouseleave} {onclick}>
+                <span class="line-number">{ idx + 1 }</span>
+                <span class="line-content">{ for line.content.iter().map(|n| self.render_text_node(n)) }</span>
+            </div>
+        }
+    }
+
+    fn render_text_node(&self, node: &TextNode) -> Html {
+        match node {
+            TextNode::Text { content } => html! { <>{content}</> },
+            TextNode::Abbr { abbr, expan } => html! {
+                <abbr title={expan.clone()} class="abbreviation">{ abbr }</abbr>
+            },
+            TextNode::Choice { sic, corr } => html! {
+                <span class="correction" title={format!("Original: {}", sic)}>{ corr }</span>
+            },
+            TextNode::Num { value, text } => html! {
+                <span class="number" title={format!("Value: {}", value)}>{ text }</span>
+            },
+            TextNode::PersName { name } => html! {
+                <span class="person-name">{ name }</span>
+            },
+            TextNode::PlaceName { name } => html! {
+                <span class="place-name">{ name }</span>
+            },
+            TextNode::RsType { rs_type, content } => html! {
+                <span class={format!("rs-type rs-{}", rs_type)}>{ content }</span>
+            },
+            TextNode::Note {
+                content: _,
+                note_id,
+            } => html! {
+                <sup class="footnote-ref"><a href={format!("#{}", note_id)}>{"*"}</a></sup>
+            },
+            TextNode::Hi { rend, content } => html! {
+                <span class={format!("hi-{}", rend)}>{ content }</span>
+            },
+        }
+    }
+
+    fn render_metadata_popup(&self, ctx: &Context<Self>) -> Html {
+        if !self.show_metadata_popup {
+            return html! {};
+        }
+        let dip = self.diplomatic.as_ref();
+        let trad = self.translation.as_ref();
+        let on_close = ctx.link().callback(|_| TeiViewerMsg::ToggleMetadata);
+        let on_toggle_dip = ctx.link().callback(|_| TeiViewerMsg::ToggleMetadataDip);
+        let on_toggle_trad = ctx.link().callback(|_| TeiViewerMsg::ToggleMetadataTrad);
+
+        html! {
+            <div class="metadata-popup-overlay">
+                <div class="metadata-popup">
+                    <div class="metadata-popup-header">
+                        <h2>{"Metadata"}</h2>
+                        <button class="close-btn" onclick={on_close}>{"×"}</button>
+                    </div>
+                    <div class="metadata-popup-selectors">
+                        <label>
+                            <input type="radio" name="metadata-select"
+                                checked={matches!(self.metadata_selected, Some(ViewType::Diplomatic))}
+                                onclick={on_toggle_dip} />
+                            {"Diplomatic"}
+                        </label>
+                        <label>
+                            <input type="radio" name="metadata-select"
+                                checked={matches!(self.metadata_selected, Some(ViewType::Translation))}
+                                onclick={on_toggle_trad} />
+                            {"Translation"}
+                        </label>
+                    </div>
+                    <div class="metadata-popup-content">
+                        { if matches!(self.metadata_selected, Some(ViewType::Diplomatic)) && dip.is_some() {
+                            self.render_metadata_panel_for(dip, "Diplomatic Edition")
+                        } else if matches!(self.metadata_selected, Some(ViewType::Translation)) && trad.is_some() {
+                            self.render_metadata_panel_for(trad, "Translation")
+                        } else {
+                            html!{ <p>{"No metadata available for the selected edition."}</p> }
+                        } }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    fn render_metadata_panel_for(&self, doc_opt: Option<&TeiDocument>, label: &str) -> Html {
+        if let Some(doc) = doc_opt {
+            html! {
+                <>
+                    <h3>{ label }</h3>
+                    <dl>
+                        <dt>{"Title:"}</dt><dd>{ &doc.metadata.title }</dd>
+                        <dt>{"Author:"}</dt><dd>{ &doc.metadata.author }</dd>
+                        <dt>{"Editor:"}</dt><dd>{ &doc.metadata.editor }</dd>
+                        <dt>{"Edition Type:"}</dt><dd>{ &doc.metadata.edition_type }</dd>
+                        <dt>{"Language:"}</dt><dd>{ &doc.metadata.language }</dd>
+                        { if let Some(c) = &doc.metadata.country { html!{<><dt>{"Country:"}</dt><dd>{c}</dd></>} } else { html!{} } }
+                        { if let Some(s) = &doc.metadata.settlement { html!{<><dt>{"Settlement:"}</dt><dd>{s}</dd></>} } else { html!{} } }
+                        { if let Some(i) = &doc.metadata.institution { html!{<><dt>{"Institution:"}</dt><dd>{i}</dd></>} } else { html!{} } }
+                        { if let Some(col) = &doc.metadata.collection { html!{<><dt>{"Collection:"}</dt><dd>{col}</dd></>} } else { html!{} } }
+                        { if let Some(sig) = &doc.metadata.siglum { html!{<><dt>{"Siglum:"}</dt><dd>{sig}</dd></>} } else { html!{} } }
+                    </dl>
+                    <h4>{"Image Information"}</h4>
+                    <dl>
+                        <dt>{"Surface ID:"}</dt><dd>{ &doc.facsimile.surface_id }</dd>
+                        <dt>{"Image File:"}</dt><dd>{ &doc.facsimile.image_url }</dd>
+                        <dt>{"Declared Dimensions:"}</dt><dd>{ format!("{} × {} pixels", doc.facsimile.width, doc.facsimile.height) }</dd>
+                        <dt>{"Intrinsic Dimensions (loaded):"}</dt><dd>{ format!("{} × {} pixels", self.image_nat_w, self.image_nat_h) }</dd>
+                        <dt>{"Zones:"}</dt><dd>{ format!("{} zones", doc.facsimile.zones.len()) }</dd>
+                        <dt>{"Lines:"}</dt><dd>{ format!("{} lines", doc.lines.len()) }</dd>
+                    </dl>
+                </>
+            }
+        } else {
+            html! {}
+        }
+    }
+}

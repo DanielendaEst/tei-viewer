@@ -1,0 +1,200 @@
+{
+  "id": "PGM-XIII",
+  "name": "Papyri Graecae Magicae XIII",
+  "description": "Magical papyrus from the Greek Magical Papyri corpus, housed at the Rijksmuseum Amsterdam (AMS76). This manuscript contains ritual instructions and magical formulae in Ancient Greek.",
+  "metadata": {
+    "author": "Anonymous",
+    "editor": "Robert W. Daniel",
+    "collection": "Papyri Graecae Magicae",
+    "institution": "Rijksmuseum Amsterdam",
+    "repository": "https://www.rmo.nl/en/collection/search-collection/collection-piece/?object=18783",
+    "country": "Netherlands",
+    "settlement": "Amsterdam",
+    "language": "Ancient Greek (grc)",
+    "date_range": "1st c. BCE – 4th c. CE",
+    "siglum": "PGM XIII",
+    "old_catalog": "J395",
+    "museum_id": "AMS76",
+    "origin_place": "Egypt"
+  },
+  "pages": [
+    {
+      "number": 1,
+      "label": "Folio 3r",
+      "has_diplomatic": true,
+      "has_translation": true,
+      "has_image": true,
+      "notes": "Opening page with title and ritual instructions"
+    },
+    {
+      "number": 2,
+      "label": "Folio 3v",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 3,
+      "label": "Folio 4r",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 4,
+      "label": "Folio 4v",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 5,
+      "label": "Folio 5r",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 6,
+      "label": "Folio 5v",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 7,
+      "label": "Folio 6r",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 8,
+      "label": "Folio 6v",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 9,
+      "label": "Folio 7r",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 10,
+      "label": "Folio 7v",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 11,
+      "label": "Folio 8r",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 12,
+      "label": "Folio 8v",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 13,
+      "label": "Folio 9r",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 14,
+      "label": "Folio 9v",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 15,
+      "label": "Folio 10r",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 16,
+      "label": "Folio 10v",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 17,
+      "label": "Folio 11r",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 18,
+      "label": "Folio 11v",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 19,
+      "label": "Folio 12r",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 20,
+      "label": "Folio 12v",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 21,
+      "label": "Folio 13r",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 22,
+      "label": "Folio 13v",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 23,
+      "label": "Folio 14r",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 24,
+      "label": "Folio 14v",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    },
+    {
+      "number": 25,
+      "label": "Folio 15r",
+      "has_diplomatic": true,
+      "has_translation": false,
+      "has_image": true
+    }
+  ],
+  "version": "1.0.0",
+  "last_updated": "2024-01-01"
+}
