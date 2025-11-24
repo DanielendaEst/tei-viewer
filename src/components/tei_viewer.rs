@@ -319,7 +319,7 @@ impl Component for TeiViewer {
     fn view(&self, ctx: &Context<Self>) -> Html {
         if self.loading {
             return html! {
-                <div class="loading"><p>{"Loading TEI documents..."}</p></div>
+                <div class="loading"><p>{"Cargando documentos TEI..."}</p></div>
             };
         }
         if let Some(err) = &self.error {
@@ -618,7 +618,7 @@ impl TeiViewer {
             html! {
                 <div class="text-panel diplomatic-panel">
                     <h3>{"Edición diplomática"}</h3>
-                    <p>{"Loading..."}</p>
+                    <p>{"Cargando..."}</p>
                 </div>
             }
         }
@@ -639,7 +639,7 @@ impl TeiViewer {
             html! {
                 <div class="text-panel translation-panel">
                     <h3>{"Traducción"}</h3>
-                    <p>{"Loading..."}</p>
+                    <p>{"Cargando..."}</p>
                 </div>
             }
         }
@@ -674,43 +674,43 @@ impl TeiViewer {
         match node {
             TextNode::Text { content } => html! { <>{content}</> },
             TextNode::Abbr { abbr, expan } => html! {
-                <abbr title={format!("[Abbreviation] {}", expan)} class="abbreviation">{ abbr }</abbr>
+                <abbr title={format!("[Abreviatura] {}", expan)} class="abbreviation">{ abbr }</abbr>
             },
             TextNode::Choice { sic, corr } => html! {
-                <span class="correction" title={format!("[Correction] Original: {}", sic)}>{ corr }</span>
+                <span class="correction" title={format!("[Corrección] Original: {}", sic)}>{ corr }</span>
             },
             TextNode::Num { value, tipo, text } => html! {
-                <span class="number" title={format!("[Number] Value: {} | Type: {}", value, tipo)}>{ text }</span>
+                <span class="number" title={format!("[Número] Valor: {} | Tipo: {}", value, tipo)}>{ text }</span>
             },
             TextNode::PersName { name, tipo } => html! {
-                <span class="person-name" title={if !tipo.is_empty() { format!("[Person] Type: {}", tipo) } else { "[Person]".to_string() }}>{ name }</span>
+                <span class="person-name" title={if !tipo.is_empty() { format!("[Persona] Tipo: {}", tipo) } else { "[Persona]".to_string() }}>{ name }</span>
             },
             TextNode::PlaceName { name } => html! {
-                <span class="place-name" title="[Place]">{ name }</span>
+                <span class="place-name" title="[Lugar]">{ name }</span>
             },
             TextNode::Ref {
                 ref_type,
                 target,
                 content,
             } => html! {
-                <span class="ref" title={format!("[Reference] Type: {} | Target: {}", ref_type, target)}>{ content }</span>
+                <span class="ref" title={format!("[Referencia] Tipo: {} | Destino: {}", ref_type, target)}>{ content }</span>
             },
             TextNode::Unclear { reason, content } => html! {
-                <span class="unclear" title={format!("[Unclear] Reason: {}", reason)}>{ content }</span>
+                <span class="unclear" title={format!("[Incierto] Razón: {}", reason)}>{ content }</span>
             },
             TextNode::RsType { rs_type, content } => html! {
-                <span class={format!("rs-type rs-{}", rs_type)} title={format!("[Reference String] Type: {}", rs_type)}>{ content }</span>
+                <span class={format!("rs-type rs-{}", rs_type)} title={format!("[Cadena de Referencia] Tipo: {}", rs_type)}>{ content }</span>
             },
             TextNode::NoteRef { note_id, n } => html! {
-                <sup class="footnote-ref" title="[Footnote]">
+                <sup class="footnote-ref" title="[Nota al pie]">
                     <a id={format!("ref_{}", note_id)} href={format!("#{}", note_id)}>{ n }</a>
                 </sup>
             },
             TextNode::InlineNote { content, n } => html! {
-                <sup class="footnote-ref" title={format!("[Footnote] {}", content)}>{ n }</sup>
+                <sup class="footnote-ref" title={format!("[Nota al pie] {}", content)}>{ n }</sup>
             },
             TextNode::Hi { rend, content } => html! {
-                <span class={format!("hi-{}", rend)} title={format!("[Highlight] Style: {}", rend)}>{ content }</span>
+                <span class={format!("hi-{}", rend)} title={format!("[Resaltado] Estilo: {}", rend)}>{ content }</span>
             },
         }
     }
@@ -808,7 +808,7 @@ impl TeiViewer {
             <div class="metadata-popup-overlay">
                 <div class="metadata-popup">
                     <div class="metadata-popup-header">
-                        <h2>{"Metadata"}</h2>
+                        <h2>{"Metadatos"}</h2>
                         <button class="close-btn" onclick={on_close}>{"×"}</button>
                     </div>
                     <div class="metadata-popup-selectors">
@@ -816,22 +816,22 @@ impl TeiViewer {
                             <input type="radio" name="metadata-select"
                                 checked={matches!(self.metadata_selected, Some(ViewType::Diplomatic))}
                                 onclick={on_toggle_dip} />
-                            {"Diplomatic"}
+                            {"Diplomática"}
                         </label>
                         <label>
                             <input type="radio" name="metadata-select"
                                 checked={matches!(self.metadata_selected, Some(ViewType::Translation))}
                                 onclick={on_toggle_trad} />
-                            {"Translation"}
+                            {"Traducción"}
                         </label>
                     </div>
                     <div class="metadata-popup-content">
                         { if matches!(self.metadata_selected, Some(ViewType::Diplomatic)) && dip.is_some() {
-                            self.render_metadata_panel_for(dip, "Diplomatic Edition")
+                            self.render_metadata_panel_for(dip, "Edición Diplomática")
                         } else if matches!(self.metadata_selected, Some(ViewType::Translation)) && trad.is_some() {
-                            self.render_metadata_panel_for(trad, "Translation")
+                            self.render_metadata_panel_for(trad, "Traducción")
                         } else {
-                            html!{ <p>{"No metadata available for the selected edition."}</p> }
+                            html!{ <p>{"No hay metadatos disponibles para la edición seleccionada."}</p> }
                         } }
                     </div>
                 </div>
@@ -845,25 +845,25 @@ impl TeiViewer {
                 <>
                     <h3>{ label }</h3>
                     <dl>
-                        <dt>{"Title:"}</dt><dd>{ &doc.metadata.title }</dd>
-                        <dt>{"Author:"}</dt><dd>{ &doc.metadata.author }</dd>
+                        <dt>{"Título:"}</dt><dd>{ &doc.metadata.title }</dd>
+                        <dt>{"Autor:"}</dt><dd>{ &doc.metadata.author }</dd>
                         <dt>{"Editor:"}</dt><dd>{ &doc.metadata.editor }</dd>
-                        <dt>{"Edition Type:"}</dt><dd>{ &doc.metadata.edition_type }</dd>
-                        <dt>{"Language:"}</dt><dd>{ &doc.metadata.language }</dd>
-                        { if let Some(c) = &doc.metadata.country { html!{<><dt>{"Country:"}</dt><dd>{c}</dd></>} } else { html!{} } }
-                        { if let Some(s) = &doc.metadata.settlement { html!{<><dt>{"Settlement:"}</dt><dd>{s}</dd></>} } else { html!{} } }
-                        { if let Some(i) = &doc.metadata.institution { html!{<><dt>{"Institution:"}</dt><dd>{i}</dd></>} } else { html!{} } }
-                        { if let Some(col) = &doc.metadata.collection { html!{<><dt>{"Collection:"}</dt><dd>{col}</dd></>} } else { html!{} } }
-                        { if let Some(sig) = &doc.metadata.siglum { html!{<><dt>{"Siglum:"}</dt><dd>{sig}</dd></>} } else { html!{} } }
+                        <dt>{"Tipo de Edición:"}</dt><dd>{ &doc.metadata.edition_type }</dd>
+                        <dt>{"Idioma:"}</dt><dd>{ &doc.metadata.language }</dd>
+                        { if let Some(c) = &doc.metadata.country { html!{<><dt>{"País:"}</dt><dd>{c}</dd></>} } else { html!{} } }
+                        { if let Some(s) = &doc.metadata.settlement { html!{<><dt>{"Ciudad:"}</dt><dd>{s}</dd></>} } else { html!{} } }
+                        { if let Some(i) = &doc.metadata.institution { html!{<><dt>{"Institución:"}</dt><dd>{i}</dd></>} } else { html!{} } }
+                        { if let Some(col) = &doc.metadata.collection { html!{<><dt>{"Colección:"}</dt><dd>{col}</dd></>} } else { html!{} } }
+                        { if let Some(sig) = &doc.metadata.siglum { html!{<><dt>{"Sigla:"}</dt><dd>{sig}</dd></>} } else { html!{} } }
                     </dl>
-                    <h4>{"Image Information"}</h4>
+                    <h4>{"Información de Imagen"}</h4>
                     <dl>
-                        <dt>{"Surface ID:"}</dt><dd>{ &doc.facsimile.surface_id }</dd>
-                        <dt>{"Image File:"}</dt><dd>{ &doc.facsimile.image_url }</dd>
-                        <dt>{"Declared Dimensions:"}</dt><dd>{ format!("{} × {} pixels", doc.facsimile.width, doc.facsimile.height) }</dd>
-                        <dt>{"Intrinsic Dimensions (loaded):"}</dt><dd>{ format!("{} × {} pixels", self.image_nat_w, self.image_nat_h) }</dd>
-                        <dt>{"Zones:"}</dt><dd>{ format!("{} zones", doc.facsimile.zones.len()) }</dd>
-                        <dt>{"Lines:"}</dt><dd>{ format!("{} lines", doc.lines.len()) }</dd>
+                        <dt>{"ID de Superficie:"}</dt><dd>{ &doc.facsimile.surface_id }</dd>
+                        <dt>{"Archivo de Imagen:"}</dt><dd>{ &doc.facsimile.image_url }</dd>
+                        <dt>{"Dimensiones Declaradas:"}</dt><dd>{ format!("{} × {} píxeles", doc.facsimile.width, doc.facsimile.height) }</dd>
+                        <dt>{"Dimensiones Intrínsecas (cargadas):"}</dt><dd>{ format!("{} × {} píxeles", self.image_nat_w, self.image_nat_h) }</dd>
+                        <dt>{"Zonas:"}</dt><dd>{ format!("{} zonas", doc.facsimile.zones.len()) }</dd>
+                        <dt>{"Líneas:"}</dt><dd>{ format!("{} líneas", doc.lines.len()) }</dd>
                     </dl>
                 </>
             }
