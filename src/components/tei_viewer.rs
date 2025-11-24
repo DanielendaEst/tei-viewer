@@ -89,7 +89,7 @@ impl Component for TeiViewer {
             show_image: true,
             loading: true,
             error: None,
-            image_scale: 1.0,
+            image_scale: 0.3, // Start zoomed out to fit large images in container
             image_offset_x: 0.0,
             image_offset_y: 0.0,
             dragging: false,
@@ -387,6 +387,20 @@ impl TeiViewer {
                     .to_string()
             };
 
+            // Always use declared TEI <graphic> width/height for image and overlay base size
+            let declared_w = doc.facsimile.width;
+            let declared_h = doc.facsimile.height;
+            let use_w = if declared_w > 0 {
+                declared_w
+            } else {
+                self.image_nat_w
+            };
+            let use_h = if declared_h > 0 {
+                declared_h
+            } else {
+                self.image_nat_h
+            };
+
             // Build an absolute URL (leading slash) for browser requests.
             // Cases handled:
             // - If TEI provides a full http(s) URL, use it as-is.
@@ -420,20 +434,6 @@ impl TeiViewer {
                     image_filename
                 )
             };
-
-            // Debug: log resolved image URL and relevant sizes to help diagnose alignment issues
-            web_sys::console::log_1(
-                &format!(
-                    "Resolved image_url='{}' (original='{}'), declared={}x{}, nat={}x{}",
-                    image_url,
-                    doc.facsimile.image_url,
-                    doc.facsimile.width,
-                    doc.facsimile.height,
-                    self.image_nat_w,
-                    self.image_nat_h
-                )
-                .into(),
-            );
 
             let onwheel = ctx.link().callback(|e: WheelEvent| {
                 e.prevent_default();
@@ -472,9 +472,7 @@ impl TeiViewer {
                         if let Ok(img) = t.dyn_into::<HtmlImageElement>() {
                             let nat_w = img.natural_width() as u32;
                             let nat_h = img.natural_height() as u32;
-                            web_sys::console::log_1(
-                                &format!("Image loaded: {}x{}", nat_w, nat_h).into(),
-                            );
+
                             link.send_message(TeiViewerMsg::ImageLoaded(nat_w, nat_h));
                         }
                     }
@@ -510,9 +508,9 @@ impl TeiViewer {
                             <img
                                 src={image_url.clone()}
                                 onload={onload}
-                                style={"display:block; width: auto; height: auto; max-width: none; max-height: none;"}
+                                style={format!("display:block; width: {}px; height: {}px; max-width: none; max-height: none;", use_w, use_h)}
                             />
-                            { self.render_zone_overlays(&doc.facsimile, active_zone) }
+                            { self.render_zone_overlays(&doc.facsimile, active_zone, use_w, use_h) }
                         </div>
                     </div>
                 </div>
@@ -525,25 +523,16 @@ impl TeiViewer {
     }
 
     /// Render overlays using shared transformed container strategy (SVG inside same container as <img>)
-    fn render_zone_overlays(&self, facsimile: &Facsimile, active_zone: Option<&String>) -> Html {
-        // Map TEI `points` (declared facsimile coordinate space) into the actual displayed image pixels.
-        // Prefer the intrinsic/natural image size for display when available so overlay coordinates
-        // match the rendered image. Fall back to the declared TEI facsimile size only if natural size unavailable.
-        let disp_w = if self.image_nat_w > 0 {
-            self.image_nat_w
-        } else if facsimile.width > 0 {
-            facsimile.width
-        } else {
-            0
-        };
-        let disp_h = if self.image_nat_h > 0 {
-            self.image_nat_h
-        } else if facsimile.height > 0 {
-            facsimile.height
-        } else {
-            0
-        };
-        if disp_w == 0 || disp_h == 0 {
+    fn render_zone_overlays(
+        &self,
+        facsimile: &Facsimile,
+        active_zone: Option<&String>,
+        display_w: u32,
+        display_h: u32,
+    ) -> Html {
+        // No scaling - use same dimensions for both image and SVG
+
+        if display_w == 0 || display_h == 0 {
             return html! {};
         }
 
@@ -553,42 +542,23 @@ impl TeiViewer {
                     return html! {};
                 }
 
-                // Compute scale factors from TEI-declared facsimile coords -> displayed pixels
-                let factor_x = if facsimile.width > 0 {
-                    (disp_w as f32) / (facsimile.width as f32)
-                } else {
-                    1.0
-                };
-                let factor_y = if facsimile.height > 0 {
-                    (disp_h as f32) / (facsimile.height as f32)
-                } else {
-                    1.0
-                };
-
-                // Convert TEI points into displayed pixel coordinates
+                // Use coordinates directly - no scaling
                 let points_str = zone
                     .points
                     .iter()
-                    .map(|(x, y)| {
-                        let px = (*x as f32) * factor_x;
-                        let py = (*y as f32) * factor_y;
-                        format!("{:.2},{:.2}", px, py)
-                    })
+                    .map(|(x, y)| format!("{},{}", x, y))
                     .collect::<Vec<_>>()
                     .join(" ");
 
-                // Use the displayed pixel dimensions as the SVG coordinate space so polygon coordinates map 1:1.
-                let svg_w = disp_w;
-                let svg_h = disp_h;
-
+                // No scaling - both image and SVG use same dimensions, coordinates map 1:1
                 return html! {
                     <svg
                         class="overlay-svg"
-                        style="position: absolute; top: 0; left: 0; pointer-events: none;"
-                        width="100%"
-                        height="100%"
-                        viewBox={format!("0 0 {} {}", svg_w, svg_h)}
-                        preserveAspectRatio="xMinYMin meet"
+                        style={format!("position: absolute; top: 0; left: 0; width: {}px; height: {}px; pointer-events: none;", display_w, display_h)}
+                        width={display_w.to_string()}
+                        height={display_h.to_string()}
+                        viewBox={format!("0 0 {} {}", display_w, display_h)}
+                        preserveAspectRatio="none"
                         xmlns="http://www.w3.org/2000/svg"
                     >
                         <polygon
