@@ -9,6 +9,7 @@ Cargo.lock
 # Project assets (TEI files, images)
 /projects/
 /public/
+/images/
 
 # IDE / Editor
 .vscode/
