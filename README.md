@@ -194,6 +194,36 @@ trunk serve
 
 GitHub Pages requires special configuration because it serves files from a subdirectory.
 
+#### How GitHub Pages Serves Your Files
+
+**Everything is managed automatically!** When you deploy to GitHub Pages:
+
+1. **The deploy script syncs your projects**:
+   ```bash
+   ./sync_projects.sh  # Copies projects/ → public/projects/
+   ```
+
+2. **Trunk bundles everything into `dist/`**:
+   ```
+   dist/
+   ├── index.html, *.wasm, *.js  # Your app
+   └── public/projects/          # ← Your static files!
+       ├── PGM-XIII/
+       │   ├── manifest.json
+       │   ├── p1_dip.xml
+       │   ├── p1_trad.xml
+       │   └── images/p1.jpg     # All images included
+       ├── Chanca/
+       └── Tractatus-Fascinatione/
+   ```
+
+3. **GitHub Pages serves `dist/` as a static website**:
+   - Your app: `https://username.github.io/tei-viewer/`
+   - XML files: `https://username.github.io/tei-viewer/public/projects/PGM-XIII/p1_dip.xml`
+   - Images: `https://username.github.io/tei-viewer/public/projects/PGM-XIII/images/p1.jpg`
+
+**You don't need a separate server** - GitHub Pages hosts your XMLs, images, and WASM app together!
+
 #### Option 1: Using deploy-gh-pages.sh (Recommended)
 
 ```bash
@@ -201,7 +231,7 @@ GitHub Pages requires special configuration because it serves files from a subdi
 ./deploy-gh-pages.sh
 ```
 
-This script:
+This script automatically:
 1. Syncs projects from `projects/` to `public/projects/`
 2. Builds the application with `--public-url /tei-viewer/`
 3. Adds `.nojekyll` file (prevents Jekyll processing)
@@ -245,7 +275,18 @@ This script:
 - **Public URL**: Must match your repository name (e.g., `/tei-viewer/`)
 - **`.nojekyll` file**: Required to prevent Jekyll from processing files
 - **Branch**: Deploy from `gh-pages` branch, not `main`
-- **CORS**: Images and XMLs must be in the same deployment
+- **All files bundled**: XMLs, images, and app are deployed together (no CORS issues!)
+- **Project data**: Must be in `projects/` folder before running deploy script
+
+#### Adding/Updating Projects on GitHub Pages
+
+```bash
+# 1. Add/edit files in projects/YourProject/
+# 2. Deploy (sync happens automatically)
+./deploy-gh-pages.sh
+```
+
+The script handles everything - you don't need to manually sync or manage static files!
 
 ### Standard Web Server Deployment
 
@@ -528,6 +569,68 @@ This issue typically occurs when:
 - Images are downsampled for web delivery
 - PAGE-XML was created on original high-res scans
 - TEI conversion didn't account for image resizing
+
+## FAQ
+
+### Do I need a separate server for my XML files and images?
+
+**No!** GitHub Pages serves everything together. The `deploy-gh-pages.sh` script:
+1. Syncs your `projects/` folder to `public/projects/`
+2. Bundles everything (app + XMLs + images) into `dist/`
+3. Deploys `dist/` to GitHub Pages
+
+Your XMLs and images are served from the same domain as your app, so there are no CORS issues.
+
+### Where should I keep my project files?
+
+Keep all your project data in `tei-viewer/projects/`:
+
+```
+projects/
+├── PGM-XIII/
+│   ├── manifest.json
+│   ├── p1_dip.xml
+│   ├── p1_trad.xml
+│   └── images/p1.jpg
+└── YourProject/
+    └── ...
+```
+
+The `projects/` folder is **gitignored** - it's not tracked in the repository. When you deploy to GitHub Pages, the script automatically copies this to `public/projects/` and includes it in the deployment.
+
+### How do I update projects on GitHub Pages?
+
+Just run the deploy script:
+
+```bash
+# Edit files in projects/YourProject/
+./deploy-gh-pages.sh
+```
+
+The script handles:
+- ✅ Syncing projects
+- ✅ Building the app
+- ✅ Deploying to gh-pages branch
+- ✅ No manual file management needed!
+
+### What about the `public/projects/` folder?
+
+This is **auto-generated** by `sync_projects.sh` and should not be edited directly:
+- Source of truth: `projects/` (gitignored, managed locally)
+- Generated copy: `public/projects/` (gitignored, created by sync)
+- Deployed version: Bundled into `dist/` by Trunk, then deployed
+
+Always edit files in `projects/` and run `./sync_projects.sh` or deployment scripts.
+
+### Can I use a different static file host?
+
+Yes, but you don't need to! GitHub Pages:
+- Hosts unlimited static files (within repo size limits)
+- Serves XMLs, images, and WASM together
+- No additional configuration needed
+- Free for public repositories
+
+For private projects or custom domains, you can deploy `dist/` to any static host (Netlify, Vercel, S3, nginx, Apache).
 
 ## Credits
 
