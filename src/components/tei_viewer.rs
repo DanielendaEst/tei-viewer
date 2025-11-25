@@ -679,6 +679,9 @@ impl TeiViewer {
             TextNode::Choice { sic, corr } => html! {
                 <span class="correction" title={format!("[Corrección] Original: {}", sic)}>{ corr }</span>
             },
+            TextNode::Regularised { orig, reg } => html! {
+                <span class="regularised" title={format!("[Regularización] Original: {}", orig)}>{ reg }</span>
+            },
             TextNode::Num { value, tipo, text } => html! {
                 <span class="number" title={format!("[Número] Valor: {} | Tipo: {}", value, tipo)}>{ text }</span>
             },
@@ -731,6 +734,10 @@ impl TeiViewer {
                     <div class="legend-item">
                         <span class="legend-swatch correction">{"Co"}</span>
                         <span class="legend-label">{"Corrección"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch regularised">{"Rg"}</span>
+                        <span class="legend-label">{"Regularización"}</span>
                     </div>
                     <div class="legend-item">
                         <span class="legend-swatch number">{"12"}</span>

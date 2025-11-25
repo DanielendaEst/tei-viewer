@@ -67,6 +67,10 @@ pub enum TextNode {
         sic: String,
         corr: String,
     },
+    Regularised {
+        orig: String,
+        reg: String,
+    },
     Num {
         value: u32,
         tipo: String,

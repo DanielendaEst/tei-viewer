@@ -413,6 +413,20 @@ body {
     border-radius: 3px;
 }
 
+/* Regularised text */
+.regularised {
+    color: #16a34a;
+    text-decoration: underline dotted;
+    text-decoration-color: #16a34a;
+    cursor: help;
+    padding: 0 2px;
+}
+
+.regularised:hover {
+    background-color: #f0fdf4;
+    border-radius: 3px;
+}
+
 /* Numbers */
 .number {
     color: #22c55e;
@@ -509,6 +523,19 @@ body {
 .unclear:hover {
     background: rgba(231, 76, 60, 0.18);
     color: #ec7063;
+}
+
+/* Highlighting - superscript and subscript */
+.hi-superscript {
+    vertical-align: super;
+    font-size: 0.75em;
+    line-height: 0;
+}
+
+.hi-subscript {
+    vertical-align: sub;
+    font-size: 0.75em;
+    line-height: 0;
 }
 
 /* Referenced Types (divine, astral, etc.) */
@@ -827,7 +854,7 @@ body {
     font-family: "Inter", "Segoe UI", Arial, sans-serif;
     font-size: 1.15rem;
     letter-spacing: 0.01em;
-}
+
     display: flex;
     flex-direction: column;
     align-items: stretch;

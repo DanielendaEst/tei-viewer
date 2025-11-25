@@ -386,16 +386,19 @@ fn parse_inline_nodes<R: std::io::BufRead>(
                 let name = String::from_utf8_lossy(e.local_name().as_ref()).to_string();
                 match name.as_str() {
                     "choice" => {
-                        // Handle <choice> with <sic>, <corr>, <abbr>, <expan>
-                        let mut sic = String::new();
-                        let mut corr = String::new();
                         let mut abbr = String::new();
                         let mut expan = String::new();
+                        let mut sic = String::new();
+                        let mut corr = String::new();
+                        let mut orig = String::new();
+                        let mut reg = String::new();
                         let mut choice_buf = Vec::new();
-                        let mut in_sic = false;
-                        let mut in_corr = false;
                         let mut in_abbr = false;
                         let mut in_expan = false;
+                        let mut in_sic = false;
+                        let mut in_corr = false;
+                        let mut in_orig = false;
+                        let mut in_reg = false;
 
                         loop {
                             match reader.read_event_into(&mut choice_buf) {
@@ -407,19 +410,25 @@ fn parse_inline_nodes<R: std::io::BufRead>(
                                         "corr" => in_corr = true,
                                         "abbr" => in_abbr = true,
                                         "expan" => in_expan = true,
+                                        "orig" => in_orig = true,
+                                        "reg" => in_reg = true,
                                         _ => {}
                                     }
                                 }
-                                Ok(Event::Text(ce)) => {
-                                    let t = ce.unescape().unwrap_or_default().to_string();
+                                Ok(Event::Text(ref t)) => {
+                                    let text = t.unescape().unwrap_or_default().to_string();
                                     if in_sic {
-                                        sic.push_str(&t);
+                                        sic.push_str(&text);
                                     } else if in_corr {
-                                        corr.push_str(&t);
+                                        corr.push_str(&text);
                                     } else if in_abbr {
-                                        abbr.push_str(&t);
+                                        abbr.push_str(&text);
                                     } else if in_expan {
-                                        expan.push_str(&t);
+                                        expan.push_str(&text);
+                                    } else if in_orig {
+                                        orig.push_str(&text);
+                                    } else if in_reg {
+                                        reg.push_str(&text);
                                     }
                                 }
                                 Ok(Event::End(ref ce)) => {
@@ -430,6 +439,8 @@ fn parse_inline_nodes<R: std::io::BufRead>(
                                         "corr" => in_corr = false,
                                         "abbr" => in_abbr = false,
                                         "expan" => in_expan = false,
+                                        "orig" => in_orig = false,
+                                        "reg" => in_reg = false,
                                         "choice" => break,
                                         _ => {}
                                     }
@@ -444,6 +455,8 @@ fn parse_inline_nodes<R: std::io::BufRead>(
                             nodes.push(TextNode::Abbr { abbr, expan });
                         } else if !sic.is_empty() || !corr.is_empty() {
                             nodes.push(TextNode::Choice { sic, corr });
+                        } else if !orig.is_empty() || !reg.is_empty() {
+                            nodes.push(TextNode::Regularised { orig, reg });
                         }
                     }
                     "hi" => {
