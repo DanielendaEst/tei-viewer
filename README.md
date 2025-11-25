@@ -19,7 +19,6 @@ A modern web-based viewer for TEI-XML documents with image-text synchronization,
 - [Rust](https://rustup.rs/) (latest stable)
 - [Trunk](https://trunkrs.dev/): `cargo install trunk`
 - [wasm32-unknown-unknown target](https://rustwasm.github.io/docs/book/game-of-life/setup.html): `rustup target add wasm32-unknown-unknown`
-- [Python 3](https://www.python.org/) (for project fix scripts, optional)
 
 ### Development
 
@@ -80,9 +79,7 @@ tei-viewer/
 ├── sync_projects.sh               # Project sync script (REQUIRED)
 ├── start.sh                       # Development startup script
 ├── deploy.sh                      # Production build script
-├── deploy-gh-pages.sh             # GitHub Pages deployment script
-├── fix_tractatus_coords.py        # Fix script: rescale coordinates
-└── fix_tractatus_order.py         # Fix script: reorder lines by Y
+└── deploy-gh-pages.sh             # GitHub Pages deployment script
 ```
 
 ## Adding Projects
@@ -406,50 +403,6 @@ Images are linked to text using TEI `<facsimile>` and `<zone>` elements:
 
 When hovering over text, the corresponding zone highlights on the image.
 
-## Fix Scripts
-
-The project includes Python scripts to fix common TEI coordinate issues:
-
-### fix_tractatus_coords.py
-
-Rescales zone coordinates when images have been downsized from the original PAGE-XML dimensions.
-
-**When to use**: Your XML declares large dimensions (e.g., 2479×3508) but the actual image is smaller (e.g., 960×1358).
-
-**Usage**:
-```bash
-# Edit the script to set your dimensions:
-OLD_WIDTH = 2479    # From XML <graphic>
-OLD_HEIGHT = 3508
-NEW_WIDTH = 960     # Actual image size
-NEW_HEIGHT = 1358
-
-# Run the script
-python3 fix_tractatus_coords.py
-
-# Sync and rebuild
-./sync_projects.sh
-trunk build
-```
-
-### fix_tractatus_order.py
-
-Reorders TEI lines based on Y-coordinates when the reading order is incorrect.
-
-**When to use**: Highlights "jump" between lines - they appear in correct positions on the image but match wrong text.
-
-**Usage**:
-```bash
-# Run the script (auto-detects and fixes order)
-python3 fix_tractatus_order.py
-
-# Sync and rebuild
-./sync_projects.sh
-trunk build
-```
-
-Both scripts are templates - copy and modify for your specific project needs.
-
 ## Troubleshooting
 
 ### Images Don't Display
@@ -471,34 +424,10 @@ The viewer automatically scales zone coordinates from TEI-declared dimensions to
 
 The XML might declare `<graphic width="2479px" height="3508px"/>` but the actual image is smaller (e.g., `960×1358`). This causes misaligned highlights because the zone coordinates are in the original large image space.
 
-**Solution**: Use the provided script to rescale coordinates:
-
-```python
-# Create fix_coords.py
-OLD_WIDTH = 2479   # Declared in XML
-OLD_HEIGHT = 3508
-NEW_WIDTH = 960    # Actual image size
-NEW_HEIGHT = 1358
-
-SCALE_X = NEW_WIDTH / OLD_WIDTH
-SCALE_Y = NEW_HEIGHT / OLD_HEIGHT
-
-# Then scale each zone point:
-# new_x = int(old_x * SCALE_X)
-# new_y = int(old_y * SCALE_Y)
-```
-
-See `fix_tractatus_coords.py` for a complete example that:
-- Updates `<graphic>` dimensions to match actual image
-- Scales all zone coordinates proportionally
-- Updates image filename references
-
-Run it, then sync and rebuild:
-```bash
-python3 fix_coords.py
-./sync_projects.sh
-trunk build
-```
+**Solution**: You'll need to rescale the coordinates manually or write a script to:
+- Update `<graphic>` dimensions to match actual image size
+- Scale all zone coordinates proportionally (new = old × scale_factor)
+- Update image filename references if needed
 
 ### Project Not Appearing
 
@@ -599,57 +528,6 @@ This issue typically occurs when:
 - Images are downsampled for web delivery
 - PAGE-XML was created on original high-res scans
 - TEI conversion didn't account for image resizing
-
-## Scripts Overview
-
-### Required Scripts
-
-- **`sync_projects.sh`** - Syncs `projects/` to `public/projects/`. Run after any project changes.
-- **`start.sh`** - Starts development server with auto-sync
-- **`deploy.sh`** - Builds for production deployment
-- **`deploy-gh-pages.sh`** - Deploys to GitHub Pages
-
-### Fix Scripts (Optional)
-
-- **`fix_tractatus_coords.py`** - Rescale zone coordinates for resized images
-- **`fix_tractatus_order.py`** - Reorder lines by Y-coordinates
-
-### Removed/Obsolete Scripts
-
-The following scripts were removed as they're no longer needed:
-- `build_page_list.sh` - No longer needed (dynamic manifest loading)
-- `update.sh` - Replaced by `sync_projects.sh` + `start.sh`
-
-## What You Need
-
-### Minimum Setup
-
-1. **Source projects** in `tei-viewer/projects/YourProject/`:
-   - `manifest.json` (required)
-   - `p1_dip.xml` (diplomatic edition)
-   - `p1_trad.xml` (translation, optional)
-   - `images/p1.jpg` (page image)
-
-2. **Register project** in `src/main.rs`:
-   ```rust
-   let project_ids = vec!["PGM-XIII", "Tractatus-Fascinatione", "Chanca", "YourProject"];
-   ```
-
-3. **Sync and build**:
-   ```bash
-   ./sync_projects.sh
-   trunk build
-   ```
-
-### Common Issues Checklist
-
-- [ ] All projects have `manifest.json`
-- [ ] XML files follow naming: `p{number}_{type}.xml`
-- [ ] Images follow naming: `p{number}.jpg`
-- [ ] `<graphic width/height>` matches actual image dimensions
-- [ ] Lines are in correct Y-coordinate order
-- [ ] Project ID added to `src/main.rs`
-- [ ] Ran `./sync_projects.sh` after changes
 
 ## Credits
 

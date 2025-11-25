@@ -1,62 +1,28 @@
-# Rust / Cargo
-/target
-**/*.rs.bk
-Cargo.lock
+# Build outputs
+/target/
+/dist/
+/pkg/
 
-# Trunk build output
-/dist
+# Generated files
+src/generated_pages.rs
 
-# Project assets (TEI files, images)
-/projects/
-/public/
-/images/
+# Project data (managed separately, synced via sync_projects.sh)
+/public/projects/
+/static/images/
 
-# IDE / Editor
-.vscode/
+# Python
+__pycache__/
+*.pyc
+
+# IDE
 .idea/
+.vscode/
 *.swp
 *.swo
-*~
+
+# OS
 .DS_Store
-
-# WASM build artifacts
-*.wasm
-
-# Debug files
-*.pdb
-
-# OS files
 Thumbs.db
-.DS_Store
-desktop.ini
-
-# Environment files
-.env
-.env.local
 
 # Logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Testing
-/coverage
-
-# Temporary files
-*.tmp
-*.temp
-
-# Backup files
-*.bak
-*~
-
-# Node modules (if using any JS tools)
-node_modules/
-
-# Package manager lock files (keep Cargo.lock for applications)
-package-lock.json
-yarn.lock
-
-# Build info
-.cache/
