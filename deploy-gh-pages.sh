@@ -150,6 +150,16 @@ fi
 echo "✅ dist/ directory verified - safe to proceed"
 echo "   Contents: $(ls dist/ | tr '\n' ' ')"
 echo ""
+
+# CRITICAL: Copy dist to a temporary location OUTSIDE the repo
+# This prevents it from being deleted when we switch branches
+TEMP_DIST=$(mktemp -d)
+echo "📦 Copying dist/ to temporary location outside repo..."
+cp -r dist/* "$TEMP_DIST/"
+cp dist/.nojekyll "$TEMP_DIST/" 2>/dev/null || true
+echo "   Temp location: $TEMP_DIST"
+echo ""
+
 echo "📤 Deploying to GitHub Pages..."
 echo ""
 
@@ -182,15 +192,15 @@ echo "🗑️  Clearing old deployment..."
 git rm -rf . 2>/dev/null || true
 find . -maxdepth 1 ! -name '.git' ! -name '.' ! -name '..' -exec rm -rf {} + 2>/dev/null || true
 
-# Copy built files to root
-echo "📋 Copying new build..."
-if ! cp -r dist/* . 2>/dev/null; then
-    echo "❌ ERROR: Failed to copy dist/* to gh-pages branch"
+# Copy built files from temporary location to root
+echo "📋 Copying new build from temp location..."
+if ! cp -r "$TEMP_DIST"/* . 2>/dev/null; then
+    echo "❌ ERROR: Failed to copy from temp location to gh-pages branch"
     echo "   Aborting deployment and returning to $CURRENT_BRANCH"
     git checkout $CURRENT_BRANCH
+    rm -rf "$TEMP_DIST"
     exit 1
 fi
-cp dist/.nojekyll . 2>/dev/null || true
 echo "   Copied: $(ls | grep -v '^\.git$' | tr '\n' ' ')"
 
 # Add all files
@@ -221,6 +231,10 @@ VERIFY_BRANCH=$(git branch --show-current)
 if [ "$VERIFY_BRANCH" != "$CURRENT_BRANCH" ]; then
     echo "⚠️  WARNING: Expected to be on $CURRENT_BRANCH but on $VERIFY_BRANCH"
 fi
+
+# Clean up temporary directory
+rm -rf "$TEMP_DIST"
+echo "   Cleaned up temporary files"
 
 # Clean up dist directory (optional - can keep for debugging)
 # Uncomment the next line if you want to auto-delete dist/ after deployment
