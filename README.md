@@ -27,6 +27,15 @@ A modern web-based viewer for TEI-XML documents with image-text synchronization,
 git clone <your-repo-url>
 cd tei-viewer
 
+# IMPORTANT: Create your projects folder first!
+# The projects/ folder is gitignored and contains your manuscript data.
+# You need to create it with your TEI files, images, and manifests.
+# See "Adding Projects" section below for structure.
+
+# Example: Create a test project
+mkdir -p projects/MyProject/images
+# ... add manifest.json, XML files, and images ...
+
 # Sync project files (copies from projects/ to public/projects/)
 ./sync_projects.sh
 
@@ -35,6 +44,8 @@ cd tei-viewer
 # Or manually:
 trunk serve
 ```
+
+**⚠️ Important**: The `projects/` folder is **not tracked in git**. You must create it locally with your manuscript data before running the viewer. See the "Adding Projects" section below for the required structure.
 
 The viewer will be available at `http://127.0.0.1:8080`
 
@@ -83,6 +94,17 @@ tei-viewer/
 ```
 
 ## Adding Projects
+
+### ⚠️ First Time Setup
+
+The `projects/` folder is **gitignored** and not included in the repository. You must create it locally:
+
+```bash
+cd tei-viewer
+mkdir -p projects
+```
+
+Then add your project folders inside following the structure below.
 
 ### 1. Create Project Structure
 
@@ -223,6 +245,8 @@ GitHub Pages requires special configuration because it serves files from a subdi
    - Images: `https://username.github.io/tei-viewer/public/projects/PGM-XIII/images/p1.jpg`
 
 **You don't need a separate server** - GitHub Pages hosts your XMLs, images, and WASM app together!
+
+**⚠️ Important**: Before deploying, make sure you have created the `projects/` folder locally with your manuscript data. The deployment script will sync and bundle it automatically.
 
 #### Option 1: Using deploy-gh-pages.sh (Recommended)
 
@@ -583,7 +607,7 @@ Your XMLs and images are served from the same domain as your app, so there are n
 
 ### Where should I keep my project files?
 
-Keep all your project data in `tei-viewer/projects/`:
+**The `projects/` folder is gitignored and must be created locally.** Keep all your project data in `tei-viewer/projects/`:
 
 ```
 projects/
@@ -597,6 +621,18 @@ projects/
 ```
 
 The `projects/` folder is **gitignored** - it's not tracked in the repository. When you deploy to GitHub Pages, the script automatically copies this to `public/projects/` and includes it in the deployment.
+
+### Why isn't there a projects/ folder when I clone?
+
+The `projects/` folder is **gitignored** because it contains your specific manuscript data. This keeps the repository clean and allows each user to have their own projects.
+
+**You must create it yourself**:
+```bash
+mkdir -p projects/YourProject/images
+# Add manifest.json, XML files, and images
+```
+
+See the "Adding Projects" section for the complete structure.
 
 ### How do I update projects on GitHub Pages?
 

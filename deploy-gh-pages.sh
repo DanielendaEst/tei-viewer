@@ -78,10 +78,32 @@ echo "   Public URL: /$REPO_NAME/"
 echo "   Note: Using dev build due to wasm-opt compatibility issues"
 echo ""
 
+# Run build and capture exit code
 trunk build --public-url /$REPO_NAME/
+BUILD_EXIT_CODE=$?
 
+# Check if build succeeded
+if [ $BUILD_EXIT_CODE -ne 0 ]; then
+    echo "❌ Error: Build failed with exit code $BUILD_EXIT_CODE"
+    echo ""
+    echo "Common issues:"
+    echo "  - Make sure 'public/' directory exists (run ./sync_projects.sh first)"
+    echo "  - Check that all Rust code compiles"
+    echo "  - Verify Cargo.toml dependencies are correct"
+    exit 1
+fi
+
+# Verify dist directory was created
 if [ ! -d "dist" ]; then
-    echo "❌ Error: Build failed - dist directory not created"
+    echo "❌ Error: Build succeeded but dist/ directory not created"
+    echo "   This is unexpected. Try running: trunk build --public-url /$REPO_NAME/ manually"
+    exit 1
+fi
+
+# Verify dist has content
+if [ -z "$(ls -A dist 2>/dev/null)" ]; then
+    echo "❌ Error: dist/ directory is empty"
+    echo "   Build did not produce any output files"
     exit 1
 fi
 
