@@ -47,8 +47,7 @@ else
         fi
     fi
 fi
-echo ""</parameter>
-fi
+echo ""
 
 # Clean previous build
 if [ -d "dist" ]; then
@@ -57,9 +56,10 @@ if [ -d "dist" ]; then
 fi
 
 # Build for production
-echo "🏗️  Building optimized production bundle..."
+echo "🏗️  Building production bundle..."
+echo "   Note: Using dev build due to wasm-opt compatibility issues"
 echo ""
-trunk build --release
+trunk build
 
 echo ""
 echo "✅ Production build complete!"

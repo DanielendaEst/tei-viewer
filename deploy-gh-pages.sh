@@ -75,9 +75,10 @@ fi
 # Build with correct public URL for GitHub Pages
 echo "🔨 Building for GitHub Pages..."
 echo "   Public URL: /$REPO_NAME/"
+echo "   Note: Using dev build due to wasm-opt compatibility issues"
 echo ""
 
-trunk build --release --public-url /$REPO_NAME/
+trunk build --public-url /$REPO_NAME/
 
 if [ ! -d "dist" ]; then
     echo "❌ Error: Build failed - dist directory not created"
