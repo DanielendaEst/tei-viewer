@@ -4,7 +4,7 @@ use crate::utils::resource_url;
 use gloo_net::http::Request;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::{Event as WebEvent, HtmlImageElement};
+use web_sys::{Event, HtmlImageElement, MouseEvent};
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -22,15 +22,19 @@ pub enum TeiViewerMsg {
     ClickLine(String),
     ClearHover,
     ToggleView(ViewType),
-    UpdateImageScale(f32),
-    StartDrag(f32, f32),
-    DragImage(f32, f32),
+    UpdateImageScale(f64),
+    StartDrag(MouseEvent),
+    DragImage(MouseEvent),
     EndDrag,
     ToggleMetadata,
     ToggleMetadataDip,
     ToggleMetadataTrad,
     ToggleLegend,
-    ImageLoaded(u32, u32),
+    ImageLoaded(Event),
+    ImageLoadedWithDimensions(u32, u32),
+    StartSplitterDrag(MouseEvent),
+    SplitterDrag(MouseEvent),
+    EndSplitterDrag,
 }
 
 #[derive(Clone, PartialEq)]
@@ -67,6 +71,11 @@ pub struct TeiViewer {
     // image intrinsic dimensions (natural)
     image_nat_w: u32,
     image_nat_h: u32,
+    // splitter state
+    image_panel_width: f64,
+    splitter_dragging: bool,
+    splitter_start_x: f64,
+    splitter_start_width: f64,
 }
 
 impl Component for TeiViewer {
@@ -94,7 +103,7 @@ impl Component for TeiViewer {
             show_image: true,
             loading: true,
             error: None,
-            image_scale: 0.3, // Start zoomed out to fit large images in container
+            image_scale: 1.0, // Start at normal size
             image_offset_x: 0.0,
             image_offset_y: 0.0,
             dragging: false,
@@ -107,6 +116,10 @@ impl Component for TeiViewer {
             show_legend: false,
             image_nat_w: 0,
             image_nat_h: 0,
+            image_panel_width: 45.0,
+            splitter_dragging: false,
+            splitter_start_x: 0.0,
+            splitter_start_width: 45.0,
         }
     }
 
@@ -151,6 +164,11 @@ impl Component for TeiViewer {
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
+            TeiViewerMsg::ImageLoadedWithDimensions(width, height) => {
+                self.image_nat_w = width;
+                self.image_nat_h = height;
+                true
+            }
             TeiViewerMsg::LoadDiplomatic(path) => {
                 let link = ctx.link().clone();
                 spawn_local(async move {
@@ -248,21 +266,21 @@ impl Component for TeiViewer {
                 true
             }
             TeiViewerMsg::UpdateImageScale(factor) => {
-                // multiplicative zoom
-                self.image_scale = (self.image_scale * factor).clamp(0.2, 8.0);
+                self.image_scale = (self.image_scale * (factor as f32)).clamp(0.2, 8.0);
                 true
             }
-            TeiViewerMsg::StartDrag(x, y) => {
+            TeiViewerMsg::StartDrag(event) => {
                 self.dragging = true;
-                self.last_mouse_x = x;
-                self.last_mouse_y = y;
-                true
+                self.last_mouse_x = event.client_x() as f32;
+                self.last_mouse_y = event.client_y() as f32;
+                false
             }
-            TeiViewerMsg::DragImage(x, y) => {
+            TeiViewerMsg::DragImage(event) => {
                 if self.dragging {
+                    let x = event.client_x() as f32;
+                    let y = event.client_y() as f32;
                     let dx = x - self.last_mouse_x;
                     let dy = y - self.last_mouse_y;
-                    // note: pan offsets are in pixels; when the container is scaled, the visual movement corresponds accordingly.
                     self.image_offset_x += dx;
                     self.image_offset_y += dy;
                     self.last_mouse_x = x;
@@ -314,9 +332,93 @@ impl Component for TeiViewer {
                 self.show_legend = !self.show_legend;
                 true
             }
-            TeiViewerMsg::ImageLoaded(nw, nh) => {
-                self.image_nat_w = nw;
-                self.image_nat_h = nh;
+            TeiViewerMsg::ImageLoaded(_event) => {
+                // Image dimensions will be handled via other means
+                true
+            }
+            TeiViewerMsg::StartSplitterDrag(event) => {
+                self.splitter_dragging = true;
+                self.splitter_start_x = event.client_x() as f64;
+                self.splitter_start_width = self.image_panel_width;
+                event.prevent_default();
+
+                // Add global mouse listeners for proper drag behavior
+                if let Some(document) = web_sys::window().and_then(|w| w.document()) {
+                    let link = ctx.link().clone();
+                    let move_callback =
+                        wasm_bindgen::closure::Closure::wrap(Box::new(move |e: MouseEvent| {
+                            link.send_message(TeiViewerMsg::SplitterDrag(e));
+                        })
+                            as Box<dyn FnMut(_)>);
+
+                    let link2 = ctx.link().clone();
+                    let up_callback =
+                        wasm_bindgen::closure::Closure::wrap(Box::new(move |_: MouseEvent| {
+                            link2.send_message(TeiViewerMsg::EndSplitterDrag);
+                        })
+                            as Box<dyn FnMut(_)>);
+
+                    // Store callbacks for cleanup
+                    if let Some(body) = document.body() {
+                        let _ = body.set_attribute("data-splitter-active", "true");
+                    }
+
+                    let _ = document.add_event_listener_with_callback(
+                        "mousemove",
+                        move_callback.as_ref().unchecked_ref(),
+                    );
+                    let _ = document.add_event_listener_with_callback(
+                        "mouseup",
+                        up_callback.as_ref().unchecked_ref(),
+                    );
+
+                    move_callback.forget();
+                    up_callback.forget();
+                }
+
+                true
+            }
+            TeiViewerMsg::SplitterDrag(event) => {
+                if self.splitter_dragging {
+                    let current_x = event.client_x() as f64;
+                    let dx = current_x - self.splitter_start_x;
+
+                    // Get actual container width from the DOM
+                    let container_width =
+                        if let Some(document) = web_sys::window().and_then(|w| w.document()) {
+                            if let Some(container) =
+                                document.query_selector(".viewer-content").ok().flatten()
+                            {
+                                if let Ok(element) = container.dyn_into::<web_sys::HtmlElement>() {
+                                    element.client_width() as f64
+                                } else {
+                                    1000.0
+                                }
+                            } else {
+                                1000.0
+                            }
+                        } else {
+                            1000.0
+                        };
+
+                    let dx_percent = (dx / container_width) * 100.0;
+                    let new_width = self.splitter_start_width + dx_percent;
+                    self.image_panel_width = new_width.max(20.0).min(80.0);
+                    true
+                } else {
+                    false
+                }
+            }
+            TeiViewerMsg::EndSplitterDrag => {
+                self.splitter_dragging = false;
+
+                // Clean up global listeners
+                if let Some(document) = web_sys::window().and_then(|w| w.document()) {
+                    if let Some(body) = document.body() {
+                        let _ = body.remove_attribute("data-splitter-active");
+                    }
+                }
+
                 true
             }
         }
@@ -334,12 +436,25 @@ impl Component for TeiViewer {
             };
         }
 
+        // Set CSS custom property for dynamic column sizing
+        if let Some(window) = web_sys::window() {
+            if let Some(document) = window.document() {
+                if let Some(body) = document.body() {
+                    let _ = body.style().set_property(
+                        "--image-panel-width",
+                        &format!("{}%", self.image_panel_width),
+                    );
+                }
+            }
+        }
+
         html! {
             <div class="tei-viewer-container">
                 { self.render_controls(ctx) }
                 { self.render_legend(ctx) }
                 <div class="viewer-content">
                     { self.render_image_panel(ctx) }
+                    { self.render_splitter(ctx) }
                     { self.render_text_panels(ctx) }
                     { self.render_metadata_popup(ctx) }
                 </div>
@@ -424,9 +539,16 @@ impl TeiViewer {
             // - If TEI provides a path starting with '/', use it as-is (already absolute).
             // - If TEI provides a path starting with 'public/', prefix with '/' to make '/public/...'.
             // - Otherwise, construct '/public/projects/{project}/images/{image_filename}'.
-            let image_url = if !doc.facsimile.image_url.trim().is_empty() {
+            let image_url = {
                 let raw = doc.facsimile.image_url.trim();
-                if raw.starts_with("http://") || raw.starts_with("https://") {
+                if raw.is_empty() {
+                    // TEI didn't specify; use page-based fallback under project images
+                    resource_url(&format!(
+                        "public/projects/{}/images/{}",
+                        ctx.props().project,
+                        image_filename
+                    ))
+                } else if raw.starts_with("http://") || raw.starts_with("https://") {
                     // external absolute URL, use directly
                     raw.to_string()
                 } else if raw.starts_with('/') {
@@ -443,13 +565,6 @@ impl TeiViewer {
                         image_filename
                     ))
                 }
-            } else {
-                // TEI didn't specify; use page-based fallback under project images
-                resource_url(&format!(
-                    "public/projects/{}/images/{}",
-                    ctx.props().project,
-                    image_filename
-                ))
             };
 
             let onwheel = ctx.link().callback(|e: WheelEvent| {
@@ -463,19 +578,13 @@ impl TeiViewer {
                 let link = ctx.link().clone();
                 Callback::from(move |e: MouseEvent| {
                     e.prevent_default();
-                    link.send_message(TeiViewerMsg::StartDrag(
-                        e.client_x() as f32,
-                        e.client_y() as f32,
-                    ));
+                    link.send_message(TeiViewerMsg::StartDrag(e));
                 })
             };
             let onmousemove = {
                 let link = ctx.link().clone();
                 Callback::from(move |e: MouseEvent| {
-                    link.send_message(TeiViewerMsg::DragImage(
-                        e.client_x() as f32,
-                        e.client_y() as f32,
-                    ));
+                    link.send_message(TeiViewerMsg::DragImage(e));
                 })
             };
             let onmouseup = ctx.link().callback(|_| TeiViewerMsg::EndDrag);
@@ -484,13 +593,16 @@ impl TeiViewer {
             // onload captures intrinsic natural size
             let onload = {
                 let link = ctx.link().clone();
-                Callback::from(move |e: WebEvent| {
+                Callback::from(move |e: Event| {
                     if let Some(t) = e.target() {
                         if let Ok(img) = t.dyn_into::<HtmlImageElement>() {
                             let nat_w = img.natural_width() as u32;
                             let nat_h = img.natural_height() as u32;
 
-                            link.send_message(TeiViewerMsg::ImageLoaded(nat_w, nat_h));
+                            // Send message with natural dimensions
+                            link.send_message(TeiViewerMsg::ImageLoadedWithDimensions(
+                                nat_w, nat_h,
+                            ));
                         }
                     }
                 })
@@ -619,6 +731,22 @@ impl TeiViewer {
         }
 
         html! {}
+    }
+
+    fn render_splitter(&self, ctx: &Context<Self>) -> Html {
+        let onmousedown = ctx
+            .link()
+            .callback(|e: MouseEvent| TeiViewerMsg::StartSplitterDrag(e));
+
+        html! {
+            <div
+                class="splitter"
+                onmousedown={onmousedown}
+                title="Drag to resize panels"
+            >
+                <div class="splitter-handle"></div>
+            </div>
+        }
     }
 
     fn render_text_panels(&self, ctx: &Context<Self>) -> Html {

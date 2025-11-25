@@ -241,15 +241,15 @@ body {
    ============================================ */
 
 .viewer-content {
-    display: flex;
+    display: grid;
+    grid-template-columns: var(--image-panel-width, 45%) 8px 1fr;
     flex: 1 1 auto;
-    overflow: auto;
-    gap: 1rem;
+    overflow: hidden;
+    gap: 0;
     padding: 1rem;
     min-height: 0;
+    height: calc(100vh - 200px);
     background: #101624;
-    flex-direction: row;
-    flex-wrap: wrap;
 }
 
 /* ============================================
@@ -257,7 +257,7 @@ body {
    ============================================ */
 
 .image-panel {
-    flex: 1 1 auto;
+    grid-column: 1;
     background-color: #18223a;
     border: 2px solid #22304a;
     border-radius: 8px;
@@ -266,8 +266,10 @@ body {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
-    min-width: 0;
-    min-height: 300px;
+    min-width: 250px;
+    min-height: 400px;
+    max-height: 100%;
+    flex-grow: 1; /* Ensure the panel grows with the container */
 }
 
 .image-container {
@@ -302,8 +304,8 @@ body {
     margin-left: auto;
     margin-right: auto;
     margin: auto;
-    max-width: none;
-    max-height: none;
+    max-width: 100%; /* Ensure the image scales within the container */
+    max-height: 100%; /* Ensure the image scales within the container */
     pointer-events: none;
     user-select: none;
 }
@@ -320,14 +322,60 @@ body {
    TEXT PANELS
    ============================================ */
 
+/* Resize handle/splitter */
+.splitter {
+    grid-column: 2;
+    background: linear-gradient(
+        90deg,
+        #22304a 0%,
+        #3a8dde 45%,
+        #3a8dde 55%,
+        #22304a 100%
+    );
+    cursor: col-resize;
+    position: relative;
+    border-radius: 2px;
+    transition: background 0.2s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none; /* Prevent default touch behavior during drag */
+    width: 10px; /* Increase width for better usability */
+}
+
+.splitter:hover {
+    background: #4fc3f7;
+    box-shadow: 0 0 5px rgba(79, 195, 247, 0.5); /* Add visual feedback */
+}
+
+.splitter-handle {
+    color: #eaf6fb;
+    font-size: 14px;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.splitter-handle::before {
+    content: "⋮⋮";
+    letter-spacing: -2px;
+}
+
+.splitter:active {
+    background: #2196f3;
+    cursor: col-resize;
+}
+
 .text-panels {
-    flex: 1 1 auto;
+    grid-column: 3;
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    overflow: hidden;
-    min-width: 0;
-    min-height: 300px;
+    overflow: auto;
+    min-width: 250px;
+    min-height: 400px;
+    max-height: 100%;
     background: #18223a;
 }
 
@@ -337,7 +385,7 @@ body {
     border: 2px solid #3a8dde;
     border-radius: 8px;
     padding: 1rem;
-    overflow: hidden;
+    overflow: auto;
     display: flex;
     flex-direction: column;
     min-height: 200px;
@@ -362,7 +410,7 @@ body {
 
 /* Custom scrollbar */
 .text-content::-webkit-scrollbar {
-    width: 8px;
+    width: 12px;
 }
 
 .text-content::-webkit-scrollbar-track {
@@ -372,11 +420,12 @@ body {
 
 .text-content::-webkit-scrollbar-thumb {
     background: #667eea;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 
 .text-content::-webkit-scrollbar-thumb:hover {
     background: #5568d3;
+    border-radius: 6px;
 }
 
 /* ============================================
@@ -1077,9 +1126,22 @@ body {
 /* Tablet and below */
 @media (max-width: 1200px) {
     .viewer-content {
+        display: flex;
         flex-direction: column;
-        flex-wrap: nowrap;
+        gap: 1rem;
         overflow-y: auto;
+    }
+
+    .image-panel {
+        grid-column: auto;
+    }
+
+    .text-panels {
+        grid-column: auto;
+    }
+
+    .viewer-content > .image-panel + * {
+        display: none;
     }
 
     .image-panel {
@@ -1197,19 +1259,33 @@ body {
     }
 
     .viewer-content {
+        display: flex;
+        flex-direction: column;
         padding: 0.5rem;
         gap: 0.5rem;
+        height: calc(100vh - 180px);
+    }
+
+    .splitter {
+        display: none;
     }
 
     .image-panel {
         flex: 0 0 auto;
-        height: 30vh;
-        min-height: 200px;
-        max-height: 40vh;
+        height: 35vh;
+        min-height: 250px;
+        max-height: 45vh;
+        width: 100%;
+        order: 1;
     }
 
     .text-panels {
         gap: 0.5rem;
+        flex: 1 1 auto;
+        order: 2;
+        overflow: auto;
+        width: 100%;
+        grid-column: unset;
     }
 
     .text-panel {
@@ -1335,8 +1411,15 @@ body {
     }
 
     .viewer-content {
+        display: flex;
+        flex-direction: column;
         padding: 0.25rem;
         gap: 0.25rem;
+        height: calc(100vh - 160px);
+    }
+
+    .splitter {
+        display: none;
     }
 
     .image-panel {
@@ -1344,6 +1427,17 @@ body {
         height: 25vh;
         min-height: 180px;
         max-height: 35vh;
+        width: 100%;
+        order: 1;
+    }
+
+    .text-panels {
+        gap: 0.25rem;
+        flex: 1 1 auto;
+        order: 2;
+        overflow: auto;
+        width: 100%;
+        grid-column: unset;
     }
 
     .text-panel {
