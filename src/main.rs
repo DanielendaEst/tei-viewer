@@ -1,6 +1,5 @@
 // src/main.rs
 mod components;
-mod generated_pages;
 mod project_config;
 mod tei_data;
 mod tei_parser;

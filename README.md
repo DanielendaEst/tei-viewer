@@ -19,6 +19,7 @@ A modern web-based viewer for TEI-XML documents with image-text synchronization,
 - [Rust](https://rustup.rs/) (latest stable)
 - [Trunk](https://trunkrs.dev/): `cargo install trunk`
 - [wasm32-unknown-unknown target](https://rustwasm.github.io/docs/book/game-of-life/setup.html): `rustup target add wasm32-unknown-unknown`
+- [Python 3](https://www.python.org/) (for project fix scripts, optional)
 
 ### Development
 
@@ -76,9 +77,12 @@ tei-viewer/
 ├── static/
 │   └── styles.css                 # Application styles
 ├── index.html                     # HTML template
-├── sync_projects.sh               # Project sync script
+├── sync_projects.sh               # Project sync script (REQUIRED)
 ├── start.sh                       # Development startup script
-└── deploy.sh                      # Production build script
+├── deploy.sh                      # Production build script
+├── deploy-gh-pages.sh             # GitHub Pages deployment script
+├── fix_tractatus_coords.py        # Fix script: rescale coordinates
+└── fix_tractatus_order.py         # Fix script: reorder lines by Y
 ```
 
 ## Adding Projects
@@ -402,6 +406,50 @@ Images are linked to text using TEI `<facsimile>` and `<zone>` elements:
 
 When hovering over text, the corresponding zone highlights on the image.
 
+## Fix Scripts
+
+The project includes Python scripts to fix common TEI coordinate issues:
+
+### fix_tractatus_coords.py
+
+Rescales zone coordinates when images have been downsized from the original PAGE-XML dimensions.
+
+**When to use**: Your XML declares large dimensions (e.g., 2479×3508) but the actual image is smaller (e.g., 960×1358).
+
+**Usage**:
+```bash
+# Edit the script to set your dimensions:
+OLD_WIDTH = 2479    # From XML <graphic>
+OLD_HEIGHT = 3508
+NEW_WIDTH = 960     # Actual image size
+NEW_HEIGHT = 1358
+
+# Run the script
+python3 fix_tractatus_coords.py
+
+# Sync and rebuild
+./sync_projects.sh
+trunk build
+```
+
+### fix_tractatus_order.py
+
+Reorders TEI lines based on Y-coordinates when the reading order is incorrect.
+
+**When to use**: Highlights "jump" between lines - they appear in correct positions on the image but match wrong text.
+
+**Usage**:
+```bash
+# Run the script (auto-detects and fixes order)
+python3 fix_tractatus_order.py
+
+# Sync and rebuild
+./sync_projects.sh
+trunk build
+```
+
+Both scripts are templates - copy and modify for your specific project needs.
+
 ## Troubleshooting
 
 ### Images Don't Display
@@ -551,6 +599,57 @@ This issue typically occurs when:
 - Images are downsampled for web delivery
 - PAGE-XML was created on original high-res scans
 - TEI conversion didn't account for image resizing
+
+## Scripts Overview
+
+### Required Scripts
+
+- **`sync_projects.sh`** - Syncs `projects/` to `public/projects/`. Run after any project changes.
+- **`start.sh`** - Starts development server with auto-sync
+- **`deploy.sh`** - Builds for production deployment
+- **`deploy-gh-pages.sh`** - Deploys to GitHub Pages
+
+### Fix Scripts (Optional)
+
+- **`fix_tractatus_coords.py`** - Rescale zone coordinates for resized images
+- **`fix_tractatus_order.py`** - Reorder lines by Y-coordinates
+
+### Removed/Obsolete Scripts
+
+The following scripts were removed as they're no longer needed:
+- `build_page_list.sh` - No longer needed (dynamic manifest loading)
+- `update.sh` - Replaced by `sync_projects.sh` + `start.sh`
+
+## What You Need
+
+### Minimum Setup
+
+1. **Source projects** in `tei-viewer/projects/YourProject/`:
+   - `manifest.json` (required)
+   - `p1_dip.xml` (diplomatic edition)
+   - `p1_trad.xml` (translation, optional)
+   - `images/p1.jpg` (page image)
+
+2. **Register project** in `src/main.rs`:
+   ```rust
+   let project_ids = vec!["PGM-XIII", "Tractatus-Fascinatione", "Chanca", "YourProject"];
+   ```
+
+3. **Sync and build**:
+   ```bash
+   ./sync_projects.sh
+   trunk build
+   ```
+
+### Common Issues Checklist
+
+- [ ] All projects have `manifest.json`
+- [ ] XML files follow naming: `p{number}_{type}.xml`
+- [ ] Images follow naming: `p{number}.jpg`
+- [ ] `<graphic width/height>` matches actual image dimensions
+- [ ] Lines are in correct Y-coordinate order
+- [ ] Project ID added to `src/main.rs`
+- [ ] Ran `./sync_projects.sh` after changes
 
 ## Credits
 
