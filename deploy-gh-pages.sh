@@ -160,6 +160,17 @@ cp dist/.nojekyll "$TEMP_DIST/" 2>/dev/null || true
 echo "   Temp location: $TEMP_DIST"
 echo ""
 
+# CRITICAL: Also backup projects/ folder to prevent deletion
+# The projects/ folder is gitignored and will be lost when switching branches
+TEMP_PROJECTS=""
+if [ -d "projects" ]; then
+    TEMP_PROJECTS=$(mktemp -d)
+    echo "📦 Backing up projects/ folder to temporary location..."
+    cp -r projects/* "$TEMP_PROJECTS/" 2>/dev/null || true
+    echo "   Projects backup: $TEMP_PROJECTS"
+    echo ""
+fi
+
 echo "📤 Deploying to GitHub Pages..."
 echo ""
 
@@ -232,8 +243,19 @@ if [ "$VERIFY_BRANCH" != "$CURRENT_BRANCH" ]; then
     echo "⚠️  WARNING: Expected to be on $CURRENT_BRANCH but on $VERIFY_BRANCH"
 fi
 
-# Clean up temporary directory
+# CRITICAL: Restore projects/ folder from backup
+if [ -n "$TEMP_PROJECTS" ] && [ -d "$TEMP_PROJECTS" ]; then
+    echo "📦 Restoring projects/ folder from backup..."
+    mkdir -p projects
+    cp -r "$TEMP_PROJECTS"/* projects/ 2>/dev/null || true
+    echo "   ✅ Projects folder restored"
+fi
+
+# Clean up temporary directories
 rm -rf "$TEMP_DIST"
+if [ -n "$TEMP_PROJECTS" ]; then
+    rm -rf "$TEMP_PROJECTS"
+fi
 echo "   Cleaned up temporary files"
 
 # Clean up dist directory (optional - can keep for debugging)
