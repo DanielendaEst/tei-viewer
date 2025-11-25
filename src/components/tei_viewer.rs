@@ -761,14 +761,19 @@ impl TeiViewer {
         }
     }
 
-    fn render_legend(&self, _ctx: &Context<Self>) -> Html {
+    fn render_legend(&self, ctx: &Context<Self>) -> Html {
         if !self.show_legend {
             return html! {};
         }
 
+        let on_close = ctx.link().callback(|_| TeiViewerMsg::ToggleLegend);
+
         html! {
             <div class="legend-panel">
-                <h3>{"Leyenda de Colores"}</h3>
+                <div class="legend-header">
+                    <h3>{"Leyenda de Colores"}</h3>
+                    <button class="close-btn" onclick={on_close}>{"×"}</button>
+                </div>
                 <div class="legend-items">
                     <div class="legend-item">
                         <span class="legend-swatch abbreviation">{"Ab"}</span>
