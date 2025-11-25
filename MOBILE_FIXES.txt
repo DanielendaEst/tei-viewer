@@ -1,0 +1,37 @@
+Mobile Responsive Branch - Summary
+===================================
+
+Branch: mobile-responsive-design
+
+CHANGES:
+--------
+1. Fixed overlapping panels on mobile/small screens
+   - Changed from fixed height to max-height on containers
+   - Used flex: 1 1 auto instead of flex: 1 for better flexibility
+   - Image panels now use flex: 0 0 auto to prevent unwanted expansion
+   - Added proper min-height constraints (200px-300px)
+
+2. Improved responsive breakpoints
+   - 1200px: Tablet layout (vertical stack)
+   - 900px: Small tablet (full-width selectors)
+   - 768px: Mobile (compact, touch-friendly)
+   - 480px: Extra small mobile
+
+3. Touch optimizations
+   - 44px minimum button height
+   - Better tap targets
+   - Momentum scrolling
+   - No horizontal overflow
+
+TESTING:
+--------
+trunk serve --port 8080
+Then resize browser or use DevTools responsive mode
+
+ISSUES FIXED:
+-------------
+✓ Panels no longer overlap when screen is reduced
+✓ Content stacks vertically on narrow screens
+✓ No fixed positioning causing layout breaks
+✓ Proper scrolling when content overflows
+
