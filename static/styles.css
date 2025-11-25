@@ -172,20 +172,32 @@ body {
    PAGE SELECTOR
    ============================================ */
 
-.page-selector {
+/* Selectors Container */
+.selectors-container {
     padding: 1rem;
     background-color: #18223a;
     border-bottom: 2px solid #22304a;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 2rem;
+    flex-wrap: wrap;
 }
 
+.project-selector,
+.page-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.project-selector label,
 .page-selector label {
     font-weight: 600;
     color: #bcdfff;
+    white-space: nowrap;
 }
 
+.project-selector select,
 .page-selector select {
     padding: 0.5rem 1rem;
     border: 2px solid #3a8dde;
@@ -197,10 +209,12 @@ body {
     min-width: 250px;
 }
 
+.project-selector select:hover,
 .page-selector select:hover {
     border-color: #4fc3f7;
 }
 
+.project-selector select:focus,
 .page-selector select:focus {
     outline: none;
     border-color: #4fc3f7;
