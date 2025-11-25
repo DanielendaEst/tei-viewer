@@ -95,6 +95,11 @@ pub fn parse_tei_xml(xml_content: &str) -> Result<TeiDocument, String> {
                         in_body = true;
                         in_facsimile = false; // Exit facsimile mode
                     }
+                    "back" => {
+                        // TEI <back> section can contain footnotes/notes
+                        in_body = false;
+                        in_facsimile = false;
+                    }
                     "lb" if in_body => {
                         // Save previous line if exists
                         if let Some(line) = current_line.take() {
@@ -123,8 +128,9 @@ pub fn parse_tei_xml(xml_content: &str) -> Result<TeiDocument, String> {
                             line.content.extend(ab_nodes);
                         }
                     }
-                    "div" if in_body => {
+                    "div" => {
                         // Check if this is a notes div (accept both "notes" and "note")
+                        // This can occur in <body> or <back>
                         for attr in e.attributes().flatten() {
                             let key = String::from_utf8_lossy(attr.key.as_ref()).to_string();
                             let value = String::from_utf8_lossy(&attr.value).to_string();
