@@ -712,9 +712,17 @@ impl TeiViewer {
             TextNode::InlineNote { content, n } => html! {
                 <sup class="footnote-ref" title={format!("[Nota al pie] {}", content)}>{ n }</sup>
             },
-            TextNode::Hi { rend, content } => html! {
-                <span class={format!("hi-{}", rend)} title={format!("[Resaltado] Estilo: {}", rend)}>{ content }</span>
-            },
+            TextNode::Hi { rend, content } => {
+                // Handle multiple rend values (e.g., "bold italic")
+                let classes = rend
+                    .split_whitespace()
+                    .map(|r| format!("hi-{}", r))
+                    .collect::<Vec<_>>()
+                    .join(" ");
+                html! {
+                    <span class={classes} title={format!("[Resaltado] Estilo: {}", rend)}>{ content }</span>
+                }
+            }
         }
     }
 
@@ -770,6 +778,22 @@ impl TeiViewer {
                     <div class="legend-item">
                         <span class="legend-swatch footnote-ref">{"1"}</span>
                         <span class="legend-label">{"Nota al pie"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch hi-bold">{"N"}</span>
+                        <span class="legend-label">{"Negrita"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch hi-italic">{"C"}</span>
+                        <span class="legend-label">{"Cursiva"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch hi-superscript">{"x²"}</span>
+                        <span class="legend-label">{"Superíndice"}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch hi-subscript">{"H₂O"}</span>
+                        <span class="legend-label">{"Subíndice"}</span>
                     </div>
                 </div>
             </div>
