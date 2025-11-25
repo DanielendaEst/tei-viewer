@@ -160,14 +160,23 @@ cp dist/.nojekyll "$TEMP_DIST/" 2>/dev/null || true
 echo "   Temp location: $TEMP_DIST"
 echo ""
 
-# CRITICAL: Also backup projects/ folder to prevent deletion
-# The projects/ folder is gitignored and will be lost when switching branches
+# CRITICAL: Also backup projects/ and public/ folders to prevent deletion
+# These folders are gitignored and will be lost when switching branches
 TEMP_PROJECTS=""
 if [ -d "projects" ]; then
     TEMP_PROJECTS=$(mktemp -d)
     echo "📦 Backing up projects/ folder to temporary location..."
     cp -r projects/* "$TEMP_PROJECTS/" 2>/dev/null || true
     echo "   Projects backup: $TEMP_PROJECTS"
+    echo ""
+fi
+
+TEMP_PUBLIC=""
+if [ -d "public" ]; then
+    TEMP_PUBLIC=$(mktemp -d)
+    echo "📦 Backing up public/ folder to temporary location..."
+    cp -r public/* "$TEMP_PUBLIC/" 2>/dev/null || true
+    echo "   Public backup: $TEMP_PUBLIC"
     echo ""
 fi
 
@@ -243,7 +252,7 @@ if [ "$VERIFY_BRANCH" != "$CURRENT_BRANCH" ]; then
     echo "⚠️  WARNING: Expected to be on $CURRENT_BRANCH but on $VERIFY_BRANCH"
 fi
 
-# CRITICAL: Restore projects/ folder from backup
+# CRITICAL: Restore projects/ and public/ folders from backup
 if [ -n "$TEMP_PROJECTS" ] && [ -d "$TEMP_PROJECTS" ]; then
     echo "📦 Restoring projects/ folder from backup..."
     mkdir -p projects
@@ -251,10 +260,20 @@ if [ -n "$TEMP_PROJECTS" ] && [ -d "$TEMP_PROJECTS" ]; then
     echo "   ✅ Projects folder restored"
 fi
 
+if [ -n "$TEMP_PUBLIC" ] && [ -d "$TEMP_PUBLIC" ]; then
+    echo "📦 Restoring public/ folder from backup..."
+    mkdir -p public
+    cp -r "$TEMP_PUBLIC"/* public/ 2>/dev/null || true
+    echo "   ✅ Public folder restored"
+fi
+
 # Clean up temporary directories
 rm -rf "$TEMP_DIST"
 if [ -n "$TEMP_PROJECTS" ]; then
     rm -rf "$TEMP_PROJECTS"
+fi
+if [ -n "$TEMP_PUBLIC" ]; then
+    rm -rf "$TEMP_PUBLIC"
 fi
 echo "   Cleaned up temporary files"
 
