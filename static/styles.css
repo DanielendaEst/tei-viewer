@@ -15,6 +15,12 @@
 
 html {
     scroll-behavior: smooth;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+    /* Better text rendering on mobile */
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 body {
@@ -36,6 +42,10 @@ body {
     color: #eaf6fb;
     line-height: 1.6;
     font-size: 18px; /* Increased by 1pt (was ~16px) */
+    /* Prevent horizontal scroll */
+    overflow-x: hidden;
+    /* Better touch scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
 }
 
 .app-container {
@@ -93,6 +103,7 @@ body {
     height: calc(100vh - 200px);
     display: flex;
     flex-direction: column;
+    min-height: 500px;
 }
 
 .tei-viewer-container > .controls-panel {
@@ -115,7 +126,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2.3rem 1.5rem;
+    padding: 1.5rem 1rem;
     background-color: #18223a;
     border-top: 2px solid #22304a;
     flex-wrap: wrap;
@@ -139,6 +150,9 @@ body {
     font-weight: 500;
     font-size: 0.95rem;
     transition: all 0.3s ease;
+    /* Better touch targets */
+    min-height: 44px;
+    -webkit-tap-highlight-color: rgba(58, 141, 222, 0.3);
 }
 
 .view-toggles button:hover,
@@ -179,7 +193,7 @@ body {
     border-bottom: 2px solid #22304a;
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
     flex-wrap: wrap;
 }
 
@@ -206,7 +220,8 @@ body {
     color: #eaf6fb;
     font-size: 0.95rem;
     cursor: pointer;
-    min-width: 250px;
+    min-width: 200px;
+    max-width: 100%;
 }
 
 .project-selector select:hover,
@@ -233,6 +248,7 @@ body {
     padding: 1rem;
     min-height: 0;
     background: #101624;
+    flex-direction: row;
 }
 
 /* ============================================
@@ -260,6 +276,10 @@ body {
     cursor: grab;
     display: block;
     background: #18223a;
+    /* Better touch handling */
+    touch-action: pan-x pan-y;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .image-container > div {
@@ -332,6 +352,9 @@ body {
     flex: 1;
     overflow-y: auto;
     padding-right: 0.5rem;
+    /* Better scrolling on mobile */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 }
 
 /* Custom scrollbar */
@@ -1048,13 +1071,20 @@ body {
    RESPONSIVE DESIGN
    ============================================ */
 
+/* Tablet and below */
 @media (max-width: 1200px) {
     .viewer-content {
         flex-direction: column;
     }
 
     .image-panel {
-        height: 50vh;
+        height: 40vh;
+        min-height: 300px;
+    }
+
+    .text-panels {
+        flex: 1;
+        min-height: 300px;
     }
 
     .metadata-panel {
@@ -1063,50 +1093,310 @@ body {
         max-width: 100%;
         margin-top: 1rem;
     }
-}
-
-@media (max-width: 768px) {
-    .app-header h1 {
-        font-size: 1.5rem;
-    }
 
     .controls-panel {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .legend-panel {
         padding: 1rem;
-        margin: 0.75rem 0.5rem;
-    }
-
-    .legend-items {
-        grid-template-columns: 1fr;
         gap: 0.75rem;
     }
 
-    .legend-swatch {
-        min-width: 38px;
-        height: 28px;
+    .selectors-container {
+        gap: 0.75rem;
+        padding: 0.75rem;
+    }
+}
+
+/* Small tablets */
+@media (max-width: 900px) {
+    .app-main {
+        padding: 0.5rem;
     }
 
-    .view-toggles,
-    .image-controls {
+    .tei-viewer-container {
+        height: calc(100vh - 150px);
+    }
+
+    .app-header {
+        padding: 1rem 1.5rem;
+    }
+
+    .app-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .viewer-content {
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+
+    .image-panel {
+        height: 35vh;
+        min-height: 250px;
+    }
+
+    .selectors-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .project-selector,
+    .page-selector {
         width: 100%;
-        justify-content: center;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .project-selector select,
+    .page-selector select {
+        width: 100%;
+        min-width: 100%;
+    }
+}
+
+/* Mobile devices */
+@media (max-width: 768px) {
+    body {
+        font-size: 16px;
+    }
+
+    .app-main {
+        padding: 0.25rem;
+    }
+
+    .tei-viewer-container {
+        height: calc(100vh - 120px);
+        border-radius: 4px;
+    }
+
+    .app-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .app-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .app-header .subtitle {
+        font-size: 0.85rem;
+    }
+
+    .app-footer {
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .viewer-content {
+        padding: 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .image-panel {
+        height: 30vh;
+        min-height: 200px;
     }
 
     .text-panels {
         gap: 0.5rem;
     }
 
+    .text-panel {
+        padding: 0.75rem;
+    }
+
+    .text-panel h3 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .controls-panel {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+
+    .view-toggles,
+    .image-controls {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .view-toggles button,
+    .image-controls button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        flex: 1 1 auto;
+        min-width: 80px;
+    }
+
+    .zoom-level {
+        min-width: 60px;
+        font-size: 0.9rem;
+    }
+
+    .legend-panel {
+        padding: 0.75rem;
+        margin: 0.5rem;
+    }
+
+    .legend-panel h3 {
+        font-size: 1rem;
+    }
+
+    .legend-items {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .legend-swatch {
+        min-width: 32px;
+        height: 24px;
+    }
+
+    .legend-label {
+        font-size: 0.85rem;
+    }
+
     .line {
         flex-direction: column;
-        gap: 0.3rem;
+        gap: 0.25rem;
+        padding: 0.5rem;
     }
 
     .line-number {
         margin-right: 0;
+        font-size: 0.8rem;
+    }
+
+    .line-content {
+        font-size: 0.95rem;
+    }
+
+    .page-navigator {
+        padding: 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .nav-button,
+    .page-button {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.85rem;
+        min-width: 36px;
+    }
+
+    .page-info {
+        font-size: 0.85rem;
+        padding: 0 0.5rem;
+    }
+
+    .metadata-popup {
+        width: 95%;
+        max-width: 95%;
+        padding: 1rem;
+        margin: 1rem auto;
+        max-height: 90vh;
+    }
+
+    .metadata-popup-header h2 {
+        font-size: 1.25rem;
+    }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+
+    .app-header h1 {
+        font-size: 1.25rem;
+    }
+
+    .app-header .subtitle {
+        font-size: 0.8rem;
+    }
+
+    .tei-viewer-container {
+        height: calc(100vh - 100px);
+    }
+
+    .viewer-content {
+        padding: 0.25rem;
+        gap: 0.25rem;
+    }
+
+    .image-panel {
+        height: 25vh;
+        min-height: 180px;
+    }
+
+    .text-panel {
+        padding: 0.5rem;
+    }
+
+    .text-panel h3 {
+        font-size: 0.95rem;
+    }
+
+    .controls-panel {
+        padding: 0.5rem;
+    }
+
+    .view-toggles button,
+    .image-controls button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        min-width: 70px;
+    }
+
+    .legend-panel {
+        padding: 0.5rem;
+        margin: 0.25rem;
+    }
+
+    .legend-panel h3 {
+        font-size: 0.9rem;
+    }
+
+    .legend-label {
+        font-size: 0.8rem;
+    }
+
+    .line {
+        padding: 0.4rem;
+    }
+
+    .line-number {
+        font-size: 0.75rem;
+    }
+
+    .line-content {
+        font-size: 0.9rem;
+    }
+
+    .nav-button,
+    .page-button {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.8rem;
+        min-width: 32px;
+    }
+
+    .page-info {
+        font-size: 0.8rem;
+    }
+
+    .abbreviation,
+    .correction,
+    .regularised,
+    .number,
+    .person-name,
+    .place-name,
+    .ref,
+    .unclear {
+        padding: 1px 3px;
     }
 }
 
