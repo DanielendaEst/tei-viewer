@@ -3,10 +3,12 @@ mod components;
 mod project_config;
 mod tei_data;
 mod tei_parser;
+mod utils;
 
 use components::tei_viewer::TeiViewer;
 use gloo_net::http::Request;
 use project_config::ProjectConfig;
+use utils::resource_url;
 use yew::prelude::*;
 
 pub enum AppMsg {
@@ -211,7 +213,7 @@ async fn load_all_manifests() -> Result<Vec<ProjectConfig>, String> {
     let mut configs = Vec::new();
 
     for project_id in project_ids {
-        let manifest_url = format!("public/projects/{}/manifest.json", project_id);
+        let manifest_url = resource_url(&format!("public/projects/{}/manifest.json", project_id));
 
         match Request::get(&manifest_url).send().await {
             Ok(resp) => {

@@ -1,5 +1,6 @@
 // src/components/tei_viewer.rs
 use crate::tei_data::*;
+use crate::utils::resource_url;
 use gloo_net::http::Request;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::spawn_local;
@@ -77,10 +78,10 @@ impl Component for TeiViewer {
         let page = ctx.props().page;
 
         // Kick off loads
-        let dip_path = format!("public/projects/{}/p{}_dip.xml", project, page);
+        let dip_path = resource_url(&format!("public/projects/{}/p{}_dip.xml", project, page));
         ctx.link()
             .send_message(TeiViewerMsg::LoadDiplomatic(dip_path));
-        let trad_path = format!("public/projects/{}/p{}_trad.xml", project, page);
+        let trad_path = resource_url(&format!("public/projects/{}/p{}_trad.xml", project, page));
         ctx.link()
             .send_message(TeiViewerMsg::LoadTranslation(trad_path));
 
@@ -436,19 +437,19 @@ impl TeiViewer {
                     format!("/{}", raw)
                 } else {
                     // treat as filename or relative path -> place under project images and make absolute
-                    format!(
-                        "/public/projects/{}/images/{}",
+                    resource_url(&format!(
+                        "public/projects/{}/images/{}",
                         ctx.props().project,
                         image_filename
-                    )
+                    ))
                 }
             } else {
                 // TEI didn't specify; use page-based fallback under project images
-                format!(
-                    "/public/projects/{}/images/{}",
+                resource_url(&format!(
+                    "public/projects/{}/images/{}",
                     ctx.props().project,
                     image_filename
-                )
+                ))
             };
 
             let onwheel = ctx.link().callback(|e: WheelEvent| {
