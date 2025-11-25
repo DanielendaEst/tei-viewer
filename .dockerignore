@@ -1,0 +1,66 @@
+# Rust build artifacts
+target/
+dist/
+**/*.rs.bk
+*.pdb
+
+# Dependencies
+Cargo.lock
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!README.md
+DOCUMENTATION.md
+HIGHLIGHT_ISSUE.md
+PROJECT_STATUS.md
+
+# Development files
+.env
+.env.*
+
+# Build scripts (not needed in container)
+build_page_list.sh
+update.sh
+start.sh
+deploy.sh
+
+# Large assets that should be volume-mounted instead
+images/
+projects/PGM-XIII/images/
+
+# Deployment configs (already copied explicitly)
+deployment/
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Testing
+tests/
+test_data/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp

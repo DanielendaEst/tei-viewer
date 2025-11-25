@@ -9,7 +9,7 @@ use yew::prelude::*;
 #[derive(Properties, PartialEq)]
 pub struct TeiViewerProps {
     pub project: String,
-    pub page: String,
+    pub page: u32,
 }
 
 pub enum TeiViewerMsg {
@@ -59,7 +59,8 @@ pub struct TeiViewer {
     // metadata popup
     show_metadata_popup: bool,
     metadata_selected: Option<ViewType>,
-    current_page: String,
+    current_page: u32,
+    current_project: String,
     // legend
     show_legend: bool,
     // image intrinsic dimensions (natural)
@@ -73,13 +74,13 @@ impl Component for TeiViewer {
 
     fn create(ctx: &Context<Self>) -> Self {
         let project = ctx.props().project.clone();
-        let page = ctx.props().page.clone();
+        let page = ctx.props().page;
 
         // Kick off loads
-        let dip_path = format!("public/projects/{}/{}_dip.xml", project, page);
+        let dip_path = format!("public/projects/{}/p{}_dip.xml", project, page);
         ctx.link()
             .send_message(TeiViewerMsg::LoadDiplomatic(dip_path));
-        let trad_path = format!("public/projects/{}/{}_trad.xml", project, page);
+        let trad_path = format!("public/projects/{}/p{}_trad.xml", project, page);
         ctx.link()
             .send_message(TeiViewerMsg::LoadTranslation(trad_path));
 
@@ -101,6 +102,7 @@ impl Component for TeiViewer {
             show_metadata_popup: false,
             metadata_selected: None,
             current_page: page,
+            current_project: project,
             show_legend: false,
             image_nat_w: 0,
             image_nat_h: 0,
@@ -108,32 +110,35 @@ impl Component for TeiViewer {
     }
 
     fn changed(&mut self, ctx: &Context<Self>, _old: &Self::Properties) -> bool {
-        let new_page = ctx.props().page.clone();
-        if new_page != self.current_page {
-            self.current_page = new_page.clone();
+        let new_page = ctx.props().page;
+        let new_project = ctx.props().project.clone();
+
+        // Check if either page or project changed
+        if new_page != self.current_page || new_project != self.current_project {
+            self.current_page = new_page;
+            self.current_project = new_project.clone();
             self.diplomatic = None;
             self.translation = None;
             self.loading = true;
             self.error = None;
             self.hovered_zone = None;
             self.locked_zone = None;
-            self.image_scale = 1.0;
+            self.image_scale = 0.3;
             self.image_offset_x = 0.0;
             self.image_offset_y = 0.0;
             self.image_nat_w = 0;
             self.image_nat_h = 0;
             // reload
-            let project = ctx.props().project.clone();
             let cache_bust = js_sys::Date::now() as u64;
             let dip_path = format!(
-                "public/projects/{}/{}_dip.xml?v={}",
-                project, new_page, cache_bust
+                "public/projects/{}/p{}_dip.xml?v={}",
+                new_project, new_page, cache_bust
             );
             ctx.link()
                 .send_message(TeiViewerMsg::LoadDiplomatic(dip_path));
             let trad_path = format!(
-                "public/projects/{}/{}_trad.xml?v={}",
-                project, new_page, cache_bust
+                "public/projects/{}/p{}_trad.xml?v={}",
+                new_project, new_page, cache_bust
             );
             ctx.link()
                 .send_message(TeiViewerMsg::LoadTranslation(trad_path));
@@ -388,7 +393,7 @@ impl TeiViewer {
             // derived from the current page prop.
             let image_filename = if doc.facsimile.image_url.trim().is_empty() {
                 // use page-based fallback like "p1.jpg"
-                format!("{}.jpg", ctx.props().page)
+                format!("p{}.jpg", ctx.props().page)
             } else {
                 doc.facsimile
                     .image_url
@@ -398,18 +403,18 @@ impl TeiViewer {
                     .to_string()
             };
 
-            // Always use declared TEI <graphic> width/height for image and overlay base size
+            // Use natural image dimensions for display, fall back to declared if not loaded
             let declared_w = doc.facsimile.width;
             let declared_h = doc.facsimile.height;
-            let use_w = if declared_w > 0 {
-                declared_w
-            } else {
+            let use_w = if self.image_nat_w > 0 {
                 self.image_nat_w
-            };
-            let use_h = if declared_h > 0 {
-                declared_h
             } else {
+                declared_w
+            };
+            let use_h = if self.image_nat_h > 0 {
                 self.image_nat_h
+            } else {
+                declared_h
             };
 
             // Build an absolute URL (leading slash) for browser requests.
@@ -521,7 +526,7 @@ impl TeiViewer {
                                 onload={onload}
                                 style={format!("display:block; width: {}px; height: {}px; max-width: none; max-height: none;", use_w, use_h)}
                             />
-                            { self.render_zone_overlays(&doc.facsimile, active_zone, use_w, use_h) }
+                            { self.render_zone_overlays(&doc.facsimile, active_zone, use_w, use_h, declared_w, declared_h) }
                         </div>
                     </div>
                 </div>
@@ -540,8 +545,10 @@ impl TeiViewer {
         active_zone: Option<&String>,
         display_w: u32,
         display_h: u32,
+        declared_w: u32,
+        declared_h: u32,
     ) -> Html {
-        // No scaling - use same dimensions for both image and SVG
+        // Scale zone coordinates from declared space to natural image space
 
         if display_w == 0 || display_h == 0 {
             return html! {};
@@ -553,11 +560,38 @@ impl TeiViewer {
                     return html! {};
                 }
 
-                // Use coordinates directly - no scaling
+                // Compute scale factors from declared coordinates to natural/display coordinates
+                let src_w = if declared_w > 0 {
+                    declared_w
+                } else {
+                    facsimile.width
+                };
+                let src_h = if declared_h > 0 {
+                    declared_h
+                } else {
+                    facsimile.height
+                };
+
+                let factor_x = if src_w > 0 {
+                    (display_w as f32) / (src_w as f32)
+                } else {
+                    1.0
+                };
+                let factor_y = if src_h > 0 {
+                    (display_h as f32) / (src_h as f32)
+                } else {
+                    1.0
+                };
+
+                // Scale coordinates from declared space to natural space
                 let points_str = zone
                     .points
                     .iter()
-                    .map(|(x, y)| format!("{},{}", x, y))
+                    .map(|(x, y)| {
+                        let px = (*x as f32) * factor_x;
+                        let py = (*y as f32) * factor_y;
+                        format!("{:.2},{:.2}", px, py)
+                    })
                     .collect::<Vec<_>>()
                     .join(" ");
 

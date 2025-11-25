@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# TEI-XML Papyrus Viewer - Startup Script
-# This script sets up and runs the development server
+# TEI-XML Papyrus Viewer - Production Deployment Script
+# This script builds the application for production deployment
 
 set -e
 
-echo "🚀 TEI-XML Papyrus Viewer - Starting..."
+echo "🔨 TEI-XML Papyrus Viewer - Production Build"
 echo ""
 
 # Check if trunk is installed
@@ -47,34 +47,33 @@ else
         fi
     fi
 fi
-echo ""
-
-# Check if dist directory exists and has the right structure
-if [ ! -d "dist/public/projects" ]; then
-    echo "📦 First time build detected..."
-    echo "   Building application..."
-
-    # Do an initial build
-    trunk build
-
-    echo "✅ Build complete!"
-    echo ""
+echo ""</parameter>
 fi
 
-# Start the server
-echo "🌐 Starting development server..."
-echo ""
-echo "   Server will be available at: http://127.0.0.1:8080"
-echo ""
-echo "   Features available:"
-echo "   • Diplomatic & Translation editions"
-echo "   • Image-text synchronization"
-echo "   • Interactive highlighting"
-echo "   • Semantic markup visualization"
-echo ""
-echo "Press Ctrl+C to stop the server"
-echo ""
-echo "─────────────────────────────────────────────"
-echo ""
+# Clean previous build
+if [ -d "dist" ]; then
+    echo "🧹 Cleaning previous build..."
+    rm -rf dist
+fi
 
-trunk serve
+# Build for production
+echo "🏗️  Building optimized production bundle..."
+echo ""
+trunk build --release
+
+echo ""
+echo "✅ Production build complete!"
+echo ""
+echo "📦 Deployment files are in: ./dist/"
+echo ""
+echo "Next steps:"
+echo "  1. Upload the ./dist/ directory to your web server"
+echo "  2. Configure your server to serve static files"
+echo "  3. Ensure proper MIME types for .wasm files"
+echo ""
+echo "Example deployment commands:"
+echo "  • Simple HTTP server:  python3 -m http.server -d dist 8080"
+echo "  • Nginx:              Copy dist/* to /var/www/html/"
+echo "  • Apache:             Copy dist/* to /var/www/html/"
+echo "  • Netlify/Vercel:     Deploy the dist/ directory"
+echo ""

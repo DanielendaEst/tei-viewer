@@ -1,0 +1,77 @@
+# Systemd service file for TEI Viewer
+# This file allows you to run the TEI Viewer as a system service
+#
+# Installation:
+# 1. Copy this file to /etc/systemd/system/tei-viewer.service
+# 2. Edit the paths and user/group as needed
+# 3. sudo systemctl daemon-reload
+# 4. sudo systemctl enable tei-viewer
+# 5. sudo systemctl start tei-viewer
+
+[Unit]
+Description=TEI XML Papyrus Viewer
+Documentation=https://github.com/yourusername/tei-viewer
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# User and group to run as (change as needed)
+User=www-data
+Group=www-data
+
+# Working directory - point to your dist folder
+WorkingDirectory=/var/www/tei-viewer/dist
+
+# Command to run a simple HTTP server
+# Option 1: Using Python (install python3 first)
+ExecStart=/usr/bin/python3 -m http.server 8080
+
+# Option 2: Using a simple static file server (install 'miniserve' first)
+# ExecStart=/usr/local/bin/miniserve --port 8080 /var/www/tei-viewer/dist
+
+# Option 3: If you have a compiled static server
+# ExecStart=/usr/local/bin/static-web-server --port 8080 --root /var/www/tei-viewer/dist
+
+# Restart policy
+Restart=on-failure
+RestartSec=10s
+
+# Resource limits (optional - adjust as needed)
+MemoryLimit=512M
+CPUQuota=50%
+
+# Security hardening (optional but recommended)
+# Restrict privileges
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/tei-viewer
+
+# Network restrictions
+# RestrictAddressFamilies=AF_INET AF_INET6
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=tei-viewer
+
+[Install]
+WantedBy=multi-user.target
+
+# Notes:
+# - This service file runs a simple HTTP server. For production, use Nginx/Apache instead.
+# - Make sure the port (8080) is not already in use
+# - Configure your firewall to allow the port if needed
+# - For production, place this behind a reverse proxy (Nginx) with SSL
+#
+# Commands:
+#   Start:   sudo systemctl start tei-viewer
+#   Stop:    sudo systemctl stop tei-viewer
+#   Restart: sudo systemctl restart tei-viewer
+#   Status:  sudo systemctl status tei-viewer
+#   Logs:    sudo journalctl -u tei-viewer -f
+#   Enable:  sudo systemctl enable tei-viewer (start on boot)
+#   Disable: sudo systemctl disable tei-viewer

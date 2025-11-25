@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  tei-viewer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tei-viewer
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "com.tei-viewer.description=TEI XML Papyrus Viewer"
+      - "com.tei-viewer.version=1.0"
+
+  # Optional: Add an HTTPS reverse proxy with Traefik
+  # Uncomment this section if you want automatic SSL
+  #
+  # traefik:
+  #   image: traefik:v2.10
+  #   container_name: tei-viewer-traefik
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  #     - "./traefik/traefik.yml:/traefik.yml:ro"
+  #     - "./traefik/acme.json:/acme.json"
+  #   restart: unless-stopped
+  #   labels:
+  #     - "traefik.enable=true"
+
+  # Update tei-viewer service with Traefik labels:
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.tei-viewer.rule=Host(`tei-viewer.example.com`)"
+  #     - "traefik.http.routers.tei-viewer.entrypoints=websecure"
+  #     - "traefik.http.routers.tei-viewer.tls.certresolver=letsencrypt"
+  #     - "traefik.http.services.tei-viewer.loadbalancer.server.port=80"
+
+networks:
+  default:
+    name: tei-viewer-network
