@@ -66,17 +66,17 @@ else
 fi
 echo ""
 
-# Clean previous build
-if [ -d "dist" ]; then
-    echo "🧹 Cleaning previous build..."
-    rm -rf dist
-fi
-
 # Build with correct public URL for GitHub Pages
+# DO NOT delete dist/ until we verify new build succeeds
 echo "🔨 Building for GitHub Pages..."
 echo "   Public URL: /$REPO_NAME/"
 echo "   Note: Using dev build due to wasm-opt compatibility issues"
 echo ""
+
+# Build into a temporary directory first for safety
+if [ -d "dist" ]; then
+    echo "   (Keeping old dist/ until new build verified)"
+fi
 
 # Run build and capture exit code
 trunk build --public-url /$REPO_NAME/
@@ -119,11 +119,47 @@ touch dist/.nojekyll
 echo ""
 echo "✅ Build complete!"
 echo ""
+
+# CRITICAL: Verify dist/ exists and has content BEFORE switching branches
+if [ ! -d "dist" ]; then
+    echo "❌ FATAL ERROR: dist/ directory does not exist!"
+    echo "   Build succeeded but dist/ was not created."
+    echo "   This is unexpected. Please check trunk output above."
+    echo ""
+    echo "⚠️  DEPLOYMENT ABORTED - Your projects/ folder is safe."
+    exit 1
+fi
+
+if [ -z "$(ls -A dist 2>/dev/null)" ]; then
+    echo "❌ FATAL ERROR: dist/ directory is empty!"
+    echo "   Build did not produce any output files."
+    echo ""
+    echo "⚠️  DEPLOYMENT ABORTED - Your projects/ folder is safe."
+    exit 1
+fi
+
+# Verify critical files exist in dist
+if [ ! -f "dist/index.html" ]; then
+    echo "❌ FATAL ERROR: dist/index.html not found!"
+    echo "   Build incomplete."
+    echo ""
+    echo "⚠️  DEPLOYMENT ABORTED - Your projects/ folder is safe."
+    exit 1
+fi
+
+echo "✅ dist/ directory verified - safe to proceed"
+echo "   Contents: $(ls dist/ | tr '\n' ' ')"
+echo ""
 echo "📤 Deploying to GitHub Pages..."
 echo ""
 
-# Save the current commit hash for reference
+# Save the current commit hash and branch for reference
 CURRENT_COMMIT=$(git rev-parse --short HEAD)
+CURRENT_BRANCH=$(git branch --show-current)
+
+echo "   Current branch: $CURRENT_BRANCH"
+echo "   Will deploy from commit: $CURRENT_COMMIT"
+echo ""
 
 # Stash any changes if needed
 STASH_NEEDED=false
@@ -148,8 +184,14 @@ find . -maxdepth 1 ! -name '.git' ! -name '.' ! -name '..' -exec rm -rf {} + 2>/
 
 # Copy built files to root
 echo "📋 Copying new build..."
-cp -r dist/* .
+if ! cp -r dist/* . 2>/dev/null; then
+    echo "❌ ERROR: Failed to copy dist/* to gh-pages branch"
+    echo "   Aborting deployment and returning to $CURRENT_BRANCH"
+    git checkout $CURRENT_BRANCH
+    exit 1
+fi
 cp dist/.nojekyll . 2>/dev/null || true
+echo "   Copied: $(ls | grep -v '^\.git$' | tr '\n' ' ')"
 
 # Add all files
 git add -A
@@ -173,6 +215,17 @@ git push origin gh-pages --force
 # Return to original branch
 echo "🔙 Returning to $CURRENT_BRANCH branch..."
 git checkout $CURRENT_BRANCH
+
+# Verify we're back on the correct branch
+VERIFY_BRANCH=$(git branch --show-current)
+if [ "$VERIFY_BRANCH" != "$CURRENT_BRANCH" ]; then
+    echo "⚠️  WARNING: Expected to be on $CURRENT_BRANCH but on $VERIFY_BRANCH"
+fi
+
+# Clean up dist directory (optional - can keep for debugging)
+# Uncomment the next line if you want to auto-delete dist/ after deployment
+# rm -rf dist
+echo "   Keeping dist/ for inspection (delete manually if needed: rm -rf dist)"
 
 # Restore stashed changes if any
 if [ "$STASH_NEEDED" = true ]; then
