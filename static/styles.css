@@ -378,15 +378,16 @@ body {
 }
 
 .text-panel {
-    flex: 1 1 50%;
-    background-color: rgba(22, 30, 4a, 0.8);
-    border: 1px solid #3a8dde;
+    flex: 1 1 auto;
+    background-color: #22304a;
+    border: 2px solid #3a8dde;
     border-radius: 8px;
     padding: 1rem;
     overflow: auto;
     display: flex;
     flex-direction: column;
-    min-height: 300px;
+    min-height: 200px;
+    white-space: pre-wrap; /* Preserve spaces and line breaks */
 }
 
 .text-panel h3 {
@@ -404,6 +405,7 @@ body {
     /* Better scrolling on mobile */
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    white-space: pre-wrap; /* Preserve spaces and line breaks */
 }
 
 /* Custom scrollbar */
@@ -469,7 +471,9 @@ body {
 
 .line-content {
     flex: 1;
+    white-space: pre-wrap;
     font-size: 1.2rem;
+    word-spacing: 1.2;
     line-height: 1.8;
     color: #eaf6fb;
 }

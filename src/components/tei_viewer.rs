@@ -852,7 +852,7 @@ impl TeiViewer {
                 <span class="person-name" title={if !tipo.is_empty() { format!("[Persona] Tipo: {}", tipo) } else { "[Persona]".to_string() }}>{ name }</span>
             },
             TextNode::PlaceName { name } => html! {
-                <span class="place-name" title="[Lugar]">{ name }</span>
+                <span class="place-name" title={format!("[Lugar]: {}", name)}>{ name }</span>
             },
             TextNode::Ref {
                 ref_type,
@@ -889,185 +889,185 @@ impl TeiViewer {
         }
     }
 
-    fn render_legend(&self, ctx: &Context<Self>) -> Html {
-        if !self.show_legend {
-            return html! {};
-        }
+        fn render_legend(&self, ctx: &Context<Self>) -> Html {
+            if !self.show_legend {
+                return html! {};
+            }
 
-        let on_close = ctx.link().callback(|_| TeiViewerMsg::ToggleLegend);
+            let on_close = ctx.link().callback(|_| TeiViewerMsg::ToggleLegend);
 
-        html! {
-            <div class="legend-panel">
-                <div class="legend-header">
-                    <h3>{"Leyenda de Colores"}</h3>
-                    <button class="close-btn" onclick={on_close}>{"×"}</button>
-                </div>
-                <div class="legend-items">
-                    <div class="legend-item">
-                        <span class="legend-swatch abbreviation">{"Ab"}</span>
-                        <span class="legend-label">{"Abreviatura"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch correction">{"Co"}</span>
-                        <span class="legend-label">{"Corrección"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch regularised">{"Rg"}</span>
-                        <span class="legend-label">{"Regularización"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch number">{"12"}</span>
-                        <span class="legend-label">{"Número"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch person-name">{"Pe"}</span>
-                        <span class="legend-label">{"Persona"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch place-name">{"Lu"}</span>
-                        <span class="legend-label">{"Lugar"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch ref">{"Rf"}</span>
-                        <span class="legend-label">{"Referencia"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch unclear">{"??"}</span>
-                        <span class="legend-label">{"Texto incierto"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch rs-divine">{"Dv"}</span>
-                        <span class="legend-label">{"Entidad divina"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch rs-astral">{"As"}</span>
-                        <span class="legend-label">{"Entidad astral"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch footnote-ref">{"1"}</span>
-                        <span class="legend-label">{"Nota al pie"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch hi-bold">{"N"}</span>
-                        <span class="legend-label">{"Negrita"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch hi-italic">{"C"}</span>
-                        <span class="legend-label">{"Cursiva"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch hi-superscript">{"x²"}</span>
-                        <span class="legend-label">{"Superíndice"}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-swatch hi-subscript">{"H₂O"}</span>
-                        <span class="legend-label">{"Subíndice"}</span>
-                    </div>
-                </div>
-            </div>
-        }
-    }
-
-    fn render_footnotes(&self, footnotes: &[Footnote]) -> Html {
-        if footnotes.is_empty() {
-            return html! {};
-        }
-
-        html! {
-            <div class="footnotes-section">
-                <hr class="footnotes-divider" />
-                <h4>{"Notas"}</h4>
-                <ol class="footnotes-list">
-                    { for footnotes.iter().map(|note| {
-                        let note_num = note.n.clone();
-                        let note_id = note.id.clone();
-                        html! {
-                            <li id={note_id.clone()} class="footnote-item">
-                                <a href={format!("#ref_{}", note_id)} class="footnote-number">{ &note_num }</a>
-                                <span class="footnote-content">{ &note.content }</span>
-                            </li>
-                        }
-                    }) }
-                </ol>
-            </div>
-        }
-    }
-
-    fn render_metadata_popup(&self, ctx: &Context<Self>) -> Html {
-        if !self.show_metadata_popup {
-            return html! {};
-        }
-        let dip = self.diplomatic.as_ref();
-        let trad = self.translation.as_ref();
-        let on_close = ctx.link().callback(|_| TeiViewerMsg::ToggleMetadata);
-        let on_toggle_dip = ctx.link().callback(|_| TeiViewerMsg::ToggleMetadataDip);
-        let on_toggle_trad = ctx.link().callback(|_| TeiViewerMsg::ToggleMetadataTrad);
-
-        html! {
-            <div class="metadata-popup-overlay">
-                <div class="metadata-popup">
-                    <div class="metadata-popup-header">
-                        <h2>{"Metadatos"}</h2>
+            html! {
+                <div class="legend-panel">
+                    <div class="legend-header">
+                        <h3>{"Leyenda de Colores"}</h3>
                         <button class="close-btn" onclick={on_close}>{"×"}</button>
                     </div>
-                    <div class="metadata-popup-selectors">
-                        <label>
-                            <input type="radio" name="metadata-select"
-                                checked={matches!(self.metadata_selected, Some(ViewType::Diplomatic))}
-                                onclick={on_toggle_dip} />
-                            {"Diplomática"}
-                        </label>
-                        <label>
-                            <input type="radio" name="metadata-select"
-                                checked={matches!(self.metadata_selected, Some(ViewType::Translation))}
-                                onclick={on_toggle_trad} />
-                            {"Traducción"}
-                        </label>
-                    </div>
-                    <div class="metadata-popup-content">
-                        { if matches!(self.metadata_selected, Some(ViewType::Diplomatic)) && dip.is_some() {
-                            self.render_metadata_panel_for(dip, "Edición Diplomática")
-                        } else if matches!(self.metadata_selected, Some(ViewType::Translation)) && trad.is_some() {
-                            self.render_metadata_panel_for(trad, "Traducción")
-                        } else {
-                            html!{ <p>{"No hay metadatos disponibles para la edición seleccionada."}</p> }
-                        } }
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="legend-swatch abbreviation">{"Ab"}</span>
+                            <span class="legend-label">{"Abreviatura"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch correction">{"Co"}</span>
+                            <span class="legend-label">{"Corrección"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch regularised">{"Rg"}</span>
+                            <span class="legend-label">{"Regularización"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch number">{"12"}</span>
+                            <span class="legend-label">{"Número"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch person-name">{"Pe"}</span>
+                            <span class="legend-label">{"Persona"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch place-name">{"Lu"}</span>
+                            <span class="legend-label">{"Lugar"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch ref">{"Rf"}</span>
+                            <span class="legend-label">{"Referencia"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch unclear">{"??"}</span>
+                            <span class="legend-label">{"Texto incierto"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch rs-divine">{"Dv"}</span>
+                            <span class="legend-label">{"Entidad divina"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch rs-astral">{"As"}</span>
+                            <span class="legend-label">{"Entidad astral"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch footnote-ref">{"1"}</span>
+                            <span class="legend-label">{"Nota al pie"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch hi-bold">{"N"}</span>
+                            <span class="legend-label">{"Negrita"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch hi-italic">{"C"}</span>
+                            <span class="legend-label">{"Cursiva"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch hi-superscript">{"x²"}</span>
+                            <span class="legend-label">{"Superíndice"}</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-swatch hi-subscript">{"H₂O"}</span>
+                            <span class="legend-label">{"Subíndice"}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    }
-
-    fn render_metadata_panel_for(&self, doc_opt: Option<&TeiDocument>, label: &str) -> Html {
-        if let Some(doc) = doc_opt {
-            html! {
-                <>
-                    <h3>{ label }</h3>
-                    <dl>
-                        <dt>{"Título:"}</dt><dd>{ &doc.metadata.title }</dd>
-                        <dt>{"Autor:"}</dt><dd>{ &doc.metadata.author }</dd>
-                        <dt>{"Editor:"}</dt><dd>{ &doc.metadata.editor }</dd>
-                        <dt>{"Tipo de Edición:"}</dt><dd>{ &doc.metadata.edition_type }</dd>
-                        <dt>{"Idioma:"}</dt><dd>{ &doc.metadata.language }</dd>
-                        { if let Some(c) = &doc.metadata.country { html!{<><dt>{"País:"}</dt><dd>{c}</dd></>} } else { html!{} } }
-                        { if let Some(s) = &doc.metadata.settlement { html!{<><dt>{"Ciudad:"}</dt><dd>{s}</dd></>} } else { html!{} } }
-                        { if let Some(i) = &doc.metadata.institution { html!{<><dt>{"Institución:"}</dt><dd>{i}</dd></>} } else { html!{} } }
-                        { if let Some(col) = &doc.metadata.collection { html!{<><dt>{"Colección:"}</dt><dd>{col}</dd></>} } else { html!{} } }
-                        { if let Some(sig) = &doc.metadata.siglum { html!{<><dt>{"Sigla:"}</dt><dd>{sig}</dd></>} } else { html!{} } }
-                    </dl>
-                    <h4>{"Información de Imagen"}</h4>
-                    <dl>
-                        <dt>{"ID de Superficie:"}</dt><dd>{ &doc.facsimile.surface_id }</dd>
-                        <dt>{"Archivo de Imagen:"}</dt><dd>{ &doc.facsimile.image_url }</dd>
-                        <dt>{"Dimensiones Declaradas:"}</dt><dd>{ format!("{} × {} píxeles", doc.facsimile.width, doc.facsimile.height) }</dd>
-                        <dt>{"Dimensiones Intrínsecas (cargadas):"}</dt><dd>{ format!("{} × {} píxeles", self.image_nat_w, self.image_nat_h) }</dd>
-                        <dt>{"Zonas:"}</dt><dd>{ format!("{} zonas", doc.facsimile.zones.len()) }</dd>
-                        <dt>{"Líneas:"}</dt><dd>{ format!("{} líneas", doc.lines.len()) }</dd>
-                    </dl>
-                </>
             }
-        } else {
-            html! {}
+        }
+
+        fn render_footnotes(&self, footnotes: &[Footnote]) -> Html {
+            if footnotes.is_empty() {
+                return html! {};
+            }
+
+            html! {
+                <div class="footnotes-section">
+                    <hr class="footnotes-divider" />
+                    <h4>{"Notas"}</h4>
+                    <ol class="footnotes-list">
+                        { for footnotes.iter().map(|note| {
+                            let note_num = note.n.clone();
+                            let note_id = note.id.clone();
+                            html! {
+                                <li id={note_id.clone()} class="footnote-item">
+                                    <a href={format!("#ref_{}", note_id)} class="footnote-number">{ &note_num }</a>
+                                    <span class="footnote-content">{ &note.content }</span>
+                                </li>
+                            }
+                        }) }
+                    </ol>
+                </div>
+            }
+        }
+
+        fn render_metadata_popup(&self, ctx: &Context<Self>) -> Html {
+            if !self.show_metadata_popup {
+                return html! {};
+            }
+            let dip = self.diplomatic.as_ref();
+            let trad = self.translation.as_ref();
+            let on_close = ctx.link().callback(|_| TeiViewerMsg::ToggleMetadata);
+            let on_toggle_dip = ctx.link().callback(|_| TeiViewerMsg::ToggleMetadataDip);
+            let on_toggle_trad = ctx.link().callback(|_| TeiViewerMsg::ToggleMetadataTrad);
+
+            html! {
+                <div class="metadata-popup-overlay">
+                    <div class="metadata-popup">
+                        <div class="metadata-popup-header">
+                            <h2>{"Metadatos"}</h2>
+                            <button class="close-btn" onclick={on_close}>{"×"}</button>
+                        </div>
+                        <div class="metadata-popup-selectors">
+                            <label>
+                                <input type="radio" name="metadata-select"
+                                    checked={matches!(self.metadata_selected, Some(ViewType::Diplomatic))}
+                                    onclick={on_toggle_dip} />
+                                {"Diplomática"}
+                            </label>
+                            <label>
+                                <input type="radio" name="metadata-select"
+                                    checked={matches!(self.metadata_selected, Some(ViewType::Translation))}
+                                    onclick={on_toggle_trad} />
+                                {"Traducción"}
+                            </label>
+                        </div>
+                        <div class="metadata-popup-content">
+                            { if matches!(self.metadata_selected, Some(ViewType::Diplomatic)) && dip.is_some() {
+                                self.render_metadata_panel_for(dip, "Edición Diplomática")
+                            } else if matches!(self.metadata_selected, Some(ViewType::Translation)) && trad.is_some() {
+                                self.render_metadata_panel_for(trad, "Traducción")
+                            } else {
+                                html!{ <p>{"No hay metadatos disponibles para la edición seleccionada."}</p> }
+                            } }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        fn render_metadata_panel_for(&self, doc_opt: Option<&TeiDocument>, label: &str) -> Html {
+            if let Some(doc) = doc_opt {
+                html! {
+                    <>
+                        <h3>{ label }</h3>
+                        <dl>
+                            <dt>{"Título:"}</dt><dd>{ &doc.metadata.title }</dd>
+                            <dt>{"Autor:"}</dt><dd>{ &doc.metadata.author }</dd>
+                            <dt>{"Editor:"}</dt><dd>{ &doc.metadata.editor }</dd>
+                            <dt>{"Tipo de Edición:"}</dt><dd>{ &doc.metadata.edition_type }</dd>
+                            <dt>{"Idioma:"}</dt><dd>{ &doc.metadata.language }</dd>
+                            { if let Some(c) = &doc.metadata.country { html!{<><dt>{"País:"}</dt><dd>{c}</dd></>} } else { html!{} } }
+                            { if let Some(s) = &doc.metadata.settlement { html!{<><dt>{"Ciudad:"}</dt><dd>{s}</dd></>} } else { html!{} } }
+                            { if let Some(i) = &doc.metadata.institution { html!{<><dt>{"Institución:"}</dt><dd>{i}</dd></>} } else { html!{} } }
+                            { if let Some(col) = &doc.metadata.collection { html!{<><dt>{"Colección:"}</dt><dd>{col}</dd></>} } else { html!{} } }
+                            { if let Some(sig) = &doc.metadata.siglum { html!{<><dt>{"Sigla:"}</dt><dd>{sig}</dd></>} } else { html!{} } }
+                        </dl>
+                        <h4>{"Información de Imagen"}</h4>
+                        <dl>
+                            <dt>{"ID de Superficie:"}</dt><dd>{ &doc.facsimile.surface_id }</dd>
+                            <dt>{"Archivo de Imagen:"}</dt><dd>{ &doc.facsimile.image_url }</dd>
+                            <dt>{"Dimensiones Declaradas:"}</dt><dd>{ format!("{} × {} píxeles", doc.facsimile.width, doc.facsimile.height) }</dd>
+                            <dt>{"Dimensiones Intrínsecas (cargadas):"}</dt><dd>{ format!("{} × {} píxeles", self.image_nat_w, self.image_nat_h) }</dd>
+                            <dt>{"Zonas:"}</dt><dd>{ format!("{} zonas", doc.facsimile.zones.len()) }</dd>
+                            <dt>{"Líneas:"}</dt><dd>{ format!("{} líneas", doc.lines.len()) }</dd>
+                        </dl>
+                    </>
+                }
+            } else {
+                html! {}
+            }
         }
     }
-}
