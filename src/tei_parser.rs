@@ -5,9 +5,16 @@ use quick_xml::events::Event;
 use quick_xml::Reader;
 use std::collections::HashMap;
 
+fn normalize_whitespace(s: &str) -> String {
+    // Collapse runs of whitespace (spaces, tabs, newlines) into a single space.
+    // This avoids losing spacing that quick-xml might otherwise trim.
+    s.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
 pub fn parse_tei_xml(xml_content: &str) -> Result<TeiDocument, String> {
     let mut reader = Reader::from_str(xml_content);
-    reader.trim_text(true);
+    // Let the parser deliver raw text nodes; normalize whitespace explicitly.
+    reader.trim_text(false);
 
     let mut doc = TeiDocument::new();
     let mut buf = Vec::new();
@@ -290,8 +297,9 @@ pub fn parse_tei_xml(xml_content: &str) -> Result<TeiDocument, String> {
             }
 
             Ok(Event::Text(e)) => {
-                let text = e.unescape().unwrap_or_default().to_string();
-                if !text.trim().is_empty() {
+                let raw = e.unescape().unwrap_or_default().to_string();
+                let text = normalize_whitespace(&raw);
+                if !text.is_empty() {
                     text_buffer.push(text);
                 }
             }
@@ -761,7 +769,8 @@ fn parse_inline_nodes<R: std::io::BufRead>(
                 }
             }
             Ok(Event::Text(e)) => {
-                let t = e.unescape().unwrap_or_default().to_string();
+                let raw = e.unescape().unwrap_or_default().to_string();
+                let t = normalize_whitespace(&raw);
                 if !t.is_empty() {
                     nodes.push(TextNode::Text { content: t });
                 }
