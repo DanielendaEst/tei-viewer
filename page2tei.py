@@ -721,9 +721,14 @@ def collect_metadata(args: argparse.Namespace, input_file: str) -> Dict[str, Any
     else:
         print(f"  Editor: {meta['edition_editor']}")
 
-    modify = (
-        input("\nDo you want to modify these defaults? (y/n) [n]: ").strip().lower()
-    )
+    # Respect the --yes/-y flag for non-interactive runs: if supplied, assume
+    # the user does NOT want to modify defaults (i.e., default 'n').
+    if getattr(args, "yes", False):
+        modify = "n"
+    else:
+        modify = (
+            input("\nDo you want to modify these defaults? (y/n) [n]: ").strip().lower()
+        )
 
     if modify in ("y", "yes"):
         # Allow modification of key fields
