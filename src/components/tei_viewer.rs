@@ -840,7 +840,7 @@ impl TeiViewer {
                 <abbr title={format!("[Abreviatura] {}", expan)} class="abbreviation">{ abbr }</abbr>
             },
             TextNode::Choice { sic, corr } => html! {
-                <span class="correction" title={format!("[Corrección] Original: {}", sic)}>{ corr }</span>
+                <span class="correction" title={format!("[Corrección] Lectura: {}", corr)}>{ sic }</span>
             },
             TextNode::Regularised { orig, reg } => html! {
                 <span class="regularised" title={format!("[Regularización] Original: {}", orig)}>{ reg }</span>
