@@ -6,9 +6,35 @@ use quick_xml::Reader;
 use std::collections::HashMap;
 
 fn normalize_whitespace(s: &str) -> String {
-    // Collapse runs of whitespace (spaces, tabs, newlines) into a single space.
-    // This avoids losing spacing that quick-xml might otherwise trim.
-    s.split_whitespace().collect::<Vec<_>>().join(" ")
+    // Collapse runs of whitespace (spaces, tabs, newlines) into a single space,
+    // but preserve a single leading and/or trailing space if the original text
+    // had leading/trailing whitespace. This prevents loss of separators between
+    // inline nodes while still normalizing internal runs.
+    let has_leading = s.chars().next().map(|c| c.is_whitespace()).unwrap_or(false);
+    let has_trailing = s
+        .chars()
+        .rev()
+        .next()
+        .map(|c| c.is_whitespace())
+        .unwrap_or(false);
+    let inner = s.split_whitespace().collect::<Vec<_>>().join(" ");
+    if inner.is_empty() {
+        // If the original contained only whitespace, preserve a single space.
+        if has_leading || has_trailing {
+            return " ".to_string();
+        } else {
+            return String::new();
+        }
+    }
+    let mut res = String::new();
+    if has_leading {
+        res.push(' ');
+    }
+    res.push_str(&inner);
+    if has_trailing {
+        res.push(' ');
+    }
+    res
 }
 
 pub fn parse_tei_xml(xml_content: &str) -> Result<TeiDocument, String> {
