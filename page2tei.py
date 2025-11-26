@@ -31,6 +31,7 @@ CLI:
 import argparse
 import os
 import re
+import string
 import sys
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional
@@ -181,7 +182,13 @@ def append_text(parent: ET.Element, s: str):
 
 
 def build_styled_nodes(parent: ET.Element, text: str, style_ops: List[Dict[str, Any]]):
-    """Build text with <hi rend="..."> styling."""
+    """Build text with <hi rend="..."> styling.
+
+    Avoid creating <hi> elements for spans that consist only of punctuation
+    (possibly surrounded by whitespace). Punctuation-only <hi> elements can
+    produce unnecessary element boundaries that split inline flow and may
+    lead to unintended line breaks when serialized/rendered.
+    """
     ranges = []
     for op in style_ops:
         rend = []
@@ -207,10 +214,19 @@ def build_styled_nodes(parent: ET.Element, text: str, style_ops: List[Dict[str, 
         if not labels:
             append_text(parent, seg_text)
         else:
-            hi = ET.Element(qn("hi"))
-            hi.set("rend", " ".join(sorted(labels)))
-            hi.text = seg_text
-            parent.append(hi)
+            # If the segment (ignoring surrounding whitespace) consists only of
+            # punctuation characters, do not wrap it in a <hi> element. Instead,
+            # append it as plain text to avoid creating element boundaries that
+            # can split inline content across tags and cause layout/line-break
+            # issues.
+            seg_stripped = seg_text.strip()
+            if seg_stripped and all(ch in string.punctuation for ch in seg_stripped):
+                append_text(parent, seg_text)
+            else:
+                hi = ET.Element(qn("hi"))
+                hi.set("rend", " ".join(sorted(labels)))
+                hi.text = seg_text
+                parent.append(hi)
 
 
 def build_choice_with_styles(
