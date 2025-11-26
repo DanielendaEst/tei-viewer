@@ -106,7 +106,7 @@ pub enum TextNode {
     },
     Hi {
         rend: String,
-        content: String,
+        content: Vec<TextNode>,
     },
 }
 

@@ -508,16 +508,12 @@ fn parse_inline_nodes<R: std::io::BufRead>(
                                 rend = value;
                             }
                         }
-                        // Recursively parse nested content
+                        // Recursively parse nested content and preserve the nested nodes
                         let inner = parse_inline_nodes(reader, buf, "hi");
-                        let content = inner
-                            .into_iter()
-                            .filter_map(|n| match n {
-                                TextNode::Text { content } => Some(content),
-                                _ => None,
-                            })
-                            .collect::<String>();
-                        nodes.push(TextNode::Hi { rend, content });
+                        nodes.push(TextNode::Hi {
+                            rend,
+                            content: inner,
+                        });
                     }
                     "num" => {
                         let mut value = 0;
