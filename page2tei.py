@@ -66,13 +66,12 @@ def qn(name: str) -> ET.QName:
 
 
 def prettify(elem: ET.Element) -> str:
-    """Pretty-print XML element."""
-    raw = ET.tostring(elem, encoding="utf-8")
-    return (
-        minidom.parseString(raw)
-        .toprettyxml(indent="  ", encoding="utf-8")
-        .decode("utf-8")
-    )
+    """Serialize XML element compactly (no added indentation/newlines).
+
+    Use ElementTree's serialization to avoid introducing indentation text nodes
+    that can become spurious whitespace in downstream processing.
+    """
+    return ET.tostring(elem, encoding="utf-8", method="xml").decode("utf-8")
 
 
 def detect_edition_type(filename: str) -> Optional[str]:
