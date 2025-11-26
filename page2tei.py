@@ -695,7 +695,11 @@ def collect_metadata(args: argparse.Namespace, input_file: str) -> Dict[str, Any
     # Confirm edition type
     if detected_type:
         print(f"\n📋 Detected edition type: {detected_type}")
-        confirm = input(f"Is this correct? (y/n) [y]: ").strip().lower()
+        # If user passed the --yes/-y flag, assume confirmation automatically.
+        if getattr(args, "yes", False):
+            confirm = "y"
+        else:
+            confirm = input(f"Is this correct? (y/n) [y]: ").strip().lower()
 
     if not detected_type:
         print("\n📋 Select edition type:")
@@ -1108,6 +1112,12 @@ Examples:
     )
     ap.add_argument(
         "--output", "-o", default="-", help='Output TEI-XML file or "-" for stdout'
+    )
+    ap.add_argument(
+        "--yes",
+        "-y",
+        action="store_true",
+        help="Assume 'yes' for interactive prompts (allow non-interactive runs)",
     )
 
     # Metadata arguments (optional, will prompt if not provided)
