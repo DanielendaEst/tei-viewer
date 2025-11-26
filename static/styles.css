@@ -386,8 +386,7 @@ body {
     overflow: auto;
     display: flex;
     flex-direction: column;
-    min-height: 200px;
-    white-space: pre-wrap; /* Preserve spaces and line breaks */
+    min-height: 200px; /* Preserve spaces and line breaks */
 }
 
 .text-panel h3 {
@@ -404,8 +403,7 @@ body {
     padding-right: 0.1rem;
     /* Better scrolling on mobile */
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    white-space: pre-wrap; /* Preserve spaces and line breaks */
+    overscroll-behavior: contain; /* Preserve spaces and line breaks */
 }
 
 /* Custom scrollbar */
@@ -471,7 +469,6 @@ body {
 
 .line-content {
     flex: 1;
-    white-space: pre-wrap;
     font-size: 1.2rem;
     word-spacing: 1.2;
     line-height: 1.8;
@@ -484,6 +481,18 @@ body {
 
 /* Abbreviations */
 .abbreviation {
+    /* Keep the abbreviation visually distinct but prevent it from causing
+       unwanted line breaks adjacent to surrounding text. Display as an
+       inline-block and avoid internal wrapping so the element stays attached
+       to surrounding glyphs when possible. */
+    display: inline-block;
+    vertical-align: baseline;
+    white-space: nowrap;
+    word-break: keep-all;
+    -webkit-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+
     text-decoration: underline dotted;
     text-decoration-color: #667eea;
     cursor: help;
@@ -499,6 +508,15 @@ body {
 
 /* Corrections */
 .correction {
+    /* Keep correction tokens from being split from adjacent words */
+    display: inline-block;
+    vertical-align: baseline;
+    white-space: nowrap;
+    word-break: keep-all;
+    -webkit-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+
     color: #e74c3c;
     text-decoration: underline wavy;
     text-decoration-color: #e74c3c;
@@ -513,6 +531,16 @@ body {
 
 /* Regularised text */
 .regularised {
+    /* Prevent regularised spans from introducing line-break opportunities
+       between pieces of a single token. */
+    display: inline-block;
+    vertical-align: baseline;
+    white-space: nowrap;
+    word-break: keep-all;
+    -webkit-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+
     color: #16a34a;
     text-decoration: underline dotted;
     text-decoration-color: #16a34a;
@@ -527,6 +555,16 @@ body {
 
 /* Numbers */
 .number {
+    /* Numbers often appear inline with words; keep them from being split
+       across lines and avoid internal wrapping that could break adjacent text. */
+    display: inline-block;
+    vertical-align: baseline;
+    white-space: nowrap;
+    word-break: keep-all;
+    -webkit-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+
     color: #22c55e;
     background: rgba(34, 197, 94, 0.08);
     border-bottom: 2px solid #22c55e;
@@ -535,7 +573,6 @@ body {
     border-radius: 3px;
     font-size: 1.08em;
     letter-spacing: 0.01em;
-    display: inline;
     transition:
         background 0.2s,
         color 0.2s;
