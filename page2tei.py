@@ -352,11 +352,7 @@ def build_placeName(
     inner_style_ops: List[Dict[str, Any]],
     global_offset: int,
 ) -> ET.Element:
-    """Build <placeName> element with nested attributes like <country> while preserving the original text.
-    NOTE: store ancillary place attributes as data-* attributes on the <placeName> element rather than
-    inserting child elements. This keeps the inline flow intact (no additional line/element breaks),
-    and lets the viewer show those attributes on hover.
-    """
+    """Build <placeName> element with nested attributes like <country> while preserving the original text."""
     placeName = ET.Element(qn("placeName"))
 
     # Always preserve the original text as the main content
@@ -371,13 +367,12 @@ def build_placeName(
             adj_styles.append(cp)
     build_styled_nodes(placeName, witness_text, adj_styles)
 
-    # Instead of creating nested child elements (which can introduce unwanted line breaks),
-    # attach place metadata as data-* attributes so the viewer can reveal them on hover.
+    # Append nested attributes as child elements
     nested_attrs = ["country", "region", "settlement", "district"]
     for attr in nested_attrs:
-        if attr in place_op and place_op[attr] is not None:
-            # Use data- attributes to avoid structural changes in the inline text flow.
-            placeName.set(f"data-{attr}", place_op[attr])
+        if attr in place_op:
+            child = ET.SubElement(placeName, qn(attr))
+            child.text = place_op[attr]
 
     return placeName
 
