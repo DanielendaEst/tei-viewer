@@ -583,11 +583,48 @@ fn parse_inline_nodes<R: std::io::BufRead>(
                         nodes.push(TextNode::PersName { name, tipo });
                     }
                     "placeName" => {
+                        // Collect the visible name text plus any ancillary place attributes
+                        // (e.g., <country>, <region>, <settlement>, etc.) into a map.
                         let mut name = String::new();
+                        let mut attrs = HashMap::new();
                         let mut place_buf = Vec::new();
+
                         loop {
                             match reader.read_event_into(&mut place_buf) {
+                                Ok(Event::Start(ref ce)) => {
+                                    // Child element inside <placeName> (e.g., <country>)
+                                    let child_name =
+                                        String::from_utf8_lossy(ce.local_name().as_ref())
+                                            .to_string();
+                                    // Collect text for the child element until its end
+                                    let mut child_text = String::new();
+                                    let mut child_buf = Vec::new();
+                                    loop {
+                                        match reader.read_event_into(&mut child_buf) {
+                                            Ok(Event::Text(ct)) => {
+                                                child_text
+                                                    .push_str(&ct.unescape().unwrap_or_default());
+                                            }
+                                            Ok(Event::End(ref cend)) => {
+                                                let end_name = String::from_utf8_lossy(
+                                                    cend.local_name().as_ref(),
+                                                )
+                                                .to_string();
+                                                if end_name == child_name {
+                                                    break;
+                                                }
+                                            }
+                                            Ok(Event::Eof) => break,
+                                            _ => {}
+                                        }
+                                        child_buf.clear();
+                                    }
+                                    if !child_text.is_empty() {
+                                        attrs.insert(child_name, child_text);
+                                    }
+                                }
                                 Ok(Event::Text(ce)) => {
+                                    // Text nodes that are not children: part of the visible place name
                                     name.push_str(&ce.unescape().unwrap_or_default());
                                 }
                                 Ok(Event::End(ref ce)) => {
@@ -602,7 +639,7 @@ fn parse_inline_nodes<R: std::io::BufRead>(
                             }
                             place_buf.clear();
                         }
-                        nodes.push(TextNode::PlaceName { name });
+                        nodes.push(TextNode::PlaceName { name, attrs });
                     }
                     "rs" => {
                         let mut rs_type = String::new();

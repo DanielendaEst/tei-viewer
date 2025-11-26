@@ -82,6 +82,7 @@ pub enum TextNode {
     },
     PlaceName {
         name: String,
+        attrs: HashMap<String, String>,
     },
     Ref {
         ref_type: String,

@@ -851,9 +851,24 @@ impl TeiViewer {
             TextNode::PersName { name, tipo } => html! {
                 <span class="person-name" title={if !tipo.is_empty() { format!("[Persona] Tipo: {}", tipo) } else { "[Persona]".to_string() }}>{ name }</span>
             },
-            TextNode::PlaceName { name } => html! {
-                <span class="place-name" title={format!("[Lugar]: {}", name)}>{ name }</span>
-            },
+            TextNode::PlaceName { name, attrs } => {
+                // Show only the visible place name inline. Ancillary attributes
+                // (e.g., country, region) are exposed via the element's title so
+                // they appear when hovering. This keeps the inline flow intact.
+                let mut title_parts: Vec<String> = Vec::new();
+                for (k, v) in attrs.iter() {
+                    // Normalize key names for display (optional)
+                    title_parts.push(format!("{}: {}", k, v));
+                }
+                let title = if title_parts.is_empty() {
+                    format!("[Lugar]: {}", name)
+                } else {
+                    format!("{} — {}", name, title_parts.join("; "))
+                };
+                html! {
+                    <span class="place-name" title={title.clone()}>{ name }</span>
+                }
+            }
             TextNode::Ref {
                 ref_type,
                 target,
