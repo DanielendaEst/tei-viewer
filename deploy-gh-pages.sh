@@ -231,6 +231,21 @@ if ! cp -a "$TEMP_DIST"/. . 2>/dev/null; then
 fi
 echo "   Copied: $(ls | grep -v '^\.git$' | tr '\n' ' ')"
 
+# Ensure .github/workflows contains the deployment workflow from main (guarantee it is committed)
+mkdir -p .github/workflows
+
+# Try to copy workflow from local main branch first; fallback to origin/main if necessary
+if git show main:.github/workflows/deploy.yml > .github/workflows/deploy.yml 2>/dev/null; then
+    echo "📌 Included workflow from local main into gh-pages working tree"
+elif git show origin/main:.github/workflows/deploy.yml > .github/workflows/deploy.yml 2>/dev/null; then
+    echo "📌 Included workflow from origin/main into gh-pages working tree"
+else
+    echo "⚠️  Warning: deploy.yml not found in main or origin/main; gh-pages will not include workflow"
+fi
+
+# Stage the workflow explicitly (optional, add will also pick it up via 'git add -A')
+git add .github/workflows/deploy.yml 2>/dev/null || true
+
 # Add all files
 git add -A
 
