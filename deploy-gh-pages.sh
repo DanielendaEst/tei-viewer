@@ -151,6 +151,13 @@ echo "✅ dist/ directory verified - safe to proceed"
 echo "   Contents: $(ls dist/ | tr '\n' ' ')"
 echo ""
 
+# CRITICAL: Ensure workflow is included in dist so it will be preserved on gh-pages
+if [ -f ".github/workflows/deploy.yml" ]; then
+    echo "📌 Including workflow in dist so it will be preserved on gh-pages"
+    mkdir -p dist/.github/workflows
+    cp .github/workflows/deploy.yml dist/.github/workflows/
+fi
+
 # CRITICAL: Copy dist to a temporary location OUTSIDE the repo
 # This prevents it from being deleted when we switch branches
 TEMP_DIST=$(mktemp -d)
