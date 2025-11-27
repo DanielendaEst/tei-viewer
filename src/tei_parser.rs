@@ -6,35 +6,27 @@ use quick_xml::Reader;
 use std::collections::HashMap;
 
 fn normalize_whitespace(s: &str) -> String {
-    // Collapse runs of whitespace (spaces, tabs, newlines) into a single space,
-    // but preserve a single leading and/or trailing space if the original text
-    // had leading/trailing whitespace. This prevents loss of separators between
-    // inline nodes while still normalizing internal runs.
-    let has_leading = s.chars().next().map(|c| c.is_whitespace()).unwrap_or(false);
-    let has_trailing = s
-        .chars()
-        .rev()
-        .next()
-        .map(|c| c.is_whitespace())
-        .unwrap_or(false);
-    let inner = s.split_whitespace().collect::<Vec<_>>().join(" ");
-    if inner.is_empty() {
-        // If the original contained only whitespace, preserve a single space.
-        if has_leading || has_trailing {
-            return " ".to_string();
-        } else {
-            return String::new();
+    // Preserve multi-space runs and non-breaking spaces (U+00A0).
+    // Convert line breaks and tabs to a single ASCII space, but do NOT
+    // collapse multiple ASCII spaces into one. This keeps intentional
+    // spacing such as "      " (multiple spaces or NBSP sequences).
+    //
+    // Rationale: the transcription sometimes uses multiple spaces or NBSP
+    // to indicate layout/spacing that must be preserved (e.g. diplomatic
+    // transcriptions). We therefore only normalize CR/LF/TAB -> ' ' and
+    // otherwise return the characters as they appear.
+    if s.is_empty() {
+        return String::new();
+    }
+
+    let mut out = String::with_capacity(s.len());
+    for ch in s.chars() {
+        match ch {
+            '\r' | '\n' | '\t' => out.push(' '),
+            other => out.push(other),
         }
     }
-    let mut res = String::new();
-    if has_leading {
-        res.push(' ');
-    }
-    res.push_str(&inner);
-    if has_trailing {
-        res.push(' ');
-    }
-    res
+    out
 }
 
 pub fn parse_tei_xml(xml_content: &str) -> Result<TeiDocument, String> {
