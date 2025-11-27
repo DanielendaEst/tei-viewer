@@ -209,8 +209,18 @@ impl Component for TeiViewer {
                         }
                     }
                     Err(e) => {
-                        self.error = Some(e);
-                        self.loading = false;
+                        // If fetching/parsing fails (for example the XML file is missing or a network error),
+                        // treat it as an empty document so the viewer can still display the image and UI.
+                        log::warn!("Failed to load diplomatic: {:?}", e);
+                        self.diplomatic = Some(TeiDocument::new());
+                        // If we already have the translation loaded (even if empty), stop the loading spinner.
+                        if self.translation.is_some() {
+                            self.loading = false;
+                        }
+                        // Preserve existing behavior for metadata popup selection.
+                        if self.show_metadata_popup {
+                            self.metadata_selected = Some(ViewType::Diplomatic);
+                        }
                     }
                 }
                 true
@@ -231,8 +241,21 @@ impl Component for TeiViewer {
                         }
                     }
                     Err(e) => {
-                        self.error = Some(e);
-                        self.loading = false;
+                        // If translation fetch/parsing fails, treat as empty translation so images still show.
+                        log::warn!("Failed to load translation: {:?}", e);
+                        self.translation = Some(TeiDocument::new());
+                        // If we already have the diplomatic loaded (even if empty), stop the loading spinner.
+                        if self.diplomatic.is_some() {
+                            self.loading = false;
+                        }
+                        // Preserve existing behavior for metadata popup selection.
+                        if self.show_metadata_popup {
+                            if self.diplomatic.is_some() {
+                                self.metadata_selected = Some(ViewType::Diplomatic);
+                            } else {
+                                self.metadata_selected = Some(ViewType::Translation);
+                            }
+                        }
                     }
                 }
                 true
