@@ -162,8 +162,8 @@ fi
 # This prevents it from being deleted when we switch branches
 TEMP_DIST=$(mktemp -d)
 echo "📦 Copying dist/ to temporary location outside repo..."
-cp -r dist/* "$TEMP_DIST/"
-cp dist/.nojekyll "$TEMP_DIST/" 2>/dev/null || true
+# Copy including hidden files (dotfiles) so .github and other dotfiles are preserved
+cp -a dist/. "$TEMP_DIST/"
 echo "   Temp location: $TEMP_DIST"
 echo ""
 
