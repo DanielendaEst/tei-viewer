@@ -863,7 +863,7 @@ impl TeiViewer {
                 let title = if title_parts.is_empty() {
                     format!("[Lugar]: {}", name)
                 } else {
-                    format!("{} — {}", name, title_parts.join("; "))
+                    format!("{} — {}", title_parts.join("; "), name)
                 };
                 html! {
                     <span class="place-name" title={title.clone()}>{ name }</span>
