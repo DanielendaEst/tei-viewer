@@ -221,7 +221,8 @@ find . -maxdepth 1 ! -name '.git' ! -name '.' ! -name '..' -exec rm -rf {} + 2>/
 
 # Copy built files from temporary location to root
 echo "📋 Copying new build from temp location..."
-if ! cp -r "$TEMP_DIST"/* . 2>/dev/null; then
+# Use cp -a with the source directory's dotfiles to ensure .github and other hidden files are preserved.
+if ! cp -a "$TEMP_DIST"/. . 2>/dev/null; then
     echo "❌ ERROR: Failed to copy from temp location to gh-pages branch"
     echo "   Aborting deployment and returning to $CURRENT_BRANCH"
     git checkout $CURRENT_BRANCH
