@@ -848,9 +848,37 @@ impl TeiViewer {
             TextNode::Num { value, tipo, text } => html! {
                 <span class="number" title={format!("[Número] Valor: {} | Tipo: {}", value, tipo)}>{ text }</span>
             },
-            TextNode::PersName { name, tipo } => html! {
-                <span class="person-name" title={if !tipo.is_empty() { format!("[Persona] Tipo: {}", tipo) } else { "[Persona]".to_string() }}>{ name }</span>
-            },
+            TextNode::PersName {
+                content,
+                tipo,
+                firstname,
+                continued,
+                ref_uri,
+            } => {
+                // Build a descriptive title from available attributes so hover shows useful metadata
+                let mut title_parts: Vec<String> = Vec::new();
+                if !tipo.is_empty() {
+                    title_parts.push(format!("[Persona] Tipo: {}", tipo));
+                } else {
+                    title_parts.push("[Persona]".to_string());
+                }
+                if let Some(fnme) = firstname {
+                    title_parts.push(format!("Nombre: {}", fnme));
+                }
+                if continued.unwrap_or(false) {
+                    title_parts.push("Continúa".to_string());
+                }
+                if let Some(r) = ref_uri {
+                    title_parts.push(format!("Ref: {}", r));
+                }
+                let title = title_parts.join(" — ");
+
+                html! {
+                    <span class="person-name" title={title}>
+                        { for content.iter().map(|n| self.render_text_node(n)) }
+                    </span>
+                }
+            }
             TextNode::PlaceName { name, attrs } => {
                 // Show only the visible place name inline. Ancillary attributes
                 // (e.g., country, region) are exposed via the element's title so

@@ -131,6 +131,11 @@ def parse_custom_ops(custom_str: str) -> List[Dict[str, Any]]:
                 if k in op:
                     op[k] = "true" if parse_bool(op[k]) else "false"
 
+        # Normalize common boolean-like attributes such as 'continued' so downstream
+        # logic can treat them uniformly as 'true'/'false' strings.
+        if "continued" in op:
+            op["continued"] = "true" if parse_bool(op["continued"]) else "false"
+
         ops.append(op)
 
     return ops
@@ -320,7 +325,7 @@ def build_persName(
     inner_style_ops: List[Dict[str, Any]],
     global_offset: int,
 ) -> ET.Element:
-    """Build <persName> element with type and optional ref."""
+    """Build <persName> element with type, optional ref, firstname and continued flag."""
     persName = ET.Element(qn("persName"))
 
     # Type is always set
@@ -331,6 +336,17 @@ def build_persName(
     if "wikiData" in person_op:
         wikidata_id = person_op["wikiData"]
         persName.set("ref", f"https://www.wikidata.org/wiki/{wikidata_id}")
+
+    # Preserve firstname attribute if present (keep as attribute so it survives
+    # even when the element is continued across lines)
+    if "firstname" in person_op:
+        persName.set("firstname", person_op["firstname"])
+
+    # Preserve and normalize continued flag (string 'true'/'false')
+    if "continued" in person_op:
+        persName.set(
+            "continued", "true" if parse_bool(person_op["continued"]) else "false"
+        )
 
     adj_styles = []
     for op in inner_style_ops:
@@ -512,91 +528,434 @@ def build_inline_nodes_for_line(text: str, ops: List[Dict[str, Any]]) -> List[An
     other_ops = [o for o in ops if o["kind"] not in known_kinds and o["length"] > 0]
 
     # Primary wrapper ops in document order (start asc, end desc for nesting)
+    # Priority: ensure certain semantic wrappers (person/place/ref/unclear) are
+    # considered outermost when they share the exact same span as others.
+    priority = {
+        "person": 0,
+        "place": 0,
+        "ref": 0,
+        "unclear": 0,
+        "abbrev": 1,
+        "sic": 1,
+        "regularised": 1,
+        "num": 1,
+    }
+
+    def op_priority(kind: str) -> int:
+        return priority.get(kind, 2)
+
+    # Make wrapper ordering deterministic: put semantic wrappers first so that
+    # when multiple ops share the exact same span a semantic wrapper (e.g.
+    # person/place/ref/unclear) will wrap choice/abbrev rather than being
+    # nested inside it. This ensures the TEI reflects entity markup outside of
+    # abbreviation choice elements.
     wrappers = sorted(
-        choice_ops
-        + num_ops
-        + person_ops
+        person_ops
         + place_ops
         + ref_ops
         + unclear_ops
+        + choice_ops
+        + num_ops
         + other_ops,
-        key=lambda x: (x["offset"], -x["end"]),
+        key=lambda x: (x["offset"], -x["end"], op_priority(x["kind"])),
     )
 
-    nodes: List[Any] = []
-    cursor = 0
+    # Build containment tree so nested wrappers are preserved instead of discarded.
+    # Each wrapper knows its children (wrappers fully contained within it).
+    children = {i: [] for i in range(len(wrappers))}
+    roots: List[int] = []
 
-    for w in wrappers:
-        start, end = w["offset"], w["end"]
-
-        # Skip overlapping annotations (keep first occurrence)
-        if start < cursor:
-            continue
-
-        # Text before this wrapper
-        pre = text[cursor:start]
-        if pre:
-            tmp = ET.Element("tmp")
-            pre_styles = [
-                s for s in style_ops if cursor <= s["offset"] and s["end"] <= start
-            ]
-            build_styled_nodes(tmp, pre, pre_styles)
-            if tmp.text:
-                nodes.append(tmp.text)
-            for ch in list(tmp):
-                nodes.append(ch)
-                if ch.tail:
-                    nodes.append(ch.tail)
-                    ch.tail = None
-
-        # The annotated span
-        witness = text[start:end]
-        inner_styles = [
-            s for s in style_ops if start <= s["offset"] and s["end"] <= end
-        ]
-
-        # Build appropriate element
-        if w["kind"] in ("abbrev", "sic", "regularised"):
-            if w["kind"] == "abbrev":
-                alt = w.get("expansion")
-            elif w["kind"] == "sic":
-                alt = w.get("correction")
-            else:  # regularised
-                alt = w.get("original")
-            el = build_choice_with_styles(
-                w["kind"], witness, alt or "", inner_styles, start
-            )
-        elif w["kind"] == "num":
-            el = build_num_with_styles(witness, w, inner_styles, start)
-        elif w["kind"] == "person":
-            el = build_persName(witness, w, inner_styles, start)
-        elif w["kind"] == "place":
-            el = build_placeName(witness, w, inner_styles, start)
-        elif w["kind"] == "ref":
-            el = build_ref(witness, w, inner_styles, start)
-        elif w["kind"] == "unclear":
-            el = build_unclear(witness, w, inner_styles, start)
+    for i, w in enumerate(wrappers):
+        parent_idx = None
+        # find the nearest enclosing wrapper (if any)
+        for j in range(i - 1, -1, -1):
+            pw = wrappers[j]
+            if pw["offset"] <= w["offset"] and pw["end"] >= w["end"]:
+                parent_idx = j
+                break
+        if parent_idx is None:
+            roots.append(i)
         else:
-            el = build_fallback_seg(witness, w, inner_styles, start)
+            children[parent_idx].append(i)
 
-        nodes.append(el)
-        cursor = end
-
-    # Tail after last wrapper
-    if cursor < len(text):
-        tail = text[cursor:]
+    def render_plain_segment(seg_start: int, seg_end: int) -> List[Any]:
+        """Render a plain text segment (no wrapper boundaries inside) with styles."""
+        seg_nodes: List[Any] = []
+        seg_text = text[seg_start:seg_end]
+        if not seg_text:
+            return seg_nodes
         tmp = ET.Element("tmp")
-        tail_styles = [
-            s for s in style_ops if cursor <= s["offset"] and s["end"] <= len(text)
+        seg_styles = [
+            s for s in style_ops if seg_start <= s["offset"] and s["end"] <= seg_end
         ]
-        build_styled_nodes(tmp, tail, tail_styles)
+        build_styled_nodes(tmp, seg_text, seg_styles)
         if tmp.text:
-            nodes.append(tmp.text)
+            seg_nodes.append(tmp.text)
         for ch in list(tmp):
-            nodes.append(ch)
+            seg_nodes.append(ch)
             if ch.tail:
-                nodes.append(ch.tail)
+                seg_nodes.append(ch.tail)
                 ch.tail = None
+        return seg_nodes
+
+    def build_wrapper_element(idx: int, inner_nodes: List[Any]) -> Any:
+        """Create wrapper element for wrappers[idx] and populate with inner_nodes.
+
+        To avoid including surrounding whitespace inside wrapper elements
+        (which makes later processing and comparisons brittle), this function
+        uses a helper that returns a tuple (lead, element, trail) when the
+        inserted content has leading or trailing whitespace. Callers must
+        accept either an Element or a (lead, Element, trail) tuple and place
+        lead/trail outside the wrapper.
+        """
+        w = wrappers[idx]
+        kind = w["kind"]
+        witness_text = text[w["offset"] : w["end"]]
+
+        def populate_target_with_nodes(target: ET.Element, nodes_to_insert: List[Any]):
+            # Insert nodes (strings and elements) into a temporary container
+            # preserving text/tails, then extract any leading/trailing
+            # whitespace so it can be placed outside the wrapper element.
+            tmp = ET.Element("tmp")
+            for n in nodes_to_insert:
+                if isinstance(n, str):
+                    append_text(tmp, n)
+                else:
+                    tmp.append(n)
+
+            # Extract leading whitespace from tmp.text (if present)
+            lead = ""
+            if tmp.text:
+                # leading whitespace characters
+                m = re.match(r"^(\s+)(.*)$", tmp.text, flags=re.DOTALL)
+                if m:
+                    lead = m.group(1)
+                    tmp.text = m.group(2)
+
+            # Extract trailing whitespace from last child's tail or tmp.text
+            trail = ""
+            children = list(tmp)
+            if children:
+                last = children[-1]
+                if last.tail:
+                    m2 = re.match(r"^(.*?)(\s+)$", last.tail, flags=re.DOTALL)
+                    if m2:
+                        last.tail = m2.group(1)
+                        trail = m2.group(2)
+            else:
+                if tmp.text:
+                    m3 = re.match(r"^(.*?)(\s+)$", tmp.text, flags=re.DOTALL)
+                    if m3:
+                        tmp.text = m3.group(1)
+                        trail = m3.group(2)
+
+            # Move content from tmp into target
+            if tmp.text:
+                target.text = (target.text or "") + tmp.text
+            for child in list(tmp):
+                target.append(child)
+
+            # Return leading/trailing whitespace to be emitted outside the target
+            return (lead, target, trail)
+
+        # Helper to convert populate result into a return value: either
+        # return an Element (if no lead/trail) or a (lead, el, trail) tuple.
+        def _maybe_wrap_with_edge_whitespace(pop_res, wrap_el):
+            lead, el, trail = pop_res
+            if lead or trail:
+                return (lead, wrap_el, trail)
+            return wrap_el
+
+        if kind in ("abbrev", "sic", "regularised"):
+            if kind == "abbrev":
+                a_tag, b_tag = "abbr", "expan"
+                alt = w.get("expansion", "") or ""
+                first_is_witness = True
+            elif kind == "sic":
+                a_tag, b_tag = "sic", "corr"
+                alt = w.get("correction", "") or ""
+                first_is_witness = True
+            else:  # regularised
+                a_tag, b_tag = "orig", "reg"
+                alt = w.get("original", "") or ""
+                # for regularised the witness_text is the regularised form (reg),
+                # and the original goes in <orig> before it. We will place
+                # inner nodes into the appropriate element below.
+                first_is_witness = False
+
+            choice = ET.Element(qn("choice"))
+            a = ET.SubElement(choice, qn(a_tag))
+            b = ET.SubElement(choice, qn(b_tag))
+
+            if kind == "regularised":
+                # a (orig) gets the alt/original as plain text
+                a.text = alt
+                # b (reg) gets the witness content (which may contain nested nodes)
+                pop_res = populate_target_with_nodes(b, inner_nodes)
+                return _maybe_wrap_with_edge_whitespace(pop_res, choice)
+            else:
+                # a gets the witness content (may contain nested nodes)
+                pop_res = populate_target_with_nodes(a, inner_nodes)
+                # b gets the alt expansion as plain text
+                b.text = alt
+                return _maybe_wrap_with_edge_whitespace(pop_res, choice)
+
+        elif kind == "num":
+            el = ET.Element(qn("num"))
+            if "type" in w:
+                el.set("type", w["type"])
+            if "value" in w:
+                el.set("value", w["value"])
+            pop_res = populate_target_with_nodes(el, inner_nodes)
+            return _maybe_wrap_with_edge_whitespace(pop_res, el)
+
+        elif kind == "person":
+            el = ET.Element(qn("persName"))
+            if "type" in w:
+                el.set("type", w["type"])
+            if "wikiData" in w:
+                el.set("ref", f"https://www.wikidata.org/wiki/{w['wikiData']}")
+
+            # Preserve firstname and continued on wrapper so the information
+            # survives wrapping/nesting across lines. continued is expected
+            # to be normalized to 'true'/'false' by parse_custom_ops.
+            if "firstname" in w:
+                el.set("firstname", w["firstname"])
+            if "continued" in w and w["continued"] == "true":
+                el.set("continued", "true")
+
+            pop_res = populate_target_with_nodes(el, inner_nodes)
+            return _maybe_wrap_with_edge_whitespace(pop_res, el)
+
+        elif kind == "place":
+            el = ET.Element(qn("placeName"))
+            pop_res = populate_target_with_nodes(el, inner_nodes)
+            nested_attrs = ["country", "region", "settlement", "district"]
+            for attr in nested_attrs:
+                if attr in w:
+                    child = ET.SubElement(el, qn(attr))
+                    child.text = w[attr]
+            return _maybe_wrap_with_edge_whitespace(pop_res, el)
+
+        elif kind == "ref":
+            el = ET.Element(qn("ref"))
+            if "type" in w:
+                el.set("type", w["type"])
+            if "target" in w:
+                el.set("target", w["target"])
+            pop_res = populate_target_with_nodes(el, inner_nodes)
+            return _maybe_wrap_with_edge_whitespace(pop_res, el)
+
+        elif kind == "unclear":
+            el = ET.Element(qn("unclear"))
+            if "reason" in w:
+                el.set("reason", w["reason"])
+            pop_res = populate_target_with_nodes(el, inner_nodes)
+            return _maybe_wrap_with_edge_whitespace(pop_res, el)
+
+        else:
+            # fallback seg with echoed attributes
+            seg = ET.Element(qn("seg"))
+            seg.set("type", w.get("kind", "custom"))
+            for key, value in w.items():
+                if key not in {"kind", "offset", "length", "end"}:
+                    seg.set(f"data-{key}", value)
+            pop_res = populate_target_with_nodes(seg, inner_nodes)
+            return _maybe_wrap_with_edge_whitespace(pop_res, seg)
+
+    def render_span(span_start: int, span_end: int, child_idxs: List[int]) -> List[Any]:
+        """Render content between span_start and span_end, inserting child wrappers."""
+        output: List[Any] = []
+        if not child_idxs:
+            return render_plain_segment(span_start, span_end)
+
+        # sort children by offset
+        child_idxs_sorted = sorted(child_idxs, key=lambda i: wrappers[i]["offset"])
+        cursor_local = span_start
+
+        for cidx in child_idxs_sorted:
+            cw = wrappers[cidx]
+            cstart, cend = cw["offset"], cw["end"]
+            # text before child
+            if cursor_local < cstart:
+                output.extend(render_plain_segment(cursor_local, cstart))
+            # render child's inner content recursively
+            inner = render_span(cstart, cend, children.get(cidx, []))
+            built = build_wrapper_element(cidx, inner)
+            # build_wrapper_element may return either an Element or a tuple
+            # (lead, Element, trail) where lead/trail are whitespace strings that
+            # should sit outside the element.
+            if isinstance(built, tuple):
+                lead, el, trail = built
+                if lead:
+                    output.append(lead)
+                output.append(el)
+                if trail:
+                    output.append(trail)
+            else:
+                output.append(built)
+            cursor_local = cend
+
+        # tail after last child
+        if cursor_local < span_end:
+            output.extend(render_plain_segment(cursor_local, span_end))
+
+        return output
+
+    # Render top-level sequence (from 0..len(text)) including roots
+    nodes: List[Any] = []
+    if not roots:
+        # no wrappers at all
+        nodes = render_plain_segment(0, len(text))
+    else:
+        # render text from start to end using roots as top-level wrappers
+        # For each root wrapper, render its inner span and then create the
+        # wrapper element using build_wrapper_element so the wrapper itself
+        # appears in the output (not just its inner content).
+        roots_sorted = sorted(roots, key=lambda i: wrappers[i]["offset"])
+        cursor = 0
+        for ridx in roots_sorted:
+            r = wrappers[ridx]
+            rstart, rend = r["offset"], r["end"]
+            if cursor < rstart:
+                nodes.extend(render_plain_segment(cursor, rstart))
+            # render the inner content of this root (children)
+            inner_nodes = render_span(rstart, rend, children.get(ridx, []))
+            built = build_wrapper_element(ridx, inner_nodes)
+            # Accept either Element or (lead, Element, trail)
+            if isinstance(built, tuple):
+                lead, el, trail = built
+                if lead:
+                    nodes.append(lead)
+                nodes.append(el)
+                if trail:
+                    nodes.append(trail)
+            else:
+                nodes.append(built)
+            cursor = rend
+        if cursor < len(text):
+            nodes.extend(render_plain_segment(cursor, len(text)))
+
+    # Post-process step: in some cases a <choice> (abbr/expan) gets emitted but the
+    # corresponding person wrapper (persName) was not created by the containment
+    # logic (ordering/edge-case). As a fallback, if there exists a person op that
+    # shares exactly the same span as an abbrev/choice op, wrap any matching
+    # <choice> element with a <persName> preserving attributes like type,
+    # firstname and continued so entity information is not lost.
+    #
+    # This implementation walks the top-level `nodes` and their descendant
+    # element children, wrapping any <choice> it finds. It attempts to do this
+    # for each person op that matches a choice op by span. This is best-effort:
+    # it only wraps choice elements that occur in the rendered node tree.
+    def _wrap_choice_in_persname_in_element(
+        elem: ET.Element, person_op: Dict[str, Any]
+    ) -> bool:
+        """Recursively search children of elem and wrap first matching <choice> child.
+
+        Returns True if a wrapping happened.
+        """
+        # Do not attempt to wrap if we're already inside a persName element.
+        if isinstance(elem, ET.Element) and elem.tag == qn("persName"):
+            return False
+
+        for i, child in enumerate(list(elem)):
+            # Skip recursing into existing persName children to avoid double-wrapping
+            if isinstance(child, ET.Element) and child.tag == qn("persName"):
+                continue
+
+            # If the child itself is a <choice>, wrap it (but ensure it's not already wrapped)
+            if isinstance(child, ET.Element) and child.tag == qn("choice"):
+                # Create persName element from person_op attributes
+                pers = ET.Element(qn("persName"))
+                if "type" in person_op:
+                    pers.set("type", person_op["type"])
+                if "wikiData" in person_op:
+                    pers.set(
+                        "ref", f"https://www.wikidata.org/wiki/{person_op['wikiData']}"
+                    )
+                if "firstname" in person_op:
+                    pers.set("firstname", person_op["firstname"])
+                if person_op.get("continued") == "true":
+                    pers.set("continued", "true")
+
+                # Preserve the tail of the choice node so whitespace is not lost
+                tail = child.tail
+
+                # Move the existing choice node under persName and keep tail intact
+                elem.remove(child)
+                pers.append(child)
+                child.tail = tail
+
+                # Insert persName in the same position
+                elem.insert(i, pers)
+                return True
+
+            # Otherwise recurse into the child element
+            if isinstance(child, ET.Element):
+                wrapped = _wrap_choice_in_persname_in_element(child, person_op)
+                if wrapped:
+                    return True
+        return False
+
+    def _wrap_choice_in_nodes_list(
+        nodes_list: List[Any], person_op: Dict[str, Any]
+    ) -> bool:
+        """Search the top-level nodes array and wrap the first matching choice.
+
+        Returns True if a wrapping happened.
+        """
+        for idx, n in enumerate(nodes_list):
+            if isinstance(n, ET.Element):
+                # If this top-level node is already a persName, skip it.
+                if n.tag == qn("persName"):
+                    continue
+
+                # direct choice at top-level
+                if n.tag == qn("choice"):
+                    pers = ET.Element(qn("persName"))
+                    if "type" in person_op:
+                        pers.set("type", person_op["type"])
+                    if "wikiData" in person_op:
+                        pers.set(
+                            "ref",
+                            f"https://www.wikidata.org/wiki/{person_op['wikiData']}",
+                        )
+                    if "firstname" in person_op:
+                        pers.set("firstname", person_op["firstname"])
+                    if person_op.get("continued") == "true":
+                        pers.set("continued", "true")
+
+                    # Preserve any tail text on the choice node so spacing is maintained
+                    tail = n.tail
+                    pers.append(n)
+                    n.tail = None
+                    pers.tail = tail
+
+                    nodes_list[idx] = pers
+                    return True
+
+                # otherwise try to wrap inside this element recursively (skip persName children)
+                if _wrap_choice_in_persname_in_element(n, person_op):
+                    return True
+        return False
+
+    # Run the fallback wrapping for any person/choice pairs that share the same span
+    # or overlap. Previously we only wrapped when spans were exactly equal; that was
+    # brittle with off-by-one / whitespace differences in PAGE offsets. Here we treat
+    # any non-empty intersection between the person span and the choice span as a
+    # best-effort candidate for wrapping. If a wrap succeeds we stop trying further
+    # choices for that person to avoid double-wrapping.
+    for p in person_ops:
+        for c in choice_ops:
+            # compute overlap (start < end means non-empty intersection)
+            start = max(p["offset"], c["offset"])
+            end = min(p["end"], c["end"])
+            if start < end:
+                # Overlapping (or identical) spans — attempt to wrap a matching <choice>.
+                wrapped = _wrap_choice_in_nodes_list(nodes, p)
+                if wrapped:
+                    # Stop attempting other choice ops for this person once wrapped.
+                    break
 
     return nodes
 
@@ -909,7 +1268,9 @@ def build_header(meta: Dict[str, Any]) -> ET.Element:
 # -------------------------
 
 
-def convert_page_to_tei(page_root: ET.Element, meta: Dict[str, Any]) -> ET.Element:
+def convert_page_to_tei(
+    page_root: ET.Element, meta: Dict[str, Any], debug_inline: bool = False
+) -> ET.Element:
     """Convert PAGE XML to TEI."""
     tei = ET.Element(qn("TEI"))
     tei.append(build_header(meta))
@@ -1072,6 +1433,42 @@ def convert_page_to_tei(page_root: ET.Element, meta: Dict[str, Any]) -> ET.Eleme
             ops = parse_custom_ops(cust)
             inline_nodes = build_inline_nodes_for_line(text_val, ops)
 
+            # Debugging: optionally print parsed ops and rendered inline nodes for
+            # lines that include person or numeric annotations.
+            # (Previously this only printed when both person AND abbrev were present;
+            # broaden the condition so num+person cases and other person/num occurrences
+            # are visible during debugging.)
+            if debug_inline:
+                has_person = any(o.get("kind") == "person" for o in ops)
+                has_num = any(o.get("kind") == "num" for o in ops)
+                # Show debug output when a line contains person OR num annotations.
+                if has_person or has_num:
+                    try:
+                        print(
+                            f"DEBUG inline for line {tl_id}: ops={ops}", file=sys.stderr
+                        )
+                    except Exception:
+                        # fallback to safer print if formatting fails
+                        print(
+                            "DEBUG inline for line:",
+                            tl_id,
+                            "ops:",
+                            ops,
+                            file=sys.stderr,
+                        )
+                    serial = []
+                    for n in inline_nodes:
+                        if isinstance(n, str):
+                            serial.append(repr(n))
+                        else:
+                            try:
+                                serial.append(
+                                    ET.tostring(n, encoding="unicode", method="xml")
+                                )
+                            except Exception:
+                                serial.append(str(n))
+                    print("DEBUG inline nodes: " + ", ".join(serial), file=sys.stderr)
+
             for node in inline_nodes:
                 if isinstance(node, str):
                     append_text(ab, node)
@@ -1118,6 +1515,11 @@ Examples:
         "-y",
         action="store_true",
         help="Assume 'yes' for interactive prompts (allow non-interactive runs)",
+    )
+    ap.add_argument(
+        "--debug-inline",
+        action="store_true",
+        help="Print parsed custom ops and generated inline nodes for lines containing person or num annotations (debug output to stderr)",
     )
 
     # Metadata arguments (optional, will prompt if not provided)
@@ -1179,7 +1581,7 @@ Examples:
     meta = collect_metadata(args, input_file)
 
     # Convert
-    tei = convert_page_to_tei(page_root, meta)
+    tei = convert_page_to_tei(page_root, meta, debug_inline=args.debug_inline)
     out = prettify(tei)
 
     # Write TEI

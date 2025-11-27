@@ -16,64 +16,120 @@
  */
 
 /* 1) Font-face declaration for the provided WOFF2 file */
+/* Regular (400) */
 @font-face {
-  font-family: "SGr Iosevka";
-  src: url("fonts/SGr-Iosevka-Regular.woff2") format("woff2");
-  /* If you later add .woff/.ttf versions, add them here as fallbacks:
+    font-family: "SGr Iosevka";
+    src: url("fonts/SGr-Iosevka-Regular.woff2") format("woff2");
+    /* If you later add .woff/.ttf versions, add them here as fallbacks:
      src: url("fonts/SGr-Iosevka-Regular.woff2") format("woff2"),
           url("fonts/SGr-Iosevka-Regular.woff") format("woff"),
           url("fonts/SGr-Iosevka-Regular.ttf") format("truetype"); */
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  /* Broad unicode-range to let fallback fonts cover glyphs that this build might omit.
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    /* Broad unicode-range to let fallback fonts cover glyphs that this build might omit.
      If your build is full-coverage, you can omit this. */
-  unicode-range: U+000-FFFD;
+    unicode-range: U+000-FFFD;
+}
+
+/* Bold (700) - ensure you placed SGr-Iosevka-Bold.woff2 under static/fonts/ */
+@font-face {
+    font-family: "SGr Iosevka";
+    src: url("fonts/SGr-Iosevka-Bold.woff2") format("woff2");
+    /* Fallbacks (optional) can be added similarly:
+     src: url("fonts/SGr-Iosevka-Bold.woff2") format("woff2"),
+          url("fonts/SGr-Iosevka-Bold.woff") format("woff"); */
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+000-FFFD;
 }
 
 /* Optional: define a lightweight alias for fallback-heavy use */
 :root {
-  /* Primary UI font preferring Iosevka, then Noto Sans (broad Unicode), then system fallbacks */
-  --ui-font: "SGr Iosevka", "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* Primary UI font preferring Iosevka, then Noto Sans (broad Unicode), then system fallbacks */
+    --ui-font:
+        "SGr Iosevka", "Noto Sans", system-ui, -apple-system, "Segoe UI",
+        Roboto, "Helvetica Neue", Arial, sans-serif;
 
-  /* Monospace stack: prefer Iosevka (if built as monospace), then Noto Sans Mono, then system monospace */
-  --mono-font: "SGr Iosevka", "Noto Sans Mono", ui-monospace, "SFMono-Regular", Menlo, Monaco, "Courier New", monospace;
+    /* Monospace stack: prefer Iosevka (if built as monospace), then Noto Sans Mono, then system monospace */
+    --mono-font:
+        "SGr Iosevka", "Noto Sans Mono", ui-monospace, "SFMono-Regular", Menlo,
+        Monaco, "Courier New", monospace;
+}
+
+/* Ensure hi-bold uses the Iosevka bold face when available */
+.hi-bold {
+    font-family:
+        "SGr Iosevka",
+        "Noto Sans",
+        system-ui,
+        -apple-system,
+        "Segoe UI",
+        Roboto,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+    font-weight: 700;
+}
+
+/* Optional: define a lightweight alias for fallback-heavy use */
+:root {
+    /* Primary UI font preferring Iosevka, then Noto Sans (broad Unicode), then system fallbacks */
+    --ui-font:
+        "SGr Iosevka", "Noto Sans", system-ui, -apple-system, "Segoe UI",
+        Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    /* Monospace stack: prefer Iosevka (if built as monospace), then Noto Sans Mono, then system monospace */
+    --mono-font:
+        "SGr Iosevka", "Noto Sans Mono", ui-monospace, "SFMono-Regular", Menlo,
+        Monaco, "Courier New", monospace;
 }
 
 /* 2) Apply the font to the body (lightweight global override).
    This will make Iosevka the first choice for normal UI text when available,
    and Noto Sans will provide broad Unicode support as the fallback. */
 body {
-  font-family: var(--ui-font);
-  /* keep existing text-rendering behaviour */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  /* preserve existing weight defaults */
-  font-weight: 400;
+    font-family: var(--ui-font);
+    /* keep existing text-rendering behaviour */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* preserve existing weight defaults */
+    font-weight: 400;
 }
 
 /* 3) Use Iosevka (or fallback monospace) for code, preformatted text, and monospace widgets */
-code, pre, kbd, samp, .code, .mono {
-  font-family: var(--mono-font);
-  /* Enable common typographic features suitable for programming fonts */
-  font-variant-ligatures: contextual;
-  font-variant-east-asian: full-width;
-  /* disable discretionary/standard ligatures if those are undesirable in code */
-  /* font-feature-settings: "liga" 0, "clig" 0; */
-  font-size: 0.95em;
-  line-height: 1.45;
+code,
+pre,
+kbd,
+samp,
+.code,
+.mono {
+    font-family: var(--mono-font);
+    /* Enable common typographic features suitable for programming fonts */
+    font-variant-ligatures: contextual;
+    font-variant-east-asian: full-width;
+    /* disable discretionary/standard ligatures if those are undesirable in code */
+    /* font-feature-settings: "liga" 0, "clig" 0; */
+    font-size: 0.95em;
+    line-height: 1.45;
 }
 
 /* 4) Utility class to force Iosevka on specific elements */
 .font-iosevka {
-  font-family: var(--ui-font);
+    font-family: var(--ui-font);
 }
 
 /* 5) Ensure headings inherit the UI font but keep slightly heavier weight for emphasis */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--ui-font);
-  font-weight: 600; /* if you later add a 600/700 Iosevka file, it will be used; otherwise synthesized */
-  line-height: 1.2;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--ui-font);
+    font-weight: 600; /* if you later add a 600/700 Iosevka file, it will be used; otherwise synthesized */
+    line-height: 1.2;
 }
 
 /* 6) Accessibility & performance notes baked into the CSS:

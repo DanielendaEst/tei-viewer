@@ -545,34 +545,43 @@ fn parse_inline_nodes<R: std::io::BufRead>(
                         });
                     }
                     "persName" => {
+                        // Collect attributes commonly present on <persName> such as
+                        // @type, @firstname, @continued, and @ref and then parse
+                        // the nested inline content (choice/abbr/expan, text, etc.)
+                        // as a vector of TextNode so the viewer can render nested
+                        // structures (e.g. a choice inside a persName).
                         let mut tipo = String::new();
+                        let mut firstname: Option<String> = None;
+                        let mut continued: Option<bool> = None;
+                        let mut ref_uri: Option<String> = None;
+
                         for attr in e.attributes().flatten() {
                             let key = String::from_utf8_lossy(attr.key.as_ref()).to_string();
                             let val = String::from_utf8_lossy(&attr.value).to_string();
-                            if key == "type" {
-                                tipo = val;
-                            }
-                        }
-                        let mut name = String::new();
-                        let mut pers_buf = Vec::new();
-                        loop {
-                            match reader.read_event_into(&mut pers_buf) {
-                                Ok(Event::Text(ce)) => {
-                                    name.push_str(&ce.unescape().unwrap_or_default());
+                            match key.as_str() {
+                                "type" => tipo = val,
+                                "firstname" => firstname = Some(val),
+                                "continued" => {
+                                    let lowered = val.to_lowercase();
+                                    continued = Some(lowered == "true" || lowered == "1");
                                 }
-                                Ok(Event::End(ref ce)) => {
-                                    let cname = String::from_utf8_lossy(ce.local_name().as_ref())
-                                        .to_string();
-                                    if cname == "persName" {
-                                        break;
-                                    }
-                                }
-                                Ok(Event::Eof) => break,
+                                "ref" => ref_uri = Some(val),
                                 _ => {}
                             }
-                            pers_buf.clear();
                         }
-                        nodes.push(TextNode::PersName { name, tipo });
+
+                        // Parse the nested inline nodes inside <persName> until its end.
+                        // Reuse parse_inline_nodes recursively with break_tag = "persName".
+                        let inner_nodes = parse_inline_nodes(reader, buf, "persName");
+
+                        // Ensure we always store a Vec<TextNode> (even if empty).
+                        nodes.push(TextNode::PersName {
+                            content: inner_nodes,
+                            tipo,
+                            firstname,
+                            continued,
+                            ref_uri,
+                        });
                     }
                     "placeName" => {
                         // Collect the visible name text plus any ancillary place attributes

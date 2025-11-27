@@ -77,8 +77,15 @@ pub enum TextNode {
         text: String,
     },
     PersName {
-        name: String,
+        // Allow nested inline content (e.g., <choice> with <abbr>/<expan>) instead of
+        // a single flat name string. Also preserve commonly-used attributes emitted
+        // by the parser: `type` (stored in `tipo`), optional `firstname`, optional
+        // `continued`, and an optional `ref_uri` (for @ref / wikidata links).
+        content: Vec<TextNode>,
         tipo: String,
+        firstname: Option<String>,
+        continued: Option<bool>,
+        ref_uri: Option<String>,
     },
     PlaceName {
         name: String,
