@@ -4,7 +4,7 @@ use crate::utils::resource_url;
 use gloo_net::http::Request;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::{Event, HtmlImageElement, MouseEvent};
+use web_sys::{Event, HtmlImageElement, MouseEvent, PointerEvent, WheelEvent};
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -35,6 +35,11 @@ pub enum TeiViewerMsg {
     StartSplitterDrag(MouseEvent),
     SplitterDrag(MouseEvent),
     EndSplitterDrag,
+
+    PointerDown(i32, i32, i32),
+    PointerMove(i32, i32, i32),
+    PointerUp(i32, i32, i32),
+    PointerLeave(i32, i32, i32),
 }
 
 #[derive(Clone, PartialEq)]
@@ -59,8 +64,10 @@ pub struct TeiViewer {
     image_offset_y: f32,
     // dragging state
     dragging: bool,
-    last_mouse_x: f32,
-    last_mouse_y: f32,
+    last_mouse_x: i32,
+    last_mouse_y: i32,
+    pointers: Vec<(i32, (i32, i32))>,
+    last_pointer_distance: f64,
     // metadata popup
     show_metadata_popup: bool,
     metadata_selected: Option<ViewType>,
@@ -107,8 +114,10 @@ impl Component for TeiViewer {
             image_offset_x: 0.0,
             image_offset_y: 0.0,
             dragging: false,
-            last_mouse_x: 0.0,
-            last_mouse_y: 0.0,
+            last_mouse_x: 0,
+            last_mouse_y: 0,
+            pointers: Vec::new(),
+            last_pointer_distance: 0.0,
             show_metadata_popup: false,
             metadata_selected: None,
             current_page: page,
@@ -294,18 +303,18 @@ impl Component for TeiViewer {
             }
             TeiViewerMsg::StartDrag(event) => {
                 self.dragging = true;
-                self.last_mouse_x = event.client_x() as f32;
-                self.last_mouse_y = event.client_y() as f32;
+                self.last_mouse_x = event.client_x();
+                self.last_mouse_y = event.client_y();
                 false
             }
             TeiViewerMsg::DragImage(event) => {
                 if self.dragging {
-                    let x = event.client_x() as f32;
-                    let y = event.client_y() as f32;
+                    let x = event.client_x();
+                    let y = event.client_y();
                     let dx = x - self.last_mouse_x;
                     let dy = y - self.last_mouse_y;
-                    self.image_offset_x += dx;
-                    self.image_offset_y += dy;
+                    self.image_offset_x += dx as f32;
+                    self.image_offset_y += dy as f32;
                     self.last_mouse_x = x;
                     self.last_mouse_y = y;
                     true
@@ -315,6 +324,95 @@ impl Component for TeiViewer {
             }
             TeiViewerMsg::EndDrag => {
                 self.dragging = false;
+                true
+            }
+            TeiViewerMsg::PointerDown(id, x, y) => {
+                self.pointers.push((id, (x, y)));
+                if self.pointers.len() == 1 {
+                    // Single pointer - initialize drag position
+                    self.last_mouse_x = x;
+                    self.last_mouse_y = y;
+                } else if self.pointers.len() == 2 {
+                    // Two pointers - initialize pinch zoom
+                    let p1 = self.pointers[0].1;
+                    let p2 = self.pointers[1].1;
+                    self.last_pointer_distance =
+                        f64::sqrt(((p1.0 - p2.0).pow(2) + (p1.1 - p2.1).pow(2)) as f64);
+                }
+                self.dragging = true;
+                false
+            }
+            TeiViewerMsg::PointerMove(id, x, y) => {
+                if let Some(pointer) = self.pointers.iter_mut().find(|(p_id, _)| *p_id == id) {
+                    pointer.1 = (x, y);
+                }
+
+                if self.pointers.len() == 2 {
+                    // Two-finger pinch zoom
+                    let p1 = self.pointers[0].1;
+                    let p2 = self.pointers[1].1;
+                    let new_dist = f64::sqrt(((p1.0 - p2.0).pow(2) + (p1.1 - p2.1).pow(2)) as f64);
+
+                    // Calculate zoom center (midpoint between two pointers)
+                    let center_x = (p1.0 + p2.0) as f32 / 2.0;
+                    let center_y = (p1.1 + p2.1) as f32 / 2.0;
+
+                    if self.last_pointer_distance > 0.0 {
+                        let scale_factor = (new_dist / self.last_pointer_distance) as f32;
+                        let old_scale = self.image_scale;
+                        self.image_scale = (self.image_scale * scale_factor).clamp(0.1, 8.0);
+
+                        // Adjust offset so zoom occurs around the gesture center
+                        let scale_change = self.image_scale / old_scale;
+                        self.image_offset_x =
+                            center_x + (self.image_offset_x - center_x) * scale_change;
+                        self.image_offset_y =
+                            center_y + (self.image_offset_y - center_y) * scale_change;
+                    }
+
+                    self.last_pointer_distance = new_dist;
+                } else if self.pointers.len() == 1 {
+                    // Single-finger pan
+                    let dx = x - self.last_mouse_x;
+                    let dy = y - self.last_mouse_y;
+                    self.image_offset_x += dx as f32;
+                    self.image_offset_y += dy as f32;
+                    self.last_mouse_x = x;
+                    self.last_mouse_y = y;
+                }
+
+                true
+            }
+            TeiViewerMsg::PointerUp(id, _, _) => {
+                self.pointers.retain(|(p_id, _)| *p_id != id);
+
+                // Reset distance when transitioning from 2 to 1 pointer
+                if self.pointers.len() == 1 {
+                    let p = self.pointers[0].1;
+                    self.last_mouse_x = p.0;
+                    self.last_mouse_y = p.1;
+                    self.last_pointer_distance = 0.0;
+                } else if self.pointers.is_empty() {
+                    self.dragging = false;
+                    self.last_pointer_distance = 0.0;
+                }
+
+                true
+            }
+            TeiViewerMsg::PointerLeave(id, _, _) => {
+                self.pointers.retain(|(p_id, _)| *p_id != id);
+
+                // Reset distance when transitioning from 2 to 1 pointer
+                if self.pointers.len() == 1 {
+                    let p = self.pointers[0].1;
+                    self.last_mouse_x = p.0;
+                    self.last_mouse_y = p.1;
+                    self.last_pointer_distance = 0.0;
+                } else if self.pointers.is_empty() {
+                    self.dragging = false;
+                    self.last_pointer_distance = 0.0;
+                }
+
                 true
             }
             TeiViewerMsg::ToggleMetadata => {
@@ -613,6 +711,47 @@ impl TeiViewer {
             let onmouseup = ctx.link().callback(|_| TeiViewerMsg::EndDrag);
             let onmouseleave = ctx.link().callback(|_| TeiViewerMsg::EndDrag);
 
+            let onpointerdown = {
+                let link = ctx.link().clone();
+                Callback::from(move |e: PointerEvent| {
+                    e.prevent_default();
+                    if let Some(target) = e.target() {
+                        if let Ok(element) = target.dyn_into::<web_sys::Element>() {
+                            let _ = element.set_pointer_capture(e.pointer_id());
+                        }
+                    }
+                    link.send_message(TeiViewerMsg::PointerDown(
+                        e.pointer_id(),
+                        e.client_x(),
+                        e.client_y(),
+                    ))
+                })
+            };
+            let onpointermove = ctx.link().callback(|e: PointerEvent| {
+                e.prevent_default();
+                TeiViewerMsg::PointerMove(e.pointer_id(), e.client_x(), e.client_y())
+            });
+            let onpointerup = {
+                let link = ctx.link().clone();
+                Callback::from(move |e: PointerEvent| {
+                    e.prevent_default();
+                    if let Some(target) = e.target() {
+                        if let Ok(element) = target.dyn_into::<web_sys::Element>() {
+                            let _ = element.release_pointer_capture(e.pointer_id());
+                        }
+                    }
+                    link.send_message(TeiViewerMsg::PointerUp(
+                        e.pointer_id(),
+                        e.client_x(),
+                        e.client_y(),
+                    ))
+                })
+            };
+            let onpointerleave = ctx.link().callback(|e: PointerEvent| {
+                e.prevent_default();
+                TeiViewerMsg::PointerLeave(e.pointer_id(), e.client_x(), e.client_y())
+            });
+
             // onload captures intrinsic natural size
             let onload = {
                 let link = ctx.link().clone();
@@ -654,7 +793,11 @@ impl TeiViewer {
                         {onmousemove}
                         {onmouseup}
                         {onmouseleave}
-                        style="position: relative; overflow: hidden;"
+                        {onpointerdown}
+                        {onpointermove}
+                        {onpointerup}
+                        {onpointerleave}
+                        style="position: relative; overflow: hidden; touch-action: none;"
                     >
                         <div class="image-and-overlay" style={transform_style}>
                             <img
