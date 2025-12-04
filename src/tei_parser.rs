@@ -507,6 +507,14 @@ fn parse_inline_nodes<R: std::io::BufRead>(
                             content: inner,
                         });
                     }
+                    "u" => {
+                        // Handle <u> tag as underline formatting
+                        let inner = parse_inline_nodes(reader, buf, "u");
+                        nodes.push(TextNode::Hi {
+                            rend: "underline".to_string(),
+                            content: inner,
+                        });
+                    }
                     "num" => {
                         let mut value = 0;
                         let mut tipo = String::new();
