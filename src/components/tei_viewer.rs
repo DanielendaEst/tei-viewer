@@ -1094,10 +1094,26 @@ impl TeiViewer {
                     .map(|r| format!("hi-{}", r))
                     .collect::<Vec<_>>()
                     .join(" ");
-                html! {
-                    <span class={classes} title={format!("[Resaltado] Estilo: {}", rend)}>
-                        { for content.iter().map(|n| self.render_text_node(n)) }
-                    </span>
+
+                // Only show titles for non-basic formatting to avoid clustering
+                // Basic formatting (bold, italic, underline) is visually obvious
+                let basic_formatting = ["bold", "italic", "underline", "superscript", "subscript"];
+                let show_title = !rend
+                    .split_whitespace()
+                    .all(|r| basic_formatting.contains(&r));
+
+                if show_title {
+                    html! {
+                        <span class={classes} title={format!("[Resaltado] Estilo: {}", rend)}>
+                            { for content.iter().map(|n| self.render_text_node(n)) }
+                        </span>
+                    }
+                } else {
+                    html! {
+                        <span class={classes}>
+                            { for content.iter().map(|n| self.render_text_node(n)) }
+                        </span>
+                    }
                 }
             }
         }
