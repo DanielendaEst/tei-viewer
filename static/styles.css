@@ -1594,6 +1594,7 @@ body {
     position: relative;
 }
 
+/* Base tooltip styles */
 [title]:hover::after {
     content: attr(title);
     position: absolute;
@@ -1606,9 +1607,12 @@ body {
     border-radius: 4px;
     font-size: 0.85rem;
     white-space: nowrap;
-    z-index: 1000;
+    z-index: 9000;
     pointer-events: none;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 [title]:hover::before {
@@ -1619,8 +1623,14 @@ body {
     transform: translateX(-50%);
     border: 6px solid transparent;
     border-top-color: #2c3e50;
-    z-index: 1000;
+    z-index: 9001;
     pointer-events: none;
+}
+
+/* Enhanced tooltips for better readability */
+[title]:hover::after {
+    white-space: pre-wrap;
+    max-width: 400px;
 }
 
 /* ============================================

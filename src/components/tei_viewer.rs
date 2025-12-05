@@ -1003,7 +1003,7 @@ impl TeiViewer {
         match node {
             TextNode::Text { content } => html! { <>{content}</> },
             TextNode::Abbr { abbr, expan } => html! {
-                <abbr title={format!("[Abreviatura] {}", expan)} class="abbreviation">{ abbr }</abbr>
+                <abbr title={format!("[Abreviatura] {}", expan)} class="abbreviation" data-tooltip-type="abbr">{ abbr }</abbr>
             },
             TextNode::Choice { sic, corr } => html! {
                 <span class="correction" title={format!("[Corrección] Lectura: {}", corr)}>{ sic }</span>
@@ -1021,7 +1021,7 @@ impl TeiViewer {
                 continued,
                 ref_uri,
             } => {
-                // Build a descriptive title from available attributes so hover shows useful metadata
+                // Build a descriptive title from available attributes
                 let mut title_parts: Vec<String> = Vec::new();
                 if !tipo.is_empty() {
                     title_parts.push(format!("[Persona] Tipo: {}", tipo));
@@ -1037,11 +1037,19 @@ impl TeiViewer {
                 if let Some(r) = ref_uri {
                     title_parts.push(format!("Ref: {}", r));
                 }
-                let title = title_parts.join(" — ");
+
+                // Check for nested abbreviations and add their info to the combined title
+                for node in content {
+                    if let TextNode::Abbr { abbr, expan } = node {
+                        title_parts.push(format!("[Abreviatura] {}: {}", abbr, expan));
+                    }
+                }
+
+                let title = title_parts.join(" | ");
 
                 html! {
-                    <span class="person-name" title={title}>
-                        { for content.iter().map(|n| self.render_text_node(n)) }
+                    <span class="person-name" title={title} data-tooltip-type="person">
+                        { for content.iter().map(|n| self.render_text_node_no_abbr_tooltip(n)) }
                     </span>
                 }
             }
@@ -1112,6 +1120,101 @@ impl TeiViewer {
                     html! {
                         <span class={classes}>
                             { for content.iter().map(|n| self.render_text_node(n)) }
+                        </span>
+                    }
+                }
+            }
+        }
+    }
+
+    fn render_text_node_no_abbr_tooltip(&self, node: &TextNode) -> Html {
+        match node {
+            TextNode::Text { content } => html! { <>{content}</> },
+            TextNode::Abbr { abbr, expan: _ } => html! {
+                <abbr class="abbreviation">{ abbr }</abbr>
+            },
+            TextNode::Choice { sic, corr } => html! {
+                <span class="correction" title={format!("[Corrección] Lectura: {}", corr)}>{ sic }</span>
+            },
+            TextNode::Regularised { orig, reg } => html! {
+                <span class="regularised" title={format!("[Regularización] Original: {}", orig)}>{ reg }</span>
+            },
+            TextNode::Num { value, tipo, text } => html! {
+                <span class="number" title={format!("[Número] Valor: {} | Tipo: {}", value, tipo)}>{ text }</span>
+            },
+            TextNode::PersName {
+                content,
+                tipo,
+                firstname,
+                continued,
+                ref_uri,
+            } => {
+                // Nested person names should use regular rendering
+                self.render_text_node(&TextNode::PersName {
+                    content: content.clone(),
+                    tipo: tipo.clone(),
+                    firstname: firstname.clone(),
+                    continued: *continued,
+                    ref_uri: ref_uri.clone(),
+                })
+            }
+            TextNode::PlaceName { name, attrs } => {
+                let mut title_parts: Vec<String> = Vec::new();
+                for (k, v) in attrs.iter() {
+                    title_parts.push(format!("{}: {}", k, v));
+                }
+                let title = if title_parts.is_empty() {
+                    format!("[Lugar]: {}", name)
+                } else {
+                    format!("{} — {}", title_parts.join("; "), name)
+                };
+                html! {
+                    <span class="place-name" title={title}>{ name }</span>
+                }
+            }
+            TextNode::Ref {
+                ref_type,
+                target,
+                content,
+            } => html! {
+                <span class="ref" title={format!("[Referencia] Tipo: {} | Destino: {}", ref_type, target)}>{ content }</span>
+            },
+            TextNode::Unclear { reason, content } => html! {
+                <span class="unclear" title={format!("[Incierto] Razón: {}", reason)}>{ content }</span>
+            },
+            TextNode::RsType { rs_type, content } => html! {
+                <span class={format!("rs-type rs-{}", rs_type)} title={format!("[Cadena de Referencia] Tipo: {}", rs_type)}>{ content }</span>
+            },
+            TextNode::NoteRef { note_id, n } => html! {
+                <sup class="footnote-ref" title="[Nota al pie]">
+                    <a id={format!("ref_{}", note_id)} href={format!("#{}", note_id)}>{ n }</a>
+                </sup>
+            },
+            TextNode::InlineNote { content, n } => html! {
+                <sup class="footnote-ref" title={format!("[Nota al pie] {}", content)}>{ n }</sup>
+            },
+            TextNode::Hi { rend, content } => {
+                let classes = rend
+                    .split_whitespace()
+                    .map(|r| format!("hi-{}", r))
+                    .collect::<Vec<_>>()
+                    .join(" ");
+
+                let basic_formatting = ["bold", "italic", "underline", "superscript", "subscript"];
+                let show_title = !rend
+                    .split_whitespace()
+                    .all(|r| basic_formatting.contains(&r));
+
+                if show_title {
+                    html! {
+                        <span class={classes} title={format!("[Resaltado] Estilo: {}", rend)}>
+                            { for content.iter().map(|n| self.render_text_node_no_abbr_tooltip(n)) }
+                        </span>
+                    }
+                } else {
+                    html! {
+                        <span class={classes}>
+                            { for content.iter().map(|n| self.render_text_node_no_abbr_tooltip(n)) }
                         </span>
                     }
                 }
