@@ -5,7 +5,7 @@ use gloo_net::http::Request;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{Event, HtmlImageElement, MouseEvent, PointerEvent, WheelEvent};
-use yew::prelude::*;
+use yew::{prelude::*, AttrValue};
 
 #[derive(Properties, PartialEq)]
 pub struct TeiViewerProps {
@@ -16,12 +16,15 @@ pub struct TeiViewerProps {
 pub enum TeiViewerMsg {
     LoadDiplomatic(String),
     LoadTranslation(String),
+    LoadCommentary(String),
     DiplomaticLoaded(Result<TeiDocument, String>),
     TranslationLoaded(Result<TeiDocument, String>),
+    CommentaryLoaded(Result<String, String>),
     HoverLine(String),
     ClickLine(String),
     ClearHover,
     ToggleView(ViewType),
+    ToggleCommentary,
     UpdateImageScale(f64),
     StartDrag(MouseEvent),
     DragImage(MouseEvent),
@@ -47,17 +50,22 @@ pub enum ViewType {
     Diplomatic,
     Translation,
     Both,
+    Commentary,
 }
 
 pub struct TeiViewer {
     diplomatic: Option<TeiDocument>,
     translation: Option<TeiDocument>,
+    commentary: Option<String>,
     hovered_zone: Option<String>,
     locked_zone: Option<String>,
     active_view: ViewType,
     show_image: bool,
     loading: bool,
     error: Option<String>,
+    // commentary popup
+    show_commentary: bool,
+    commentary_first_load: bool,
     // zoom and pan
     image_scale: f32,
     image_offset_x: f32,
@@ -100,16 +108,22 @@ impl Component for TeiViewer {
         let trad_path = resource_url(&format!("public/projects/{}/p{}_trad.xml", project, page));
         ctx.link()
             .send_message(TeiViewerMsg::LoadTranslation(trad_path));
+        let commentary_path = resource_url(&format!("public/projects/{}/commentary.html", project));
+        ctx.link()
+            .send_message(TeiViewerMsg::LoadCommentary(commentary_path));
 
         Self {
             diplomatic: None,
             translation: None,
+            commentary: None,
             hovered_zone: None,
             locked_zone: None,
             active_view: ViewType::Both,
             show_image: true,
             loading: true,
             error: None,
+            show_commentary: false, // Will be set to true when commentary loads successfully
+            commentary_first_load: true,
             image_scale: 1.0, // Start at normal size
             image_offset_x: 0.0,
             image_offset_y: 0.0,
@@ -142,6 +156,7 @@ impl Component for TeiViewer {
             self.current_project = new_project.clone();
             self.diplomatic = None;
             self.translation = None;
+            self.commentary = None;
             self.loading = true;
             self.error = None;
             self.hovered_zone = None;
@@ -165,6 +180,12 @@ impl Component for TeiViewer {
             );
             ctx.link()
                 .send_message(TeiViewerMsg::LoadTranslation(trad_path));
+            let commentary_path = format!(
+                "public/projects/{}/commentary.html?v={}",
+                new_project, cache_bust
+            );
+            ctx.link()
+                .send_message(TeiViewerMsg::LoadCommentary(commentary_path));
             true
         } else {
             false
@@ -205,6 +226,37 @@ impl Component for TeiViewer {
                     link.send_message(TeiViewerMsg::TranslationLoaded(result));
                 });
                 false
+            }
+            TeiViewerMsg::LoadCommentary(path) => {
+                let link = ctx.link().clone();
+                spawn_local(async move {
+                    let result = match Request::get(&path).send().await {
+                        Ok(resp) => match resp.text().await {
+                            Ok(html) => Ok(html),
+                            Err(e) => Err(format!("Failed to read commentary text: {:?}", e)),
+                        },
+                        Err(e) => Err(format!("Failed to load commentary: {:?}", e)),
+                    };
+                    link.send_message(TeiViewerMsg::CommentaryLoaded(result));
+                });
+                false
+            }
+            TeiViewerMsg::CommentaryLoaded(res) => {
+                match res {
+                    Ok(html) => {
+                        self.commentary = Some(html);
+                        // Auto-show only on first load if commentary exists
+                        if self.commentary_first_load {
+                            self.show_commentary = true;
+                        }
+                    }
+                    Err(e) => {
+                        log::warn!("Failed to load commentary: {:?}", e);
+                        self.commentary = None;
+                        self.show_commentary = false;
+                    }
+                }
+                true
             }
             TeiViewerMsg::DiplomaticLoaded(res) => {
                 match res {
@@ -295,6 +347,14 @@ impl Component for TeiViewer {
             }
             TeiViewerMsg::ToggleView(view) => {
                 self.active_view = view;
+                true
+            }
+            TeiViewerMsg::ToggleCommentary => {
+                self.show_commentary = !self.show_commentary;
+                // After first manual toggle, don't auto-show anymore
+                if self.commentary_first_load {
+                    self.commentary_first_load = false;
+                }
                 true
             }
             TeiViewerMsg::UpdateImageScale(factor) => {
@@ -430,6 +490,7 @@ impl Component for TeiViewer {
                                 None
                             }
                         }
+                        ViewType::Commentary => Some(ViewType::Diplomatic), // Default to diplomatic for commentary
                     };
                     self.metadata_selected = preferred;
                 } else {
@@ -578,6 +639,7 @@ impl Component for TeiViewer {
                     { self.render_splitter(ctx) }
                     { self.render_text_panels(ctx) }
                     { self.render_metadata_popup(ctx) }
+                    { self.render_commentary_popup(ctx) }
                 </div>
             </div>
         }
@@ -595,6 +657,7 @@ impl TeiViewer {
         let toggle_both = ctx
             .link()
             .callback(|_| TeiViewerMsg::ToggleView(ViewType::Both));
+        let toggle_commentary = ctx.link().callback(|_| TeiViewerMsg::ToggleCommentary);
         let zoom_in = ctx.link().callback(|_| TeiViewerMsg::UpdateImageScale(1.2));
         let zoom_out = ctx.link().callback(|_| TeiViewerMsg::UpdateImageScale(0.8));
         let toggle_meta = ctx.link().callback(|_| TeiViewerMsg::ToggleMetadata);
@@ -606,6 +669,7 @@ impl TeiViewer {
                     <button class={if self.active_view == ViewType::Diplomatic { "active" } else { "" }} onclick={toggle_dip}>{"Edición diplomática"}</button>
                     <button class={if self.active_view == ViewType::Translation { "active" } else { "" }} onclick={toggle_trad}>{"Traducción"}</button>
                     <button class={if self.active_view == ViewType::Both { "active" } else { "" }} onclick={toggle_both}>{"Ambas"}</button>
+                    <button class={if self.show_commentary { "active" } else { "" }} onclick={toggle_commentary}>{"Comentarios"}</button>
                 </div>
                 <div class="image-controls">
                     <button onclick={zoom_in}>{"🔍 +"}</button>
@@ -1401,6 +1465,32 @@ impl TeiViewer {
             }
         } else {
             html! {}
+        }
+    }
+
+    fn render_commentary_popup(&self, ctx: &Context<Self>) -> Html {
+        if !self.show_commentary || self.commentary.is_none() {
+            return html! {};
+        }
+
+        let on_close = ctx.link().callback(|_| TeiViewerMsg::ToggleCommentary);
+        let commentary_html = self.commentary.as_ref().unwrap();
+
+        html! {
+            <div class="commentary-popup-overlay">
+                <div class="commentary-popup">
+                    <div class="commentary-popup-header">
+                        <h2>{"Comentarios"}</h2>
+                        <button class="close-btn" onclick={on_close}>{"×"}</button>
+                    </div>
+                    <div class="commentary-popup-content">
+                        <div class="commentary-html-content">
+                            // Raw HTML content from commentary.html
+                            { Html::from_html_unchecked(AttrValue::from(commentary_html.clone())) }
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
     }
 }
