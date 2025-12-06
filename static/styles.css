@@ -1652,26 +1652,27 @@ body {
 }
 
 .commentary-popup {
-    background: white;
+    background: #22304a;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    width: 75%;
-    height: 75%;
-    max-width: 900px;
-    max-height: 80vh;
+    width: 85%;
+    height: 85%;
+    max-width: 1200px;
+    max-height: 90vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    border: 2px solid #3a8dde;
 }
 
 .commentary-popup-header {
-    background-color: #34495e;
-    color: white;
+    background-color: #18223a;
+    color: #eaf6fb;
     padding: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #3a8dde;
 }
 
 .commentary-popup-header h2 {
@@ -1691,7 +1692,7 @@ body {
 }
 
 .commentary-popup .close-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: #3a8dde;
 }
 
 .commentary-popup-content {
@@ -1704,6 +1705,8 @@ body {
     padding: 2rem;
     line-height: 1.6;
     font-size: 1rem;
+    color: #eaf6fb;
+    background-color: #22304a;
 }
 
 .commentary-html-content h1,
@@ -1712,7 +1715,7 @@ body {
 .commentary-html-content h4,
 .commentary-html-content h5,
 .commentary-html-content h6 {
-    color: #2c3e50;
+    color: #bcdfff;
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
@@ -1741,7 +1744,10 @@ body {
     margin: 1rem 0;
     padding-left: 1rem;
     font-style: italic;
-    color: #555;
+    color: #bcdfff;
+    background-color: #18223a;
+    padding: 1rem;
+    border-radius: 4px;
 }
 
 .commentary-html-content ul,
@@ -1755,7 +1761,7 @@ body {
 }
 
 .commentary-html-content a {
-    color: #3498db;
+    color: #4fc3f7;
     text-decoration: none;
 }
 
@@ -1764,25 +1770,29 @@ body {
 }
 
 .commentary-html-content code {
-    background-color: #f8f9fa;
+    background-color: #18223a;
+    color: #4fc3f7;
     padding: 0.2rem 0.4rem;
     border-radius: 3px;
     font-family: "Courier New", monospace;
+    border: 1px solid #3a8dde;
 }
 
 .commentary-html-content pre {
-    background-color: #f8f9fa;
+    background-color: #18223a;
+    color: #eaf6fb;
     padding: 1rem;
     border-radius: 4px;
     overflow-x: auto;
     margin: 1rem 0;
+    border: 1px solid #3a8dde;
 }
 
 /* Responsive styles for commentary popup */
 @media (max-width: 768px) {
     .commentary-popup {
         width: 95%;
-        height: 85%;
+        height: 90%;
     }
 
     .commentary-html-content {
@@ -1801,7 +1811,7 @@ body {
 @media (max-width: 480px) {
     .commentary-popup {
         width: 98%;
-        height: 90%;
+        height: 95%;
     }
 
     .commentary-html-content {

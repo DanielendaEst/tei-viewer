@@ -669,7 +669,7 @@ impl TeiViewer {
                     <button class={if self.active_view == ViewType::Diplomatic { "active" } else { "" }} onclick={toggle_dip}>{"Edición diplomática"}</button>
                     <button class={if self.active_view == ViewType::Translation { "active" } else { "" }} onclick={toggle_trad}>{"Traducción"}</button>
                     <button class={if self.active_view == ViewType::Both { "active" } else { "" }} onclick={toggle_both}>{"Ambas"}</button>
-                    <button class={if self.show_commentary { "active" } else { "" }} onclick={toggle_commentary}>{"Comentarios"}</button>
+                    <button class={if self.show_commentary { "active" } else { "" }} onclick={toggle_commentary}>{"Comentario"}</button>
                 </div>
                 <div class="image-controls">
                     <button onclick={zoom_in}>{"🔍 +"}</button>
