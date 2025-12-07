@@ -1,0 +1,82 @@
+{
+  "id": "Tractatus",
+  "name": "Tractatus",
+  "description": "Brief description of your project",
+  "metadata": {
+    "author": "Author Name",
+    "editor": "Editor Name",
+    "collection": "Collection Name",
+    "institution": "Institution Name",
+    "repository": "https://repository-url.com",
+    "country": "Country",
+    "settlement": "City",
+    "language": "Language (e.g., Ancient Greek)",
+    "date_range": "Date range",
+    "siglum": "Manuscript siglum",
+    "old_catalog": "Old catalog number",
+    "museum_id": "Museum ID",
+    "origin_place": "Place of origin"
+  },
+  "pages": [
+    {
+      "number": 1,
+      "label": "Folio 1r",
+      "has_diplomatic": true,
+      "has_translation": true,
+      "has_image": true,
+      "notes": "Optional notes"
+    },
+    {
+      "number": 2,
+      "label": "Folio 2r",
+      "has_diplomatic": true,
+      "has_translation": true,
+      "has_image": true
+    },
+    {
+      "number": 3,
+      "label": "Folio 2v",
+      "has_diplomatic": true,
+      "has_translation": true,
+      "has_image": true
+    },
+    {
+      "number": 4,
+      "label": "Folio 3r",
+      "has_diplomatic": true,
+      "has_translation": true,
+      "has_image": true
+    },
+    {
+      "number": 5,
+      "label": "Folio 3v",
+      "has_diplomatic": true,
+      "has_translation": true,
+      "has_image": true
+    },
+    {
+      "number": 6,
+      "label": "Folio 4r",
+      "has_diplomatic": true,
+      "has_translation": true,
+      "has_image": true
+    },
+    {
+      "number": 7,
+      "label": "Folio 4v",
+      "has_diplomatic": true,
+      "has_translation": true,
+      "has_image": true
+    },
+    {
+      "number": 8,
+      "label": "Folio 5r",
+      "has_diplomatic": true,
+      "has_translation": true,
+      "has_image": true
+    }
+
+  ],
+  "version": "1.0.0",
+  "last_updated": "2024-01-01"
+}

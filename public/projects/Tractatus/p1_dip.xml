@@ -1,0 +1,76 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>Tractatus de facinatione</title>
+                <author>Diego Álvarez Chanca</author>
+                <editor>Daniel S. López</editor>
+                <respStmt>
+                    <resp>Transcripción diplomática y marcación TEI</resp>
+                    <name>Daniel S. López</name>
+                </respStmt>
+            </titleStmt>
+            <editionStmt>
+                <edition>Transcripción diplomática</edition>
+            </editionStmt>
+            <publicationStmt>
+                <publisher>Petrus Brun</publisher>
+                <date>1499</date>
+            </publicationStmt>
+            <sourceDesc>
+                <msDesc>
+                    <msIdentifier>
+                        <country>España</country>
+                        <settlement>Córdoba</settlement>
+                        <institution>Biblioteca Provincial de Córdoba</institution>
+                        <collection>Fondo Antiguo</collection>
+                        <idno type="oldCatalog">N/A</idno>
+                        <idno type="museumNew">N/A</idno>
+                        <idno type="siglum">N/A</idno>
+                    </msIdentifier>
+                    <history>
+                        <origin>
+                            <origPlace>
+                                <placeName>España</placeName>
+                            </origPlace>
+                            <origDate notBefore="1450" notAfter="1515">1499</origDate>
+                        </origin>
+                    </history>
+                </msDesc>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <p>Digital edition for research and display purposes. Converted from PAGE-XML with full
+                semantic markup including abbreviations, corrections, regularisations, numbers,
+                person names, place names, references, and text styling.</p>
+        </encodingDesc>
+        <profileDesc>
+            <langUsage>
+                <language ident="lat">Spanish</language>
+            </langUsage>
+        </profileDesc>
+        <revisionDesc>
+            <change>Automated conversion from PAGE-XML with preservation of all annotations.</change>
+        </revisionDesc>
+    </teiHeader>
+    <facsimile>
+        <surface n="1" xml:id="p1">
+            <graphic url="images/p1.jpg" width="960px" height="1358px" />
+            <zone type="TextRegion" xml:id="z_tr_1" points="288,446 551,446 551,478 288,478" />
+            <zone type="line" xml:id="z_tr_1_tl_1"
+                points="286,437 309,436 331,436 343,436 360,436 383,436 392,437 411,437 428,436 447,436 463,437 483,437 500,437 518,437 532,439 542,439 553,440 551,476 548,475 531,472 513,472 496,471 479,471 461,470 444,470 426,470 409,470 392,469 374,469 357,470 340,469 322,469 305,469 288,468">
+                <note type="baseline">288,466 305,467 322,467 340,467 357,468 374,467 392,467
+                    409,468 426,468 444,468 461,468 479,469 496,469 513,470 531,470 548,473 551,474</note>
+            </zone>
+        </surface>
+    </facsimile>
+    <text>
+        <body>
+            <div type="transcription" xml:lang="lat">
+                <pb n="1" facs="#p1" />
+                <lb facs="#z_tr_1_tl_1" n="1" />
+                <ab>Libro del ojo</ab>
+            </div>
+        </body>
+    </text>
+</TEI>

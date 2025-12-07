@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Visualizador TEI-XML</title>
+        <meta
+            name="description"
+            content="Interactive visualization of ancient Greek papyri with TEI-XML encoding"
+        />
+
+        <!-- Trunk build tool directives -->
+        
+<script type="module">
+import init, * as bindings from '/tei-viewer/tei-viewer-9dce7053ddf5252f.js';
+const wasm = await init({ module_or_path: '/tei-viewer/tei-viewer-9dce7053ddf5252f_bg.wasm' });
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script>
+        <link rel="stylesheet" href="/tei-viewer/styles-5e9070767feb87af.css" integrity="sha384-WdEiyRyYE+FxIkTOkG4sf3JPTPQfYFNO1k1TObAC15O1g5LO5DHU1Z+FVGLx8ThM"/>
+        <link rel="stylesheet" href="/tei-viewer/iosevka-4b2e30e1aeb1b5e3.css" integrity="sha384-LkGcKL5YJspMf0s8pU51YHbKOTFxnf1HoLdn66BwJX057OMkR+ql5osdMvX56RBB"/>
+        
+        
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Gentium+Plus:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- Enhanced Unicode support -->
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Music&display=swap"
+            rel="stylesheet"
+        />
+
+        <style>
+            /* Loading screen styles */
+            #loading-screen {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                color: white;
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            #loading-screen h1 {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
+
+            #loading-screen .spinner {
+                width: 50px;
+                height: 50px;
+                border: 4px solid rgba(255, 255, 255, 0.3);
+                border-top-color: white;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            /* Hide loading screen when app loads */
+            body.loaded #loading-screen {
+                opacity: 0;
+                transition: opacity 0.5s ease-out;
+                pointer-events: none;
+            }
+        </style>
+    <link rel="modulepreload" href="/tei-viewer/tei-viewer-9dce7053ddf5252f.js" crossorigin="anonymous" integrity="sha384-cBhA3lg6/p9KLFStWB7SicLvdfLXjdezfUnZv2fs69vUcVVnrJ+FJDuRAquLs3va"><link rel="preload" href="/tei-viewer/tei-viewer-9dce7053ddf5252f_bg.wasm" crossorigin="anonymous" integrity="sha384-JciipjS5ZfwrtFLoAHHH0XTk+CWZwjOnvMcMzbp6n5cAKRI9iSvAGAoReptN+23K" as="fetch" type="application/wasm"></head>
+    <body>
+        <!-- Loading screen -->
+        <div id="loading-screen">
+            <h1>TEI-XML Viewer</h1>
+            <p>Loading application...</p>
+            <div class="spinner"></div>
+        </div>
+
+        <!-- Main app container -->
+        <div id="root"></div>
+
+        <script>
+            // Remove loading screen when WASM app is ready
+            window.addEventListener("load", function () {
+                setTimeout(function () {
+                    document.body.classList.add("loaded");
+                }, 500);
+            });
+        </script>
+    </body>
+</html>

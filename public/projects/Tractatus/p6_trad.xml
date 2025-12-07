@@ -1,0 +1,341 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>Tractatus de fascinatione</title>
+                <author>Diego Álvarez Chanca</author>
+                <editor role="translator">Daniel S. López</editor>
+                <editor>Daniel S. López</editor>
+                <respStmt>
+                    <resp>Traducción al español y marcación TEI</resp>
+                    <name>Daniel S. López</name>
+                </respStmt>
+            </titleStmt>
+            <editionStmt>
+                <edition>Traducción al español</edition>
+            </editionStmt>
+            <publicationStmt>
+                <publisher>Patrus Brun</publisher>
+                <date>1499</date>
+            </publicationStmt>
+            <sourceDesc>
+                <msDesc>
+                    <msIdentifier>
+                        <settlement>España</settlement>
+                        <institution>Biblioteca Provincial de Córdoba</institution>
+                        <collection>Fondo Antiguo</collection>
+                        <idno type="oldCatalog">N/A</idno>
+                        <idno type="museumNew">N/A</idno>
+                        <idno type="siglum">N/A</idno>
+                    </msIdentifier>
+                    <history>
+                        <origin>
+                            <origPlace>
+                                <placeName>España</placeName>
+                            </origPlace>
+                            <origDate notBefore="1450" notAfter="1515">1499</origDate>
+                        </origin>
+                    </history>
+                </msDesc>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <p>Digital edition for research and display purposes. Converted from PAGE-XML with full
+                semantic markup including abbreviations, corrections, regularisations, numbers,
+                person names, place names, references, and text styling.</p>
+        </encodingDesc>
+        <profileDesc>
+            <langUsage>
+                <language ident="es">Spanish</language>
+            </langUsage>
+        </profileDesc>
+        <revisionDesc>
+            <change>Automated conversion from PAGE-XML with preservation of all annotations.</change>
+        </revisionDesc>
+    </teiHeader>
+    <facsimile>
+        <surface n="1" xml:id="p1">
+            <graphic url="images/p6.jpg" width="960px" height="1358px" />
+            <zone type="TextRegion" xml:id="z_tr_1" points="84,63 84,1144 805,1144 805,63" />
+            <zone type="line" xml:id="z_tr_1_tl_1"
+                points="89,96 802,85 800,52 653,53 552,55 480,54 437,55 244,58 124,62 90,62">
+                <note type="baseline">93,89 124,89 160,87 196,87 232,86 267,85 303,83 338,84 374,84
+                    410,83 446,83 481,82 517,81 553,81 589,82 624,81 660,80 696,80 732,81 767,80
+                    803,77</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_2" points="90,128 751,117 801,114 802,84 89,97">
+                <note type="baseline">91,122 126,120 162,119 197,118 233,117 269,117 304,117 340,115
+                    375,115 411,114 447,114 482,113 517,113 553,113 589,113 624,112 659,112 695,112
+                    731,112 766,112 802,111</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_3" points="89,152 800,149 801,117 87,128">
+                <note type="baseline">93,151 129,149 164,149 199,150 235,149 270,149 306,148 341,147
+                    377,146 412,146 448,145 483,144 519,143 554,143 589,143 625,144 660,144 696,143
+                    731,142 766,142 802,143</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_4" points="86,184 663,178 799,178 799,149 87,151">
+                <note type="baseline">91,181 126,180 162,180 197,180 233,180 268,178 304,178 339,177
+                    375,177 410,177 446,175 481,175 517,175 552,174 588,173 623,173 659,173 694,173
+                    730,172 765,172 801,172</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_5"
+                points="84,221 134,219 191,218 478,213 802,211 803,182 84,190">
+                <note type="baseline">88,211 123,212 159,211 195,211 230,209 266,209 302,209 338,208
+                    374,208 409,207 445,206 481,206 517,206 553,206 588,206 624,206 660,206 696,204
+                    732,203 767,204 803,203</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_6" points="84,249 801,242 801,212 168,219 84,222">
+                <note type="baseline">89,241 124,242 160,241 196,240 232,239 267,239 303,238 338,239
+                    374,239 410,239 446,238 481,237 517,237 553,237 589,237 624,236 660,236 696,235
+                    732,233 767,233 803,233</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_7" points="87,276 799,271 800,242 740,244 88,247">
+                <note type="baseline">92,274 127,273 163,273 198,271 234,270 270,270 305,270 340,269
+                    376,269 411,269 447,268 483,268 518,268 553,267 589,267 624,267 660,266 696,264
+                    731,264 766,264 802,266</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_8" points="89,311 704,302 799,300 800,270 89,278">
+                <note type="baseline">93,304 129,303 164,303 199,302 235,302 270,300 306,300 341,300
+                    376,300 412,300 447,299 482,299 518,298 553,298 588,297 624,297 659,297 694,296
+                    730,296 765,295 801,296</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_9" points="90,343 799,332 799,300 88,313">
+                <note type="baseline">91,338 126,335 162,334 197,333 233,331 268,330 304,330 339,330
+                    375,330 410,330 446,330 481,329 517,329 552,329 588,328 623,328 659,327 694,326
+                    730,326 765,324 801,324</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_10" points="89,370 801,363 801,330 89,345">
+                <note type="baseline">92,366 125,365 161,364 197,363 232,363 268,362 304,362 339,362
+                    375,362 410,362 447,360 482,360 518,360 553,360 589,359 625,358 660,358 696,356
+                    732,357 767,356 803,357</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_11"
+                points="87,397 236,401 797,394 799,363 768,364 87,372">
+                <note type="baseline">91,395 123,395 158,395 194,394 230,394 265,393 301,393 336,393
+                    372,391 407,391 443,391 479,391 514,391 550,391 585,391 621,390 656,389 692,388
+                    728,388 763,387 799,387</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_12"
+                points="88,428 800,422 800,393 779,393 276,402 232,402 88,404">
+                <note type="baseline">94,426 124,426 160,425 196,425 231,426 267,426 302,423 338,424
+                    374,423 409,423 445,422 481,423 517,422 552,422 588,420 623,420 659,419 695,418
+                    730,418 766,416 802,418</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_13" points="87,461 802,455 800,422 117,434 88,436">
+                <note type="baseline">91,458 123,457 159,456 195,455 230,455 266,455 302,454 338,454
+                    374,454 409,453 445,453 481,453 517,453 553,453 588,451 624,451 660,449 696,449
+                    732,449 767,449 803,451</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_14" points="90,497 801,487 801,458 782,454 89,462">
+                <note type="baseline">93,489 129,487 164,487 199,487 235,487 271,486 306,485 342,484
+                    377,484 412,484 448,484 484,484 519,483 555,484 590,483 625,482 661,480 697,480
+                    732,479 768,478 803,480</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_15" points="89,523 803,515 802,488 89,497">
+                <note type="baseline">94,518 130,519 165,518 200,519 235,518 271,516 306,515 341,515
+                    376,515 412,515 447,514 482,514 517,514 553,514 588,513 623,513 658,512 694,511
+                    729,511 764,509 800,511</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_16" points="91,557 799,545 798,519 769,518 90,526">
+                <note type="baseline">93,551 129,550 164,548 199,548 234,548 270,547 305,547 340,547
+                    376,546 411,545 447,545 482,545 517,544 552,544 587,544 623,543 658,542 694,541
+                    729,542 764,540 800,540</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_17" points="91,584 799,576 801,547 89,557">
+                <note type="baseline">93,580 125,580 160,579 196,578 231,578 267,578 302,576 337,575
+                    373,574 408,574 444,574 479,575 514,574 550,573 585,573 621,573 656,573 691,572
+                    727,571 762,571 798,569</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_18" points="90,614 797,609 797,580 772,580 89,586">
+                <note type="baseline">93,611 124,610 160,609 195,608 230,608 266,607 302,607 337,605
+                    373,605 408,605 444,605 479,604 515,605 550,604 586,603 621,603 657,603 692,603
+                    728,602 763,602 799,601</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_19" points="90,646 801,640 802,610 90,617">
+                <note type="baseline">91,641 126,641 162,640 197,640 233,639 269,638 304,637 340,636
+                    375,636 411,636 447,636 482,635 517,634 553,634 589,634 624,634 659,634 695,634
+                    731,633 766,633 802,633</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_20" points="90,674 797,672 797,642 730,642 91,648">
+                <note type="baseline">91,671 123,671 158,670 194,670 230,670 265,669 301,669 336,667
+                    372,667 407,667 443,667 479,665 514,666 550,666 585,665 621,665 656,665 692,664
+                    728,663 763,663 799,667</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_21" points="89,709 800,698 800,671 761,670 91,676">
+                <note type="baseline">91,703 121,701 156,701 192,700 228,700 263,699 299,699 335,699
+                    371,699 406,698 442,698 477,697 513,696 549,697 585,697 620,697 656,695 692,695
+                    727,694 763,694 799,694</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_22" points="89,737 800,732 798,705 781,705 91,710">
+                <note type="baseline">90,732 125,732 161,732 196,732 232,731 267,731 302,730 338,730
+                    374,730 409,729 445,728 480,728 515,728 551,728 587,728 622,727 658,726 693,725
+                    728,727 764,727 800,728</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_23" points="89,768 799,761 799,734 773,733 89,741">
+                <note type="baseline">92,763 127,763 163,763 198,764 234,763 269,762 305,761 340,761
+                    376,760 411,759 447,759 482,759 517,759 553,759 588,758 623,758 659,757 694,756
+                    730,756 765,757 801,758</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_24" points="90,800 804,793 804,764 760,765 90,770">
+                <note type="baseline">91,796 126,795 162,795 197,795 233,793 269,793 304,792 340,792
+                    375,792 411,792 447,790 482,790 517,790 553,790 589,790 624,789 659,789 695,787
+                    731,787 766,788 802,789</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_25" points="90,830 804,824 803,796 91,802">
+                <note type="baseline">94,826 124,825 160,825 196,825 232,825 268,824 303,823 339,823
+                    375,823 410,823 447,822 482,821 518,820 554,820 589,820 625,819 661,819 697,818
+                    733,819 768,819 804,820</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_26" points="90,865 806,854 805,827 779,827 90,830">
+                <note type="baseline">98,858 130,857 167,855 202,856 237,856 273,855 308,854 344,853
+                    380,854 415,853 450,853 486,852 521,852 557,852 592,852 628,851 663,850 699,849
+                    734,848 770,848 805,850</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_27" points="90,890 803,886 803,856 770,856 89,866">
+                <note type="baseline">96,886 127,885 165,886 202,886 240,885 277,884 314,885 352,883
+                    390,884 427,884 464,883 502,883 539,883 577,883 615,881 652,881 689,880 727,879
+                    764,878 802,879</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_28"
+                points="91,922 254,917 803,914 802,888 774,887 91,892">
+                <note type="baseline">92,919 127,917 163,917 198,915 234,915 270,915 305,914 340,913
+                    376,913 411,913 447,912 483,912 518,912 553,912 589,911 624,910 660,910 696,909
+                    731,909 766,910 802,909</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_29" points="91,955 803,944 803,918 692,917 90,928">
+                <note type="baseline">96,949 123,949 159,948 194,946 230,946 266,945 302,944 337,944
+                    373,943 409,943 445,942 480,943 516,942 552,942 587,941 623,941 659,942 695,941
+                    730,941 766,941 802,941</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_30" points="92,984 802,976 802,947 747,947 92,957">
+                <note type="baseline">97,980 132,980 167,978 202,977 237,976 272,976 307,976 342,976
+                    377,974 412,973 447,974 482,973 517,973 552,973 587,972 622,972 658,973 692,973
+                    728,970 763,972 798,973</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_31" points="91,1021 802,1010 801,978 92,988">
+                <note type="baseline">92,1016 127,1012 163,1010 198,1009 234,1008 270,1008 305,1007
+                    340,1006 376,1005 411,1005 447,1004 483,1004 518,1004 553,1004 589,1004 624,1004
+                    660,1004 696,1003 731,1004 766,1003 802,1003</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_32"
+                points="89,1047 738,1038 802,1040 802,1012 89,1023">
+                <note type="baseline">91,1042 126,1041 161,1041 197,1040 232,1039 268,1039 303,1038
+                    338,1038 374,1037 409,1037 445,1037 480,1037 515,1037 551,1036 586,1036 622,1036
+                    657,1034 692,1034 728,1034 763,1034 799,1036</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_33"
+                points="90,1078 798,1073 799,1042 768,1040 89,1048">
+                <note type="baseline">92,1072 120,1072 155,1072 191,1071 227,1071 262,1070 298,1069
+                    334,1069 369,1069 405,1069 441,1068 476,1068 512,1067 548,1067 584,1067 619,1067
+                    655,1066 690,1065 726,1065 762,1065 798,1064</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_34"
+                points="91,1112 799,1102 799,1074 781,1074 89,1079">
+                <note type="baseline">92,1100 127,1103 163,1103 198,1103 234,1103 269,1102 305,1101
+                    340,1099 376,1100 411,1099 447,1098 482,1098 517,1098 553,1098 588,1098 623,1098
+                    659,1097 694,1097 730,1097 765,1096 801,1096</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_35"
+                points="92,1143 107,1142 141,1142 270,1143 403,1142 469,1142 544,1140 676,1139 797,1137 799,1102 91,1112">
+                <note type="baseline">96,1136 123,1135 158,1136 194,1136 229,1137 264,1135 300,1134
+                    335,1134 371,1134 406,1133 442,1133 477,1133 513,1132 548,1132 584,1132 619,1132
+                    654,1131 690,1131 725,1131 761,1130 797,1130</note>
+            </zone>
+        </surface>
+    </facsimile>
+    <text>
+        <body>
+            <div type="transcription" xml:lang="es">
+                <pb n="1" facs="#p1" />
+                <lb facs="#z_tr_1_tl_1" n="1" />
+                <ab>ave, en época de muda de plumas, rápidamente provoca que esta pierda</ab>
+                <lb facs="#z_tr_1_tl_2" n="2" />
+                <ab>las plumas, como se lee en cierto libro sobre el cuidado de las aves y como
+                    frecuentemente</ab>
+                <lb facs="#z_tr_1_tl_3" n="3" />
+                <ab>se ha visto por experiencia. De este efecto ninguna otra causa puede darse</ab>
+                <lb facs="#z_tr_1_tl_4" n="4" />
+                <ab>que no sea porque la gallina fue alimentada con la venenosidad presente en</ab>
+                <lb facs="#z_tr_1_tl_5" n="5" />
+                <ab>el trigo y la cual adquirió al cocinarse junto con la serpiente. ¿Cómo,
+                    entonces,</ab>
+                <lb facs="#z_tr_1_tl_6" n="6" />
+                <ab>esto no se producirá en la constitución humana cuando también la gallina es de
+                    constitución</ab>
+                <lb facs="#z_tr_1_tl_7" n="7" />
+                <ab>equilibrada tal como la constitución humana misma? Tampoco por esto la gallina</ab>
+                <lb facs="#z_tr_1_tl_8" n="8" />
+                <ab>deja de ser gallina, como quiso mostrar el razonamiento de Averroes. También se
+                    lee</ab>
+                <lb facs="#z_tr_1_tl_9" n="9" />
+                <ab>a propósito de los hongos que nacen cerca de cuevas de reptiles venenosos que</ab>
+                <lb facs="#z_tr_1_tl_10" n="10" />
+                <ab>aquellos se vuelven venenosos debido a que se nutren de la tierra infectada</ab>
+                <lb facs="#z_tr_1_tl_11" n="11" />
+                <ab>de veneno, mas no por ello dejan de ser hongos. También, el perejil trasplantado</ab>
+                <lb facs="#z_tr_1_tl_12" n="12" />
+                <ab>en Egipto, debido a que se nutre con alimento bueno y equilibrado,</ab>
+                <lb facs="#z_tr_1_tl_13" n="13" />
+                <ab>deja de ser venenoso, pero se mantiene aún en su especie.</ab>
+                <lb facs="#z_tr_1_tl_14" n="14" />
+                <ab>También, Arnau de Vilanova en el libelo que hizo acerca de los vinos enseña a
+                    hacer</ab>
+                <lb facs="#z_tr_1_tl_15" n="15" />
+                <ab>uvas laxativas insertando en el tronco de una vid alguna medicina laxativa;</ab>
+                <lb facs="#z_tr_1_tl_16" n="16" />
+                <ab>además, de este modo las uvas se vuelven moscatelinas, al insertarles</ab>
+                <lb facs="#z_tr_1_tl_17" n="17" />
+                <ab>musgo en el tronco. Hay muchos más ejemplos para cuya recopilación</ab>
+                <lb facs="#z_tr_1_tl_18" n="18" />
+                <ab>no bastarían días enteros y de todos los cuales no se halla razón</ab>
+                <lb facs="#z_tr_1_tl_19" n="19" />
+                <ab>según la cual esto ocurra en ellos y no así en el hombre, pues todos estos
+                    efectos</ab>
+                <lb facs="#z_tr_1_tl_20" n="20" />
+                <ab>se producen a partir de la misma facultad tanto en plantas como en animales.
+                    Esto es,</ab>
+                <lb facs="#z_tr_1_tl_21" n="21" />
+                <ab>a partir de facultades naturales que no están menos presentes en el hombre que
+                    en las plantas</ab>
+                <lb facs="#z_tr_1_tl_22" n="22" />
+                <ab>y en los demás animales. Por ello, no entiendo de qué modo la autoridad y la
+                    razón</ab>
+                <lb facs="#z_tr_1_tl_23" n="23" />
+                <ab>de Averroes podría forzar un intelecto a creer algo contrario</ab>
+                <lb facs="#z_tr_1_tl_24" n="24" />
+                <ab>a la verdad, pues se encuentran muchas autoridades de los antiguos</ab>
+                <lb facs="#z_tr_1_tl_25" n="25" />
+                <ab>que afirman lo contrario y la amplia experiencia nos lo demuestra a través de
+                    los sentidos.</ab>
+                <lb facs="#z_tr_1_tl_26" n="26" />
+                <ab>Asimismo, por artificio puede el hombre hacerse inmune a los venenos, como
+                    parece del Rey</ab>
+                <lb facs="#z_tr_1_tl_27" n="27" />
+                <ab>Mitrídates; por lo tanto, de manera artificial se puede hacer venenoso, pues lo
+                    opuesto debe</ab>
+                <lb facs="#z_tr_1_tl_28" n="28" />
+                <ab>ocurrir al respecto de lo mismo, como la justicia y la injusticia al respecto
+                    del hombre y la visión</ab>
+                <lb facs="#z_tr_1_tl_29" n="29" />
+                <ab>y la ceguera al respecto del ojo y así de las demás cosas. De la misma manera,
+                    por naturaleza se encuentran</ab>
+                <lb facs="#z_tr_1_tl_30" n="30" />
+                <ab>hombres con la facultad de sanar alguna enfermedad, como se comprueba del Rey
+                    Alfonso de Portugal,</ab>
+                <lb facs="#z_tr_1_tl_31" n="31" />
+                <ab>quien tuvo la facultad de sanar escrófulas con el mero tacto de sus manos, como
+                    muchos</ab>
+                <lb facs="#z_tr_1_tl_32" n="32" />
+                <ab>vieron, y yo mismo. También se encuentran muchos con la facultad de sanar</ab>
+                <lb facs="#z_tr_1_tl_33" n="33" />
+                <ab>la rabia como se constata por doquier por experiencia. Por lo tanto, pueden</ab>
+                <lb facs="#z_tr_1_tl_34" n="34" />
+                <ab>encontrarse hombres que puedan enfermar a los demás y en especial a los que
+                    estén</ab>
+                <lb facs="#z_tr_1_tl_35" n="35" />
+                <ab>predispuestos. Asimismo, en variadas ocasiones se han reseñado por experiencia
+                    hombres</ab>
+            </div>
+        </body>
+    </text>
+</TEI>

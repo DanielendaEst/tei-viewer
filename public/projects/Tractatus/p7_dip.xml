@@ -1,0 +1,974 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>Tractatus de facinatione</title>
+                <author>Diego Álvarez Chanca</author>
+                <editor>Daniel S. López</editor>
+                <respStmt>
+                    <resp>Transcripción diplomática y marcación TEI</resp>
+                    <name>Daniel S. López</name>
+                </respStmt>
+            </titleStmt>
+            <editionStmt>
+                <edition>Transcripción diplomática</edition>
+            </editionStmt>
+            <publicationStmt>
+                <publisher>Petrus Brun</publisher>
+                <date>1499</date>
+            </publicationStmt>
+            <sourceDesc>
+                <msDesc>
+                    <msIdentifier>
+                        <country>España</country>
+                        <settlement>Córdoba</settlement>
+                        <institution>Biblioteca Provincial de Córdoba</institution>
+                        <collection>Fondo Antiguo</collection>
+                        <idno type="oldCatalog">N/A</idno>
+                        <idno type="museumNew">N/A</idno>
+                        <idno type="siglum">N/A</idno>
+                    </msIdentifier>
+                    <history>
+                        <origin>
+                            <origPlace>
+                                <placeName>España</placeName>
+                            </origPlace>
+                            <origDate notBefore="1450" notAfter="1515">1499</origDate>
+                        </origin>
+                    </history>
+                </msDesc>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <p>Digital edition for research and display purposes. Converted from PAGE-XML with full
+                semantic markup including abbreviations, corrections, regularisations, numbers,
+                person names, place names, references, and text styling.</p>
+        </encodingDesc>
+        <profileDesc>
+            <langUsage>
+                <language ident="lat">Spanish</language>
+            </langUsage>
+        </profileDesc>
+        <revisionDesc>
+            <change>Automated conversion from PAGE-XML with preservation of all annotations.</change>
+        </revisionDesc>
+    </teiHeader>
+    <facsimile>
+        <surface n="1" xml:id="p1">
+            <graphic url="images/p7.jpg" width="960px" height="1358px" />
+            <zone type="TextRegion" xml:id="z_tr_1" points="158,79 158,1136 890,1136 890,79" />
+            <zone type="line" xml:id="z_tr_1_tl_1"
+                points="154,114 544,102 874,107 879,69 851,70 682,70 652,74 311,77 249,78 156,77">
+                <note type="baseline">158,103 194,102 230,101 266,99 302,100 338,99 374,98 410,98
+                    446,97 482,96 518,96 554,96 590,96 626,96 661,95 697,96 733,96 769,96 805,96
+                    842,94 878,93</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_2"
+                points="156,146 620,129 809,134 879,132 879,104 157,111">
+                <note type="baseline">161,134 197,133 233,133 268,133 304,132 340,132 375,130
+                    411,130 447,129 483,129 518,128 554,127 589,127 625,127 661,127 697,127 732,127
+                    768,127 804,127 839,126 875,127</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_3" points="157,170 519,161 879,163 878,134 156,146">
+                <note type="baseline">161,165 197,164 233,164 268,163 304,163 340,161 376,161
+                    412,160 447,160 483,160 519,159 555,159 590,158 626,158 662,159 697,158 733,158
+                    769,158 805,158 840,157 872,156</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_4" points="160,200 879,193 876,164 451,170 160,174">
+                <note type="baseline">165,195 201,195 236,195 272,194 307,193 343,193 379,192
+                    414,192 450,191 486,192 521,191 557,190 592,190 628,189 664,190 699,189 735,189
+                    771,189 806,189 842,189 878,188</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_5" points="161,237 880,225 879,192 161,204">
+                <note type="baseline">166,226 202,227 237,225 273,225 309,224 345,224 381,223
+                    416,223 452,223 488,223 524,222 560,222 595,222 631,222 667,223 703,222 738,221
+                    774,219 810,219 846,219 882,219</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_6"
+                points="159,267 878,255 878,230 772,228 642,232 160,236">
+                <note type="baseline">165,257 201,257 236,256 272,256 307,255 343,256 379,257
+                    415,255 450,254 486,254 522,253 557,252 593,252 629,251 665,252 700,252 736,251
+                    771,250 807,249 843,249 879,250</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_7" points="160,295 878,289 879,255 160,267">
+                <note type="baseline">165,290 201,289 236,288 272,288 308,288 344,288 380,288
+                    415,286 451,285 487,284 523,285 558,286 594,285 630,283 666,283 702,283 737,283
+                    773,282 809,281 845,281 881,281</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_8" points="157,322 883,320 884,288 767,292 158,293">
+                <note type="baseline">163,321 198,320 234,319 270,319 306,319 342,319 378,319
+                    413,317 449,317 485,316 521,317 557,315 592,314 629,314 664,315 700,313 736,312
+                    772,312 807,312 843,311 879,312</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_9" points="156,357 826,349 883,350 884,321 156,322">
+                <note type="baseline">161,350 197,351 234,351 270,350 306,349 342,349 378,349
+                    414,348 450,348 486,348 523,348 559,347 595,346 631,345 667,345 703,344 739,344
+                    776,343 812,343 848,343 884,342</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_10" points="161,385 883,379 882,353 840,351 157,357">
+                <note type="baseline">166,382 202,381 238,381 274,381 309,381 345,381 381,380
+                    417,380 453,380 489,380 525,379 561,377 597,377 633,377 668,377 704,376 740,376
+                    776,376 812,376 848,374 884,374</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_11" points="161,417 883,411 882,379 162,385">
+                <note type="baseline">166,411 202,413 238,412 274,412 309,411 345,411 381,412
+                    417,411 453,409 489,409 525,409 561,408 597,408 633,407 668,406 704,406 740,406
+                    776,405 812,405 848,404 884,405</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_12" points="165,446 880,441 880,414 779,415 165,419">
+                <note type="baseline">170,444 205,442 241,444 276,444 312,442 348,444 383,442
+                    419,441 455,441 490,440 526,441 562,440 598,439 633,439 669,438 704,438 740,437
+                    776,437 811,436 847,436 883,437</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_13" points="160,479 879,472 881,441 850,441 160,451">
+                <note type="baseline">165,475 201,474 237,474 272,474 308,474 344,474 380,474
+                    416,473 452,472 487,472 523,472 559,471 595,470 631,469 666,469 702,469 738,468
+                    774,468 810,467 846,467 882,468</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_14"
+                points="160,507 882,506 880,472 826,468 620,477 161,479">
+                <note type="baseline">165,506 201,505 237,505 272,505 308,505 344,505 380,504
+                    416,504 452,502 487,502 523,502 559,502 595,501 631,500 666,499 702,499 738,499
+                    774,499 810,498 846,498 882,498</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_15"
+                points="161,543 883,533 883,509 766,509 654,509 161,508">
+                <note type="baseline">166,537 202,537 238,537 274,537 309,536 345,536 381,535
+                    417,534 453,534 489,534 525,534 561,534 597,533 633,533 668,532 704,532 740,531
+                    776,532 812,531 848,529 884,527</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_16" points="163,572 882,566 882,534 837,531 163,550">
+                <note type="baseline">167,567 203,568 239,567 275,567 311,567 346,566 382,566
+                    418,565 454,565 489,565 526,565 562,564 597,563 633,561 669,561 705,561 740,561
+                    776,561 812,560 848,559 884,559</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_17" points="163,604 883,597 882,566 842,563 163,572">
+                <note type="baseline">168,600 204,598 240,600 276,600 311,598 347,597 383,597
+                    419,596 455,595 490,595 526,595 562,595 598,594 634,593 669,593 705,593 741,593
+                    776,592 812,590 848,590 884,592</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_18" points="163,641 885,622 882,593 859,593 163,604">
+                <note type="baseline">167,630 203,630 239,630 275,630 311,629 347,629 383,628
+                    419,626 455,628 491,626 527,626 563,625 599,625 635,625 670,624 706,623 742,623
+                    778,623 814,622 850,622 886,622</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_19"
+                points="168,668 587,663 846,656 880,657 883,623 172,639">
+                <note type="baseline">175,661 211,661 246,661 282,661 317,660 353,659 388,658
+                    424,657 459,657 495,657 530,657 566,657 601,656 637,656 672,654 708,654 743,654
+                    779,654 814,653 850,653 885,653</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_20"
+                points="169,701 884,692 885,659 855,661 215,668 168,669">
+                <note type="baseline">174,694 210,691 245,691 281,691 316,691 352,691 387,690
+                    423,689 459,689 494,688 530,688 565,689 601,688 636,687 672,686 708,686 743,685
+                    778,686 814,684 850,684 885,684</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_21"
+                points="163,729 224,727 884,724 884,694 855,697 817,696 163,699">
+                <note type="baseline">168,721 204,722 240,722 275,722 311,722 347,722 382,721
+                    418,720 453,719 489,719 525,719 561,719 596,719 632,718 668,718 703,718 739,718
+                    775,718 810,717 846,714 882,714</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_22" points="165,758 883,753 883,722 828,719 167,732">
+                <note type="baseline">171,756 206,753 242,753 278,753 314,753 349,753 385,752
+                    421,751 457,751 492,751 528,750 563,751 599,749 635,749 671,749 706,749 742,749
+                    778,746 814,746 849,746 885,745</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_23" points="167,796 883,780 883,753 821,749 167,763">
+                <note type="baseline">172,785 208,785 243,785 279,785 314,785 350,784 386,784
+                    421,782 457,782 493,784 529,782 564,781 600,782 635,780 671,779 707,779 742,779
+                    778,777 814,775 849,774 885,774</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_24"
+                points="165,826 772,808 851,818 883,809 884,780 165,796">
+                <note type="baseline">170,820 205,816 241,816 277,816 313,814 349,814 384,814
+                    420,813 456,813 491,812 527,811 563,812 599,811 635,810 670,810 706,810 742,808
+                    778,808 814,806 849,805 885,806</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_25" points="169,852 883,849 883,812 866,809 169,828">
+                <note type="baseline">174,846 210,846 245,846 281,846 316,845 352,845 387,844
+                    423,844 459,844 494,844 530,843 565,842 601,842 636,840 672,840 708,840 743,839
+                    778,839 814,838 850,839 885,838</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_26" points="165,882 886,873 886,850 865,840 165,851">
+                <note type="baseline">171,876 206,875 242,876 278,876 314,876 350,875 386,874
+                    421,874 457,874 493,874 529,871 565,871 601,871 637,871 672,870 708,870 744,869
+                    780,869 816,869 852,869 888,869</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_27" points="163,913 888,904 888,870 163,881">
+                <note type="baseline">168,908 204,907 240,907 276,907 313,907 349,906 385,905
+                    421,905 457,904 493,904 529,903 565,904 601,902 637,902 673,902 709,901 745,901
+                    781,900 817,900 854,900 890,899</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_28" points="166,946 887,938 885,912 791,909 167,916">
+                <note type="baseline">172,938 209,938 247,939 284,940 322,938 359,937 397,936
+                    434,936 472,935 509,936 546,935 584,935 622,934 659,934 697,932 734,931 771,931
+                    809,932 847,931 884,930</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_29"
+                points="165,977 886,967 886,936 864,935 829,938 768,935 165,946">
+                <note type="baseline">171,970 206,969 242,968 278,969 314,969 350,968 386,967
+                    421,967 457,967 493,966 529,966 565,965 601,965 637,964 672,964 708,964 744,964
+                    780,962 816,962 852,961 888,964</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_30"
+                points="170,1010 632,1000 666,1000 886,998 888,967 169,975">
+                <note type="baseline">173,1003 209,1000 244,1001 280,1001 316,1001 352,1000 388,1001
+                    423,1000 459,998 495,998 531,997 567,996 602,996 638,996 674,995 710,995 745,995
+                    781,994 817,994 853,991 889,994</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_31"
+                points="165,1037 201,1036 888,1031 885,1001 852,1002 163,1011">
+                <note type="baseline">171,1033 206,1032 242,1031 278,1031 314,1032 349,1032 385,1032
+                    421,1031 457,1029 492,1029 528,1029 563,1028 599,1028 635,1028 671,1026 706,1026
+                    742,1025 778,1024 814,1024 849,1024 885,1024</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_32"
+                points="165,1068 886,1066 886,1036 865,1032 167,1038">
+                <note type="baseline">170,1063 205,1062 241,1061 277,1061 313,1062 349,1062 385,1061
+                    421,1061 457,1060 493,1060 529,1060 564,1059 600,1058 636,1057 672,1057 708,1057
+                    744,1056 780,1056 816,1055 852,1055 888,1056</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_33" points="165,1101 882,1094 886,1068 165,1069">
+                <note type="baseline">170,1094 205,1094 241,1092 277,1092 313,1093 349,1093 384,1093
+                    420,1092 456,1092 491,1092 527,1091 563,1092 599,1091 635,1090 670,1089 706,1087
+                    742,1087 778,1086 814,1086 849,1086 885,1086</note>
+            </zone>
+            <zone type="line" xml:id="z_tr_1_tl_34"
+                points="168,1139 885,1127 886,1097 845,1095 660,1096 168,1099">
+                <note type="baseline">173,1129 208,1127 244,1127 279,1125 315,1125 350,1127 386,1126
+                    421,1126 457,1125 492,1125 528,1124 563,1124 599,1123 634,1123 670,1122 705,1121
+                    741,1121 776,1121 812,1122 847,1122 883,1122</note>
+            </zone>
+        </surface>
+    </facsimile>
+    <text>
+        <body>
+            <div type="transcription" xml:lang="lat">
+                <pb n="1" facs="#p1" />
+                <lb facs="#z_tr_1_tl_1" n="1" />
+                <ab>med<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>tes araneas <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> ole<choice>
+                        <abbr>ã</abbr>
+                        <expan>a[n]</expan>
+                    </choice>drum <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> a<choice>
+                        <orig>ll</orig>
+                        <reg>l</reg>
+                    </choice>ia venenosa. a<choice>
+                        <abbr>q̱</abbr>
+                        <expan>q[ui]</expan>
+                    </choice>bus n<choice>
+                        <abbr>õ</abbr>
+                        <expan>o(n)</expan>
+                    </choice></ab>
+                <lb facs="#z_tr_1_tl_2" n="2" />
+                <ab>solum i<choice>
+                        <sic>no</sic>
+                        <corr>n</corr>
+                    </choice>nocui e<choice>
+                        <sic>u</sic>
+                        <corr>v</corr>
+                    </choice>adunt verum<choice>
+                        <abbr>tñ</abbr>
+                        <expan>t[ame]n</expan>
+                    </choice> eis nutriuntur <choice>
+                        <abbr>q̃n</abbr>
+                        <expan>q[uide]m</expan>
+                    </choice>admo</ab>
+                <lb facs="#z_tr_1_tl_3" n="3" />
+                <ab>dum si cibis vescer<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>tur <choice>
+                        <abbr>d̑</abbr>
+                        <expan>d(e)</expan>
+                    </choice> quibus ego no<choice>
+                        <orig>u</orig>
+                        <reg>v</reg>
+                    </choice>i pue<choice>
+                        <orig>l</orig>
+                        <reg>ll</reg>
+                    </choice><choice>
+                        <abbr>ã</abbr>
+                        <expan>a(m)</expan>
+                    </choice> comed<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>t<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e(m)</expan>
+                    </choice></ab>
+                <lb facs="#z_tr_1_tl_4" n="4" />
+                <ab>cubelas sine <choice>
+                        <orig>v</orig>
+                        <reg>u</reg>
+                    </choice>llo nocum<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>to. <choice>
+                        <abbr>sȝ</abbr>
+                        <expan>s(ed)</expan>
+                    </choice> cum inter cibum <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> cibatu<choice>
+                        <abbr>ȝ</abbr>
+                        <expan>(m)</expan>
+                    </choice> te</ab>
+                <lb facs="#z_tr_1_tl_5" n="5" />
+                <ab>ste. <persName firstname="Galeno">ga</persName>. 3ª c<choice>
+                        <abbr>õ</abbr>
+                        <expan>o[m]</expan>
+                    </choice>ple<choice>
+                        <orig>t</orig>
+                        <reg>x</reg>
+                    </choice>ion<choice>
+                        <abbr>ũ</abbr>
+                        <expan>u(m)</expan>
+                    </choice> sit nece<choice>
+                        <orig>sc</orig>
+                        <reg>ss</reg>
+                    </choice>e re<choice>
+                        <abbr>p̱</abbr>
+                        <expan>p[er]</expan>
+                    </choice>iri ali<choice>
+                        <abbr>q̃</abbr>
+                        <expan>q(uis)</expan>
+                    </choice> <choice>
+                        <abbr>p̢</abbr>
+                        <expan>p[ro]</expan>
+                    </choice>por<choice>
+                        <orig>c</orig>
+                        <reg>t</reg>
+                    </choice>io m<choice>
+                        <abbr>ã</abbr>
+                        <expan>a[n]</expan>
+                    </choice>ifest<choice>
+                        <abbr>ũ</abbr>
+                        <expan>u(m)</expan>
+                    </choice></ab>
+                <lb facs="#z_tr_1_tl_6" n="6" />
+                <ab>est <choice>
+                        <abbr>qd̑</abbr>
+                        <expan>q[uo]d</expan>
+                    </choice> isti hab<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>t <choice>
+                        <abbr>p̢</abbr>
+                        <expan>p[ro]</expan>
+                    </choice><choice>
+                        <sic>pr</sic>
+                        <corr>p</corr>
+                    </choice>ortion<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e(m)</expan>
+                    </choice> <choice>
+                        <abbr>cũ</abbr>
+                        <expan>cu(m)</expan>
+                    </choice> venenis <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> per consequens e</ab>
+                <lb facs="#z_tr_1_tl_7" n="7" />
+                <ab>runt venenosi. E<choice>
+                        <orig>c</orig>
+                        <reg>t</reg>
+                    </choice>i<choice>
+                        <abbr>ã</abbr>
+                        <expan>a(m)</expan>
+                    </choice> teste a<choice>
+                        <sic>n</sic>
+                        <corr>u</corr>
+                    </choice>i<choice>
+                        <abbr>c̋</abbr>
+                        <expan>c(ena)</expan>
+                    </choice>. <choice>
+                        <abbr>vij°</abbr>
+                        <expan>septimo</expan>
+                    </choice> a<choice>
+                        <abbr>ĩ</abbr>
+                        <expan>[n]i[m]</expan>
+                    </choice>alium reperi<choice>
+                        <abbr>ũ</abbr>
+                        <expan>u[n]</expan>
+                    </choice>tur h<choice>
+                        <abbr>õ</abbr>
+                        <expan>o[m]</expan>
+                    </choice>i</ab>
+                <lb facs="#z_tr_1_tl_8" n="8" />
+                <ab>nes <choice>
+                        <abbr>q̱</abbr>
+                        <expan>q[ui]</expan>
+                    </choice>bus <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> si momorderint venenos<choice>
+                        <orig>e</orig>
+                        <reg>ae</reg>
+                    </choice> serp<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>tes eis n<choice>
+                        <abbr>õ</abbr>
+                        <expan>o(n)</expan>
+                    </choice> noc<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>t</ab>
+                <lb facs="#z_tr_1_tl_9" n="9" />
+                <ab>de quibus dicit se vidisse <choice>
+                        <orig>v</orig>
+                        <reg>u</reg>
+                    </choice>n<choice>
+                        <abbr>ũ</abbr>
+                        <expan>u(m)</expan>
+                    </choice> <choice>
+                        <abbr>ĩ</abbr>
+                        <expan>i(n)</expan>
+                    </choice> patria sua. hoc aut<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e(m)</expan>
+                    </choice> n<choice>
+                        <abbr>õ</abbr>
+                        <expan>o(n)</expan>
+                    </choice> pote</ab>
+                <lb facs="#z_tr_1_tl_10" n="10" />
+                <ab>rat <choice>
+                        <abbr>eẽ</abbr>
+                        <expan>e[ss]e</expan>
+                    </choice> nisi <choice>
+                        <abbr>qr</abbr>
+                        <expan>q[ua]r(e)</expan>
+                    </choice> ali<choice>
+                        <abbr>q̱</abbr>
+                        <expan>q[ui]</expan>
+                    </choice>d participabat ven<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>ositatis <choice>
+                        <abbr>q̃</abbr>
+                        <expan>q(ue)</expan>
+                    </choice> medi<choice>
+                        <abbr>ã</abbr>
+                        <expan>a[n]</expan>
+                    </choice>te simi</ab>
+                <lb facs="#z_tr_1_tl_11" n="11" />
+                <ab>litudin<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e(m)</expan>
+                    </choice> habebat c<choice>
+                        <abbr>ũ</abbr>
+                        <expan>u(m)</expan>
+                    </choice> ven<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>osis <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> i<choice>
+                        <abbr>õ</abbr>
+                        <expan>[mm]o</expan>
+                    </choice> eis n<choice>
+                        <abbr>õ</abbr>
+                        <expan>o(n)</expan>
+                    </choice> nocebatur <choice>
+                        <abbr>qr</abbr>
+                        <expan>q[ua]r(e)</expan>
+                    </choice> a simi</ab>
+                <lb facs="#z_tr_1_tl_12" n="12" />
+                <ab>li n<choice>
+                        <abbr>õ</abbr>
+                        <expan>o(n)</expan>
+                    </choice> fit pa<choice>
+                        <orig>s</orig>
+                        <reg>ss</reg>
+                    </choice>io. h<choice>
+                        <abbr>ũ</abbr>
+                        <expan>u[m]</expan>
+                    </choice>ana <choice>
+                        <abbr>.n.</abbr>
+                        <expan>[enim]</expan>
+                    </choice> natura c<choice>
+                        <abbr>õ</abbr>
+                        <expan>o[n]</expan>
+                    </choice>trarietat<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e(m)</expan>
+                    </choice> habet cu<choice>
+                        <sic>n</sic>
+                        <corr>m</corr>
+                    </choice> ve</ab>
+                <lb facs="#z_tr_1_tl_13" n="13" />
+                <ab>nenis taliter <choice>
+                        <abbr>qd̑</abbr>
+                        <expan>q[uo]d</expan>
+                    </choice> eis sum<choice>
+                        <orig>t</orig>
+                        <reg>pt</reg>
+                    </choice>is notabiliter sine corruptione
+                    ciba</ab>
+                <lb facs="#z_tr_1_tl_14" n="14" />
+                <ab>ri n<choice>
+                        <abbr>õ</abbr>
+                        <expan>o(n)</expan>
+                    </choice> poterit nisi fuerit illis
+                    paulatine <choice>
+                        <sic>a s</sic>
+                        <corr>ass</corr>
+                    </choice>u<choice>
+                        <sic>e f</sic>
+                        <corr>ef</corr>
+                    </choice>acta <choice>
+                        <orig>v</orig>
+                        <reg>u</reg>
+                    </choice>t <choice>
+                        <abbr>p̃</abbr>
+                        <expan>p[rae]</expan>
+                    </choice>di<choice>
+                        <orig>t</orig>
+                        <reg>ct</reg>
+                    </choice>u<choice>
+                        <abbr>ȝ</abbr>
+                        <expan>(m)</expan>
+                    </choice> <choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e(st)</expan>
+                    </choice></ab>
+                <lb facs="#z_tr_1_tl_15" n="15" />
+                <ab>aut nisi sit alicui indi<choice>
+                        <orig>u</orig>
+                        <reg>v</reg>
+                    </choice>iduo specie<choice>
+                        <abbr>ꝝ</abbr>
+                        <expan>(rum)</expan>
+                    </choice> ali<choice>
+                        <abbr>q̃</abbr>
+                        <expan>q(uis)</expan>
+                    </choice> particularis <choice>
+                        <abbr>p̢</abbr>
+                        <expan>p[ro]</expan>
+                    </choice><choice>
+                        <orig>p</orig>
+                        <reg>pr</reg>
+                    </choice>ietas</ab>
+                <lb facs="#z_tr_1_tl_16" n="16" />
+                <ab>medi<choice>
+                        <abbr>ã</abbr>
+                        <expan>a[n]</expan>
+                    </choice>te <choice>
+                        <abbr>q̃</abbr>
+                        <expan>q(ua)</expan>
+                    </choice> c<choice>
+                        <abbr>õ</abbr>
+                        <expan>o[n]</expan>
+                    </choice><choice>
+                        <orig>u</orig>
+                        <reg>v</reg>
+                    </choice>eniat cum aliquo genere veneni c<choice>
+                        <abbr>ũ</abbr>
+                        <expan>u(m)</expan>
+                    </choice> quo <choice>
+                        <abbr>rõ</abbr>
+                        <expan>r[ati]o</expan>
+                    </choice>ne</ab>
+                <lb facs="#z_tr_1_tl_17" n="17" />
+                <ab>talis <choice>
+                        <abbr>p̢</abbr>
+                        <expan>p[ro]</expan>
+                    </choice><choice>
+                        <orig>p</orig>
+                        <reg>pr</reg>
+                    </choice>ietatis habet ali<choice>
+                        <abbr>q̃</abbr>
+                        <expan>q[ua]</expan>
+                    </choice>m con<choice>
+                        <orig>u</orig>
+                        <reg>v</reg>
+                    </choice>enientiam <choice>
+                        <abbr>p̢</abbr>
+                        <expan>p[ro]</expan>
+                    </choice>pter <choice>
+                        <abbr>q̃</abbr>
+                        <expan>q[ua]</expan>
+                    </choice>m non</ab>
+                <lb facs="#z_tr_1_tl_18" n="18" />
+                <ab>l<choice>
+                        <orig>e</orig>
+                        <reg>ae</reg>
+                    </choice>ditur ab eo de quo <choice>
+                        <orig>j</orig>
+                        <reg>i</reg>
+                    </choice>ndi<choice>
+                        <orig>u</orig>
+                        <reg>v</reg>
+                    </choice>iduo credibile est <choice>
+                        <abbr>hr̃e</abbr>
+                        <expan>h[abe]re</expan>
+                    </choice> aliqu<choice>
+                        <abbr>ã</abbr>
+                        <expan>a(m)</expan>
+                    </choice> re</ab>
+                <lb facs="#z_tr_1_tl_19" n="19" />
+                <ab>pugna<choice>
+                        <sic>m</sic>
+                        <corr>n</corr>
+                    </choice>tiam cum a<choice>
+                        <orig>ll</orig>
+                        <reg>l</reg>
+                    </choice><choice>
+                        <sic>i</sic>
+                        <corr>ii</corr>
+                    </choice>s <choice>
+                        <orig>j</orig>
+                        <reg>i</reg>
+                    </choice>ndi<choice>
+                        <orig>u</orig>
+                        <reg>v</reg>
+                    </choice>iduis su<choice>
+                        <orig>e</orig>
+                        <reg>ae</reg>
+                    </choice> specie<choice>
+                        <sic>y</sic>
+                        <corr>i</corr>
+                    </choice> <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> esse illis ali</ab>
+                <lb facs="#z_tr_1_tl_20" n="20" />
+                <ab><choice>
+                        <abbr>q̃</abbr>
+                        <expan>q[ua]</expan>
+                    </choice>liter venenosu<choice>
+                        <abbr>ȝ</abbr>
+                        <expan>(m)</expan>
+                    </choice> sicut <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> venenum cum quo habet <choice>
+                        <abbr>p̢</abbr>
+                        <expan>p[ro]</expan>
+                    </choice>portio</ab>
+                <lb facs="#z_tr_1_tl_21" n="21" />
+                <ab>n<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e(m)</expan>
+                    </choice> <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> conformitat<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e(m)</expan>
+                    </choice> <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> sic m<choice>
+                        <abbr>ã</abbr>
+                        <expan>a[n]</expan>
+                    </choice>ifestum est tale corpus
+                    humanu<choice>
+                        <abbr>ȝ</abbr>
+                        <expan>(m)</expan>
+                    </choice></ab>
+                <lb facs="#z_tr_1_tl_22" n="22" />
+                <ab>habere venenum <choice>
+                        <abbr>qd̑</abbr>
+                        <expan>q[uo]d</expan>
+                    </choice> erat <choice>
+                        <abbr>p̢</abbr>
+                        <expan>p[ro]</expan>
+                    </choice>ba<choice>
+                        <sic>m</sic>
+                        <corr>n</corr>
+                    </choice>dum <choice>
+                        <abbr>qr</abbr>
+                        <expan>q[ua]r(e)</expan>
+                    </choice> n<choice>
+                        <abbr>õ</abbr>
+                        <expan>o(n)</expan>
+                    </choice> repugnat re<choice>
+                        <abbr>p̱</abbr>
+                        <expan>p[er]</expan>
+                    </choice>iri</ab>
+                <lb facs="#z_tr_1_tl_23" n="23" />
+                <ab>duo <choice>
+                        <orig>j</orig>
+                        <reg>i</reg>
+                    </choice>ndi<choice>
+                        <orig>u</orig>
+                        <reg>v</reg>
+                    </choice>idua eiusd<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e(m)</expan>
+                    </choice> specie<choice>
+                        <sic>y</sic>
+                        <corr>i</corr>
+                    </choice> speciali<choice>
+                        <orig>c</orig>
+                        <reg>ss</reg>
+                    </choice>ime quo<choice>
+                        <abbr>ꝝ</abbr>
+                        <expan>(rum)</expan>
+                    </choice> <choice>
+                        <orig>v</orig>
+                        <reg>u</reg>
+                    </choice>n<choice>
+                        <abbr>ũ</abbr>
+                        <expan>u(m)</expan>
+                    </choice> <choice>
+                        <orig>a</orig>
+                        <reg>ha</reg>
+                    </choice>beat</ab>
+                <lb facs="#z_tr_1_tl_24" n="24" />
+                <ab><choice>
+                        <abbr>p̢</abbr>
+                        <expan>p[ro]</expan>
+                    </choice><choice>
+                        <orig>p</orig>
+                        <reg>pr</reg>
+                    </choice>ietat<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e(m)</expan>
+                    </choice> <choice>
+                        <abbr>q̃</abbr>
+                        <expan>q[ua]</expan>
+                    </choice>m alterum non habet ut
+                    patet <choice>
+                        <abbr>d̑</abbr>
+                        <expan>d(e)</expan>
+                    </choice> persico transpl<choice>
+                        <abbr>ã</abbr>
+                        <expan>a[n]</expan>
+                    </choice></ab>
+                <lb facs="#z_tr_1_tl_25" n="25" />
+                <ab>tato in <choice>
+                        <orig>e</orig>
+                        <reg>ae</reg>
+                    </choice>gipto respectu <choice>
+                        <abbr>p̱</abbr>
+                        <expan>p[er]</expan>
+                    </choice>sici ex<choice>
+                        <abbr>ñ</abbr>
+                        <expan>[siste]n</expan>
+                    </choice>tis <choice>
+                        <abbr>ĩ</abbr>
+                        <expan>i(n)</expan>
+                    </choice> persia <choice>
+                        <abbr>qr</abbr>
+                        <expan>q[ua]r(e)</expan>
+                    </choice> persicu<choice>
+                        <abbr>ȝ</abbr>
+                        <expan>(m)</expan>
+                    </choice> <choice>
+                        <orig>e</orig>
+                        <reg>ae</reg>
+                    </choice>gipti</ab>
+                <lb facs="#z_tr_1_tl_26" n="26" />
+                <ab><choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e(st)</expan>
+                    </choice> nutriti<choice>
+                        <orig>u</orig>
+                        <reg>v</reg>
+                    </choice>um <choice>
+                        <abbr>exñs</abbr>
+                        <expan>ex[siste]ns</expan>
+                    </choice> <choice>
+                        <abbr>aũt</abbr>
+                        <expan>aut(em)</expan>
+                    </choice> in persia est venenosu<choice>
+                        <abbr>ȝ</abbr>
+                        <expan>(m)</expan>
+                    </choice>. hoc e<choice>
+                        <orig>c</orig>
+                        <reg>t</reg>
+                    </choice>i<choice>
+                        <abbr>ã</abbr>
+                        <expan>a(m)</expan>
+                    </choice> ma</ab>
+                <lb facs="#z_tr_1_tl_27" n="27" />
+                <ab>nifeste a<choice>
+                        <orig>p</orig>
+                        <reg>pp</reg>
+                    </choice>aret de homine pa<choice>
+                        <orig>sc</orig>
+                        <reg>t</reg>
+                    </choice>i<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>te <choice>
+                        <orig>y</orig>
+                        <reg>hy</reg>
+                    </choice>dro<choice>
+                        <orig>f</orig>
+                        <reg>ph</reg>
+                    </choice><choice>
+                        <sic>or</sic>
+                        <corr>o</corr>
+                    </choice>bi<choice>
+                        <abbr>ã</abbr>
+                        <expan>a(m)</expan>
+                    </choice> cuius morsus</ab>
+                <lb facs="#z_tr_1_tl_28" n="28" />
+                <ab>venenat quos morderit <choice>
+                        <abbr>qd̑</abbr>
+                        <expan>q[uo]d</expan>
+                    </choice> <choice>
+                        <abbr>p̃ȝ</abbr>
+                        <expan>p(robatur)</expan>
+                    </choice> per A<choice>
+                        <orig>u</orig>
+                        <reg>v</reg>
+                    </choice>ic<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>a. libro <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> fe<choice>
+                        <sic>ns</sic>
+                        <corr>n\u0020s</corr>
+                    </choice>upe</ab>
+                <lb facs="#z_tr_1_tl_29" n="29" />
+                <ab>rius a<choice>
+                        <orig>l</orig>
+                        <reg>ll</reg>
+                    </choice>egatis. <choice>
+                        <orig>j</orig>
+                        <reg>i</reg>
+                    </choice>de<choice>
+                        <sic>n</sic>
+                        <corr>m</corr>
+                    </choice> e<choice>
+                        <orig>c</orig>
+                        <reg>t</reg>
+                    </choice>i<choice>
+                        <abbr>ã</abbr>
+                        <expan>a(m)</expan>
+                    </choice> e<choice>
+                        <sic>u</sic>
+                        <corr>v</corr>
+                    </choice>id<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>tissime li<choice>
+                        <abbr>q̃</abbr>
+                        <expan>q[ui]</expan>
+                    </choice>t in hab<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>tibus. <choice>
+                        <abbr>feb</abbr>
+                        <expan>feb(res)</expan>
+                    </choice>.</ab>
+                <lb facs="#z_tr_1_tl_30" n="30" />
+                <ab>pestil<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice><choice>
+                        <orig>c</orig>
+                        <reg>t</reg>
+                    </choice>iales pr<choice>
+                        <orig>e</orig>
+                        <reg>ae</reg>
+                    </choice>cipue confirmatas cuius. <choice>
+                        <abbr>hu</abbr>
+                        <expan>hu(mores)</expan>
+                    </choice>. <choice>
+                        <abbr>oĩo</abbr>
+                        <expan>o[mn]i[n]o</expan>
+                    </choice> sunt ve<choice>
+                        <abbr>ñ</abbr>
+                        <expan>n[e]</expan>
+                    </choice></ab>
+                <lb facs="#z_tr_1_tl_31" n="31" />
+                <ab>nati <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> corrupti ex <choice>
+                        <abbr>q̱</abbr>
+                        <expan>q[ui]</expan>
+                    </choice>bus clare constare potest
+                    omnibus veri</ab>
+                <lb facs="#z_tr_1_tl_32" n="32" />
+                <ab>tas <choice>
+                        <abbr>p̃</abbr>
+                        <expan>p[rae]</expan>
+                    </choice>dict<choice>
+                        <orig>e</orig>
+                        <reg>ae</reg>
+                    </choice> dubitationis <choice>
+                        <abbr>q̃</abbr>
+                        <expan>q[ua]</expan>
+                    </choice>re firmissime ten<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e[n]</expan>
+                    </choice>du<choice>
+                        <abbr>ȝ</abbr>
+                        <expan>(m)</expan>
+                    </choice> est in corpo</ab>
+                <lb facs="#z_tr_1_tl_33" n="33" />
+                <ab>re h<choice>
+                        <abbr>ũ</abbr>
+                        <expan>u[m]</expan>
+                    </choice>ano reperibile <choice>
+                        <abbr>eẽ</abbr>
+                        <expan>e[ss]e</expan>
+                    </choice> venenu<choice>
+                        <abbr>ȝ</abbr>
+                        <expan>(m)</expan>
+                    </choice> <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> <choice>
+                        <abbr>p̱</abbr>
+                        <expan>p(er)</expan>
+                    </choice> conse<choice>
+                        <abbr>q̃</abbr>
+                        <expan>q[ue]</expan>
+                    </choice>ns <choice>
+                        <abbr>eẽ</abbr>
+                        <expan>e[ss]e</expan>
+                    </choice> c<choice>
+                        <abbr>õ</abbr>
+                        <expan>o[m]</expan>
+                    </choice>ple<choice>
+                        <orig>ct</orig>
+                        <reg>x</reg>
+                    </choice>io</ab>
+                <lb facs="#z_tr_1_tl_34" n="34" />
+                <ab>n<choice>
+                        <abbr>ẽ</abbr>
+                        <expan>e(m)</expan>
+                    </choice> venenosa<choice>
+                        <sic>n</sic>
+                        <corr>m</corr>
+                    </choice>. tunc ad argumentum in o<choice>
+                        <orig>p</orig>
+                        <reg>pp</reg>
+                    </choice>osit<choice>
+                        <abbr>ũ</abbr>
+                        <expan>u(m)</expan>
+                    </choice>. <choice>
+                        <abbr>dd̑</abbr>
+                        <expan>d[octorum)</expan>
+                    </choice>. <choice>
+                        <abbr>qd̑</abbr>
+                        <expan>q[uo]d</expan>
+                    </choice>. <choice>
+                        <abbr>lȝ</abbr>
+                        <expan>l(egitur)</expan>
+                    </choice>.</ab>
+            </div>
+        </body>
+    </text>
+</TEI>
