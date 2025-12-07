@@ -252,8 +252,12 @@ impl Component for TeiViewer {
                     }
                     Err(e) => {
                         log::warn!("Failed to load commentary: {:?}", e);
-                        self.commentary = None;
-                        self.show_commentary = false;
+                        // Set fallback message instead of None
+                        self.commentary = Some("<p>Sin comentario</p>".to_string());
+                        // Auto-show fallback message on first load
+                        if self.commentary_first_load {
+                            self.show_commentary = true;
+                        }
                     }
                 }
                 true
@@ -1469,12 +1473,13 @@ impl TeiViewer {
     }
 
     fn render_commentary_popup(&self, ctx: &Context<Self>) -> Html {
-        if !self.show_commentary || self.commentary.is_none() {
+        if !self.show_commentary {
             return html! {};
         }
 
         let on_close = ctx.link().callback(|_| TeiViewerMsg::ToggleCommentary);
-        let commentary_html = self.commentary.as_ref().unwrap();
+        let fallback_message = "<p>Sin comentario</p>".to_string();
+        let commentary_html = self.commentary.as_ref().unwrap_or(&fallback_message);
 
         html! {
             <div class="commentary-popup-overlay">

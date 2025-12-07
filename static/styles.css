@@ -1824,6 +1824,19 @@ body {
     }
 }
 
+/* Fallback message styling for when no commentary exists */
+.commentary-html-content p:only-child {
+    text-align: center;
+    font-style: italic;
+    color: #bcdfff;
+    font-size: 1.2rem;
+    margin: 3rem 0;
+    padding: 2rem;
+    background-color: #18223a;
+    border: 2px dashed #3a8dde;
+    border-radius: 8px;
+}
+
 /* ============================================
    PRINT STYLES
    ============================================ */
