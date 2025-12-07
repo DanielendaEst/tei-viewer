@@ -1825,16 +1825,16 @@ body {
 }
 
 /* Fallback message styling for when no commentary exists */
-.commentary-html-content p:only-child {
+.sin-comentario {
     text-align: center;
     font-style: italic;
-    color: #bcdfff;
-    font-size: 1.2rem;
-    margin: 3rem 0;
-    padding: 2rem;
-    background-color: #18223a;
-    border: 2px dashed #3a8dde;
-    border-radius: 8px;
+    color: #bcdfff !important;
+    font-size: 1.2rem !important;
+    margin: 3rem 0 !important;
+    padding: 2rem !important;
+    background-color: #18223a !important;
+    border: 2px dashed #3a8dde !important;
+    border-radius: 8px !important;
 }
 
 /* ============================================

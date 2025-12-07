@@ -253,7 +253,8 @@ impl Component for TeiViewer {
                     Err(e) => {
                         log::warn!("Failed to load commentary: {:?}", e);
                         // Set fallback message instead of None
-                        self.commentary = Some("<p>Sin comentario</p>".to_string());
+                        self.commentary =
+                            Some("<p class=\"sin-comentario\">Sin comentario</p>".to_string());
                         // Auto-show fallback message on first load
                         if self.commentary_first_load {
                             self.show_commentary = true;
@@ -1478,19 +1479,18 @@ impl TeiViewer {
         }
 
         let on_close = ctx.link().callback(|_| TeiViewerMsg::ToggleCommentary);
-        let fallback_message = "<p>Sin comentario</p>".to_string();
+        let fallback_message = "<p class=\"sin-comentario\">Sin comentario</p>".to_string();
         let commentary_html = self.commentary.as_ref().unwrap_or(&fallback_message);
 
         html! {
             <div class="commentary-popup-overlay">
                 <div class="commentary-popup">
                     <div class="commentary-popup-header">
-                        <h2>{"Comentarios"}</h2>
+                        <h2>{"Comentario"}</h2>
                         <button class="close-btn" onclick={on_close}>{"×"}</button>
                     </div>
                     <div class="commentary-popup-content">
                         <div class="commentary-html-content">
-                            // Raw HTML content from commentary.html
                             { Html::from_html_unchecked(AttrValue::from(commentary_html.clone())) }
                         </div>
                     </div>
