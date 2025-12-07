@@ -12,8 +12,8 @@
         <!-- Trunk build tool directives -->
         
 <script type="module">
-import init, * as bindings from '/tei-viewer/tei-viewer-9dce7053ddf5252f.js';
-const wasm = await init({ module_or_path: '/tei-viewer/tei-viewer-9dce7053ddf5252f_bg.wasm' });
+import init, * as bindings from '/tei-viewer/tei-viewer-d3133c7c400639fc.js';
+const wasm = await init({ module_or_path: '/tei-viewer/tei-viewer-d3133c7c400639fc_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -90,7 +90,7 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
                 pointer-events: none;
             }
         </style>
-    <link rel="modulepreload" href="/tei-viewer/tei-viewer-9dce7053ddf5252f.js" crossorigin="anonymous" integrity="sha384-cBhA3lg6/p9KLFStWB7SicLvdfLXjdezfUnZv2fs69vUcVVnrJ+FJDuRAquLs3va"><link rel="preload" href="/tei-viewer/tei-viewer-9dce7053ddf5252f_bg.wasm" crossorigin="anonymous" integrity="sha384-JciipjS5ZfwrtFLoAHHH0XTk+CWZwjOnvMcMzbp6n5cAKRI9iSvAGAoReptN+23K" as="fetch" type="application/wasm"></head>
+    <link rel="modulepreload" href="/tei-viewer/tei-viewer-d3133c7c400639fc.js" crossorigin="anonymous" integrity="sha384-cBhA3lg6/p9KLFStWB7SicLvdfLXjdezfUnZv2fs69vUcVVnrJ+FJDuRAquLs3va"><link rel="preload" href="/tei-viewer/tei-viewer-d3133c7c400639fc_bg.wasm" crossorigin="anonymous" integrity="sha384-+U8jyloOTdmKgJDuRdrc5MbuVGvIFVKfN80xYb/39zgE6atsT2K7duOalZCJ52dB" as="fetch" type="application/wasm"></head>
     <body>
         <!-- Loading screen -->
         <div id="loading-screen">
