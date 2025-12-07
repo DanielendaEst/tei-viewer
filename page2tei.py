@@ -65,6 +65,27 @@ def qn(name: str) -> ET.QName:
     return ET.QName(TEI_NS, name)
 
 
+def scale_points(points_str: str, sx: float, sy: float) -> str:
+    """Scale a PAGE points string like 'x1,y1 x2,y2' by sx/sy.
+
+    Returns scaled points string with integer coordinates.
+    """
+    if not points_str:
+        return points_str
+    parts = []
+    for pair in points_str.split():
+        if "," not in pair:
+            continue
+        try:
+            x_s, y_s = pair.split(",")
+            x = round(float(x_s) * sx)
+            y = round(float(y_s) * sy)
+            parts.append(f"{x},{y}")
+        except Exception:
+            parts.append(pair)
+    return " ".join(parts)
+
+
 def prettify(elem: ET.Element) -> str:
     """Serialize XML element compactly (no added indentation/newlines).
 
@@ -688,11 +709,45 @@ def build_inline_nodes_for_line(text: str, ops: List[Dict[str, Any]]) -> List[An
             b = ET.SubElement(choice, qn(b_tag))
 
             if kind == "regularised":
-                # a (orig) gets the alt/original as plain text
-                a.text = alt
-                # b (reg) gets the witness content (which may contain nested nodes)
-                pop_res = populate_target_with_nodes(b, inner_nodes)
-                return _maybe_wrap_with_edge_whitespace(pop_res, choice)
+                # Prefer explicit attributes when provided: `original` -> <orig>
+                # and `regularised` -> <reg>. Fall back to inner_nodes/witness
+                # content when attrs are missing.
+                orig_attr = w.get("original") or w.get("orig")
+                reg_attr = w.get("regularised") or w.get("reg")
+
+                # a (orig)
+                a.text = orig_attr if orig_attr is not None else alt
+
+                # If an explicit regularised form is provided, prefer it.
+                if reg_attr is not None:
+                    # Filter out plain strings that exactly match the witness
+                    # text so we don't duplicate the witness in <reg>.
+                    filtered_inner = []
+                    for n in inner_nodes:
+                        if isinstance(n, str) and n.strip() == witness_text.strip():
+                            continue
+                        filtered_inner.append(n)
+
+                    # If no element children remain, emit reg_attr directly.
+                    element_children = [n for n in filtered_inner if isinstance(n, ET.Element)]
+                    if not element_children:
+                        b.text = reg_attr
+                        return choice
+
+                    # Otherwise populate a temporary container with element
+                    # children and append them to <reg>, keeping reg_attr as
+                    # the base text. Do not copy plain tmp.text to avoid
+                    # duplicating witness text.
+                    tmp = ET.Element("tmp")
+                    pop_res = populate_target_with_nodes(tmp, element_children)
+                    b.text = reg_attr
+                    for child in list(tmp):
+                        b.append(child)
+                    return _maybe_wrap_with_edge_whitespace(pop_res, choice)
+                else:
+                    # No explicit reg attribute: emit inner content as before
+                    pop_res = populate_target_with_nodes(b, inner_nodes)
+                    return _maybe_wrap_with_edge_whitespace(pop_res, choice)
             else:
                 # a gets the witness content (may contain nested nodes)
                 pop_res = populate_target_with_nodes(a, inner_nodes)
@@ -969,62 +1024,62 @@ def get_default_metadata(edition_type: str) -> Dict[str, Any]:
     """Get default metadata based on edition type."""
     if edition_type == "diplomatic":
         return {
-            "title": "PGM XIII — Diplomatic transcription",
-            "author": "Anonymous",
-            "edition_editor": "Robert W. Daniel",
-            "resp": "digital edition preparation and TEI encoding",
-            "resp_name": "Federico Gaviria Zambrano",
-            "publisher": "Springer Fachmedien Wiesbaden GmbH",
-            "pub_date": "1991",
-            "country": "Netherlands",
+            "title": "Tractatus de facinatione",
+            "author": "Diego Álvarez Chanca",
+            "edition_editor": "Daniel S. López",
+            "resp": "Transcripción diplomática y marcación TEI",
+            "resp_name": "Daniel S. López",
+            "publisher": "Petrus Brun",
+            "pub_date": "1499",
+            "country": "España",
             "region": "",
-            "settlement": "Leiden",
+            "settlement": "Córdoba",
             "district": "",
             "geogName": "",
-            "institution": "Rijksmuseum van Oudheden",
+            "institution": "Biblioteca Provincial de Córdoba",
             "repository": "",
-            "collection": "PGM",
-            "idno_old": "J395",
-            "idno_new": "AMS76",
-            "idno_siglum": "PGM XIII",
-            "orig_place": "Egypt",
-            "orig_notBefore": "-0100",
-            "orig_notAfter": "0400",
-            "orig_label": "1st c. BCE–4th c. CE",
+            "collection": "Fondo Antiguo",
+            "idno_old": "N/A",
+            "idno_new": "N/A",
+            "idno_siglum": "N/A",
+            "orig_place": "España",
+            "orig_notBefore": "1450",
+            "orig_notAfter": "1515",
+            "orig_label": "1499",
             "page_n": "",
             "page_side": "",
-            "edition_type": "Diplomatic transcription",
-            "language": "grc",
+            "edition_type": "Transcripción diplomática",
+            "language": "lat",
             "translator": "",
         }
     else:  # translation
         return {
-            "title": "PGM XIII — Spanish translation",
-            "author": "Anonymous",
-            "edition_editor": "Robert W. Daniel",
-            "translator": "Federico Gaviria Zambrano",
-            "resp": "Spanish translation and TEI encoding",
-            "resp_name": "Federico Gaviria Zambrano",
-            "publisher": "Springer Fachmedien Wiesbaden GmbH",
-            "pub_date": "1991",
-            "country": "Netherlands",
+            "title": "Tractatus de fascinatione",
+            "author": "Diego Álvarez Chanca",
+            "edition_editor": "Daniel S. López",
+            "translator": "Daniel S. López",
+            "resp": "Traducción al español y marcación TEI",
+            "resp_name": "Daniel S. López",
+            "publisher": "Patrus Brun",
+            "pub_date": "1499",
+            "country": "",
             "region": "",
-            "settlement": "Leiden",
+            "settlement": "España",
             "district": "",
             "geogName": "",
-            "institution": "Rijksmuseum van Oudheden",
+            "institution": "Biblioteca Provincial de Córdoba",
             "repository": "",
-            "collection": "PGM",
-            "idno_old": "J395",
-            "idno_new": "AMS76",
-            "idno_siglum": "PGM XIII",
-            "orig_place": "Egypt",
-            "orig_notBefore": "-0100",
-            "orig_notAfter": "0400",
-            "orig_label": "1st c. BCE–4th c. CE",
+            "collection": "Fondo Antiguo",
+            "idno_old": "N/A",
+            "idno_new": "N/A",
+            "idno_siglum": "N/A",
+            "orig_place": "España",
+            "orig_notBefore": "1450",
+            "orig_notAfter": "1515",
+            "orig_label": "1499",
             "page_n": "",
             "page_side": "",
-            "edition_type": "Spanish translation",
+            "edition_type": "Traducción al español",
             "language": "es",
         }
 
@@ -1290,6 +1345,24 @@ def convert_page_to_tei(
         width = page.get("imageWidth")
         height = page.get("imageHeight")
 
+        # Force target image size (px) for output and scaling
+        TARGET_IMG_W = 960
+        TARGET_IMG_H = 1358
+
+        # Parse PAGE-provided image size if available (may include 'px')
+        page_img_w = None
+        page_img_h = None
+        try:
+            if width:
+                page_img_w = int(str(width).rstrip("px"))
+        except Exception:
+            page_img_w = None
+        try:
+            if height:
+                page_img_h = int(str(height).rstrip("px"))
+        except Exception:
+            page_img_h = None
+
         surface = ET.SubElement(facsimile, qn("surface"), {"n": str(page_idx)})
         surface.set(ET.QName(XML_NS, "id"), f"p{page_idx}")
 
@@ -1304,12 +1377,10 @@ def convert_page_to_tei(
             if not image_fn.startswith("images/"):
                 image_fn = f"images/{image_fn}"
             graphic.set("url", image_fn)
-        if width:
-            # Add 'px' unit suffix for TEI validation
-            graphic.set("width", f"{width}px")
-        if height:
-            # Add 'px' unit suffix for TEI validation
-            graphic.set("height", f"{height}px")
+
+        # Always emit the forced target image size for TEI output
+        graphic.set("width", f"{TARGET_IMG_W}px")
+        graphic.set("height", f"{TARGET_IMG_H}px")
 
         # Page break
         ET.SubElement(div, qn("pb"), {"n": str(page_idx), "facs": f"#p{page_idx}"})
@@ -1325,7 +1396,13 @@ def convert_page_to_tei(
                     z.set(ET.QName(XML_NS, "id"), f"z_{rid}")
                     pts = coords.get("points")
                     if pts:
-                        z.set("points", pts)
+                        # Scale PAGE coords to forced TARGET_IMG size when possible
+                        if page_img_w and page_img_h:
+                            sx = TARGET_IMG_W / page_img_w if page_img_w else 1.0
+                            sy = TARGET_IMG_H / page_img_h if page_img_h else 1.0
+                            z.set("points", scale_points(pts, sx, sy))
+                        else:
+                            z.set("points", pts)
 
         # Collect TextRegions with their lines
         # Helper function to get Y coordinate from baseline/points
@@ -1419,11 +1496,21 @@ def convert_page_to_tei(
             z = ET.SubElement(surface, qn("zone"), {"type": "line"})
             z.set(ET.QName(XML_NS, "id"), zid)
             if points:
-                z.set("points", points)
+                if page_img_w and page_img_h:
+                    sx = TARGET_IMG_W / page_img_w if page_img_w else 1.0
+                    sy = TARGET_IMG_H / page_img_h if page_img_h else 1.0
+                    z.set("points", scale_points(points, sx, sy))
+                else:
+                    z.set("points", points)
             # Store baseline in a note element (baseline attribute not allowed on zone)
             if baseline:
                 baseline_note = ET.SubElement(z, qn("note"), {"type": "baseline"})
-                baseline_note.text = baseline
+                if page_img_w and page_img_h:
+                    sx = TARGET_IMG_W / page_img_w if page_img_w else 1.0
+                    sy = TARGET_IMG_H / page_img_h if page_img_h else 1.0
+                    baseline_note.text = scale_points(baseline, sx, sy)
+                else:
+                    baseline_note.text = baseline
 
             # Line break with number
             ET.SubElement(div, qn("lb"), {"facs": f"#{zid}", "n": str(line_num)})

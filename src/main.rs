@@ -236,7 +236,7 @@ async fn load_all_manifests() -> Result<Vec<ProjectConfig>, String> {
     // List of known project directories to check
     // In a real implementation, you might want to fetch a directory listing
     // For now, we'll try to load manifests for known projects
-    let project_ids = vec!["PGM-XIII"];
+    let project_ids = vec!["Tractatus"];
 
     let mut configs = Vec::new();
 
