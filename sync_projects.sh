@@ -37,6 +37,13 @@ for project_dir in "${PROJECTS_SRC}"/*; do
             echo "    Warning: No manifest.json found for ${project_name}"
         fi
 
+        # Copy commentary.html if it exists
+        if [ -f "${project_dir}/commentary.html" ]; then
+            cp -v "${project_dir}/commentary.html" "${dest_dir}/"
+        else
+            echo "    Warning: No commentary.html found for ${project_name}"
+        fi
+
         # Copy images directory if it exists
         if [ -d "${project_dir}/images" ]; then
             mkdir -p "${dest_dir}/images"
