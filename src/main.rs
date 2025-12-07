@@ -129,8 +129,7 @@ impl Component for App {
                 <header class="app-header">
                     <h1>{"Visualizador TEI-XML"}</h1>
                     <p class="subtitle">{format!("Visualizador interactivo - {}", current_project_name)}</p>
-                    <p class="subtitle">{format!("Un especial agradecimiento al profesor Robert W. Daniel por permitirnos utilizar su edición
-                        diplomática del papiro y al profesor Juan Felipe González por su dirección en este trabajo. ¡Gracias!")}</p>
+                    <p class="subtitle">{format!("Gracias Federico uwu")}</p>
                 </header>
 
                 <main class="app-main">
