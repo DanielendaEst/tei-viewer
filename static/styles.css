@@ -23,13 +23,53 @@ html {
     text-size-adjust: 100%;
 }
 
+/* Unicode fallback fonts with specific character ranges */
+@font-face {
+    font-family: "Byzantine Fallback";
+    src:
+        local("Noto Music"), local("Segoe UI Historic"),
+        local("Segoe UI Symbol");
+    unicode-range: U+1D000-U+1D0FF; /* Byzantine Musical Symbols */
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Kayah Fallback";
+    src:
+        local("Noto Sans Symbols 2"), local("Segoe UI Symbol"),
+        local("Arial Unicode MS");
+    unicode-range: U+11AC0-U+11AFF; /* Kayah Li */
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "General Unicode Fallback";
+    src:
+        local("Noto Sans Symbols 2"), local("Segoe UI Symbol"),
+        local("Arial Unicode MS");
+    unicode-range:
+        U+2000-U+2FFF,
+        U+A000-U+AFFF,
+        U+F000-U+FFFF; /* Various Unicode blocks */
+    font-display: swap;
+}
+
+/* Optional utility class for forcing Unicode fallbacks when needed */
+.ensure-unicode {
+    font-family:
+        "Byzantine Fallback", "Kayah Fallback", "General Unicode Fallback",
+        "SGr Iosevka", sans-serif;
+}
+
 body {
     font-family:
-        "Noto Sans",
         "SGr Iosevka",
-        "Noto Sans Symbols",
-        "Noto Sans Symbols 2",
-        -apple-system,
+        /* Your primary font - renders everything it supports */
+        "Byzantine Fallback",
+        /* Only loads for 𝀺 and similar */ "Kayah Fallback",
+        /* Only loads for ᪺ and similar */ "General Unicode Fallback",
+        /* Other rare symbols */ "Noto Sans",
+        /* General fallback */ -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
         Roboto,
