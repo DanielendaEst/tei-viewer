@@ -7,10 +7,22 @@ A modern web-based viewer for TEI-XML documents with image-text synchronization,
 - 📖 **Dual View**: Display diplomatic editions and translations side-by-side
 - 🖼️ **Image Synchronization**: Interactive highlighting between text and manuscript images
 - 🔍 **Zoom & Pan**: Smooth image navigation with mouse wheel and drag
+- 💬 **Commentary System**: Rich HTML commentary popups with auto-open and fallback support
 - 🎨 **Semantic Markup**: Visual rendering of TEI elements (abbreviations, corrections, names, etc.)
-- 📱 **Responsive**: Works on desktop and mobile devices
+- 📱 **Responsive**: Works on desktop and mobile devices with mobile pan & zoom
 - 🚀 **Fast**: WebAssembly-powered performance
 - 📚 **Multi-Project**: Support for multiple manuscript projects with dynamic loading
+
+## Interface
+
+The viewer provides an intuitive interface with:
+
+- **View Controls**: Toggle between diplomatic edition, translation, or both views
+- **Commentary Button**: Access rich HTML commentary for scholarly analysis
+- **Image Controls**: Zoom in/out, metadata, and color legend toggles
+- **Project Selector**: Switch between manuscript projects
+- **Page Navigation**: Browse through manuscript pages
+- **Interactive Highlighting**: Click or hover on text to highlight corresponding image zones
 
 ## Quick Start
 
@@ -76,6 +88,7 @@ tei-viewer/
 ├── projects/                      # SOURCE OF TRUTH for project data
 │   ├── PGM-XIII/
 │   │   ├── manifest.json          # Project metadata
+│   │   ├── commentary.html        # Commentary content (optional)
 │   │   ├── p1_dip.xml             # Diplomatic edition, page 1
 │   │   ├── p1_trad.xml            # Translation, page 1
 │   │   └── images/
@@ -87,7 +100,7 @@ tei-viewer/
 ├── static/
 │   └── styles.css                 # Application styles
 ├── index.html                     # HTML template
-├── sync_projects.sh               # Project sync script (REQUIRED)
+├── sync_projects.sh               # Project sync script (REQUIRED) - copies XML, images, manifests, and commentary.html
 ├── start.sh                       # Development startup script
 ├── deploy.sh                      # Production build script
 └── deploy-gh-pages.sh             # GitHub Pages deployment script
@@ -114,6 +127,7 @@ Create a new folder in `projects/` with this structure:
 projects/
 └── YourProject/
     ├── manifest.json              # Required
+    ├── commentary.html            # Commentary content (optional)
     ├── p1_dip.xml                 # Diplomatic edition
     ├── p1_trad.xml                # Translation (optional)
     ├── p2_dip.xml                 # Additional pages...
@@ -172,6 +186,11 @@ Each project **must** have a `manifest.json` file:
 
 **IMPORTANT**: Files must follow these exact naming patterns:
 
+- **Commentary**: `commentary.html` (optional)
+  - Rich HTML content with academic commentary
+  - Auto-opens on first app load
+  - Falls back to "Sin comentario" if missing
+
 - **XML files**: `p{number}_{type}.xml`
   - `p1_dip.xml` = Diplomatic edition, page 1
   - `p1_trad.xml` = Translation, page 1
@@ -200,7 +219,7 @@ async fn load_all_manifests() -> Result<Vec<ProjectConfig>, String> {
 ### 5. Sync and Build
 
 ```bash
-# Sync projects to public folder
+# Sync projects to public folder (includes commentary.html files)
 ./sync_projects.sh
 
 # Rebuild
@@ -256,7 +275,7 @@ GitHub Pages requires special configuration because it serves files from a subdi
 ```
 
 This script automatically:
-1. Syncs projects from `projects/` to `public/projects/`
+1. Syncs projects from `projects/` to `public/projects/` (includes commentary.html)
 2. Builds the application with `--public-url /tei-viewer/`
 3. Adds `.nojekyll` file (prevents Jekyll processing)
 4. Commits to `gh-pages` branch
@@ -446,6 +465,33 @@ The included `Dockerfile` uses Nginx to serve the static files.
 - `<lb>` - Line breaks
 - `<zone>` - Facsimile zones for highlighting
 
+### Commentary System
+
+The viewer supports rich HTML commentary for each project:
+
+- **File location**: `projects/ProjectName/commentary.html`
+- **Format**: Full HTML document with styling
+- **Auto-display**: Opens automatically on first app load
+- **Toggle button**: "Comentario" button in view controls
+- **Fallback**: Shows "Sin comentario" if file doesn't exist
+- **Responsive**: 85% screen coverage with dark theme styling
+
+**Example commentary.html**:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Commentary</title>
+</head>
+<body>
+    <h1>Academic Commentary</h1>
+    <p>Your scholarly analysis here...</p>
+    <blockquote>Citations and references...</blockquote>
+</body>
+</html>
+```
+
 ### Facsimile Linking
 
 Images are linked to text using TEI `<facsimile>` and `<zone>` elements:
@@ -469,6 +515,14 @@ Images are linked to text using TEI `<facsimile>` and `<zone>` elements:
 When hovering over text, the corresponding zone highlights on the image.
 
 ## Troubleshooting
+
+### Commentary Not Showing
+
+- Check file exists: `projects/YourProject/commentary.html`
+- Verify HTML is valid (no syntax errors)
+- Run `./sync_projects.sh` to copy to public folder
+- Check browser console for loading errors
+- If no commentary exists, "Sin comentario" should display
 
 ### Images Don't Display
 
@@ -515,6 +569,22 @@ trunk build
 rustup target add wasm32-unknown-unknown
 cargo install trunk
 ```
+
+### Commentary Features Not Working
+
+**Commentary button not visible**:
+- Check that you're on the latest version with commentary feature
+- Commentary button is always visible regardless of file existence
+
+**Commentary popup not opening**:
+- Click "Comentario" button in view toggles
+- Check browser console for JavaScript errors
+- Verify HTML content is valid
+
+**Wrong styling in commentary popup**:
+- Commentary uses dark theme colors matching the app
+- Custom CSS in commentary.html may conflict with app styles
+- Use relative units (em, rem) rather than fixed pixels
 
 ### GitHub Pages Not Working
 
@@ -613,6 +683,7 @@ Your XMLs and images are served from the same domain as your app, so there are n
 projects/
 ├── PGM-XIII/
 │   ├── manifest.json
+│   ├── commentary.html
 │   ├── p1_dip.xml
 │   ├── p1_trad.xml
 │   └── images/p1.jpg
@@ -629,7 +700,7 @@ The `projects/` folder is **gitignored** because it contains your specific manus
 **You must create it yourself**:
 ```bash
 mkdir -p projects/YourProject/images
-# Add manifest.json, XML files, and images
+# Add manifest.json, commentary.html, XML files, and images
 ```
 
 See the "Adding Projects" section for the complete structure.
