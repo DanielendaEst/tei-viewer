@@ -3,19 +3,19 @@
   "name": "Tractatus",
   "description": "Brief description of your project",
   "metadata": {
-    "author": "Author Name",
-    "editor": "Editor Name",
-    "collection": "Collection Name",
-    "institution": "Institution Name",
-    "repository": "https://repository-url.com",
-    "country": "Country",
-    "settlement": "City",
-    "language": "Language (e.g., Ancient Greek)",
-    "date_range": "Date range",
-    "siglum": "Manuscript siglum",
-    "old_catalog": "Old catalog number",
+    "author": "Diego Álvarez Chanca",
+    "editor": "Petrus Brun",
+    "collection": "Fondo Antiguo",
+    "institution": "Biblioteca Provincial de Córdoba",
+    "repository": "https://www.bibliotecadigitaldeandalucia.es/catalogo/es/consulta/registro.cmd?id=6111",
+    "country": "España",
+    "settlement": "Córdoba",
+    "language": "Latín",
+    "date_range": "1499",
+    "siglum": "N/A",
+    "old_catalog": "N/A",
     "museum_id": "Museum ID",
-    "origin_place": "Place of origin"
+    "origin_place": "España"
   },
   "pages": [
     {
