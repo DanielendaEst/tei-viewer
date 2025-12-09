@@ -41,8 +41,8 @@
         </fileDesc>
         <encodingDesc>
             <p>Digital edition for research and display purposes. Converted from PAGE-XML with full
-                semantic markup including abbreviations, corrections, regularisations, numbers,
-                person names, place names, references, and text styling.</p>
+                semantic markup including abbreviations, corrections, regularisations, and
+                person names.</p>
         </encodingDesc>
         <profileDesc>
             <langUsage>
@@ -297,10 +297,7 @@
                         <abbr>ũ</abbr>
                         <expan>u[m]</expan>
                     </choice>or <choice>
-                        <sic>mal<choice>
-                                <abbr>ẽ</abbr>
-                                <expan>e[n]</expan>
-                            </choice></sic>
+                        <sic>malẽ</sic>
                         <corr>melan</corr>
                     </choice><choice>
                         <orig>c</orig>
@@ -345,12 +342,11 @@
                         <reg>i</reg>
                     </choice>dis rebus ci</ab>
                 <lb facs="#z_tr_1_tl_6" n="6" />
-                <ab>bantur <persName firstname="Galeno">
+                <ab>bantur
                         <choice>
                             <abbr>⁊</abbr>
                             <expan>[et]</expan>
                         </choice>
-                    </persName>
                     ei n<choice>
                         <abbr>õ</abbr>
                         <expan>o(n)</expan>
@@ -379,7 +375,7 @@
                         firstname="Galeno">
                         <choice>
                             <abbr>Ga.</abbr>
-                            <expan>Ga(llienum)</expan>
+                            <expan>Ga(lenum)</expan>
                         </choice>
                     </persName></ab>
                 <lb facs="#z_tr_1_tl_7" n="7" />
@@ -404,12 +400,11 @@
                         <expan>q[ua]</expan>
                     </choice></ab>
                 <lb facs="#z_tr_1_tl_8" n="8" />
-                <ab>si s<persName firstname="Avicena">
+                <ab>si s
                         <choice>
                             <abbr>ã</abbr>
                             <expan>a[n]</expan>
-                        </choice>
-                    </persName>gis
+                        </choice>gis
                     niger. <choice>
                         <abbr>⁊</abbr>
                         <expan>[et]</expan>
@@ -503,7 +498,7 @@
                         <reg>ae</reg>
                     </choice>. <choice>
                         <abbr>vȝ</abbr>
-                        <expan>v(erbi)\u0020g(ratia)</expan>
+                        <expan>v(erbi) g(ratia)</expan>
                     </choice> pra</ab>
                 <lb facs="#z_tr_1_tl_12" n="12" />
                 <ab>scina <choice>
@@ -550,9 +545,9 @@
                     </choice>tur discordes. quoni<choice>
                         <abbr>ã</abbr>
                         <expan>a(m)</expan>
-                    </choice> y</ab>
+                    </choice> <persname firstname="Isaac Israelí">y</persname></ab>
                 <lb facs="#z_tr_1_tl_14" n="14" />
-                <ab>sac febri<choice>
+                <ab><persname firstname="Isaac Israelí">sac</persname> febri<choice>
                         <abbr>ũ</abbr>
                         <expan>u(m)</expan>
                     </choice>. <choice>
@@ -643,17 +638,16 @@
                         <expan>(m)</expan>
                     </choice> inter</ab>
                 <lb facs="#z_tr_1_tl_19" n="19" />
-                <ab>ficiunt. <persName firstname="Avenzoar">Avenzoar</persName> <persName
-                        ref="https://www.wikidata.org/wiki/Q39837" firstname="Averroes">
+                <ab>ficiunt. <persName firstname="Avenzoar">Avenzoar</persName>
                         <choice>
                             <abbr>añt</abbr>
                             <expan>ant(ea)</expan>
                         </choice>
-                    </persName> <choice>
+                    <choice>
                         <abbr>⁊</abbr>
                         <expan>[et]</expan>
                     </choice> <persName
-                        ref="https://www.wikidata.org/wiki/Q39837" firstname="Averroes">auẽrro<choice>
+                         firstname="Averroes">auẽrro<choice>
                             <orig>yȝ</orig>
                             <reg>is</reg>
                         </choice></persName> <choice>

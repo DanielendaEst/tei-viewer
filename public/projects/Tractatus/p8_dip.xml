@@ -41,8 +41,8 @@
         </fileDesc>
         <encodingDesc>
             <p>Digital edition for research and display purposes. Converted from PAGE-XML with full
-                semantic markup including abbreviations, corrections, regularisations, numbers,
-                person names, place names, references, and text styling.</p>
+                semantic markup including abbreviations, corrections, regularisations, and
+                person names.</p>
         </encodingDesc>
         <profileDesc>
             <langUsage>
@@ -551,7 +551,7 @@
                     </choice>el <choice>
                         <orig>v</orig>
                         <reg>u</reg>
-                    </choice>ltra<choice>
+                    </choice>ltra <choice>
                         <abbr>q̃</abbr>
                         <expan>q[ua]</expan>
                     </choice>m <choice>
@@ -699,108 +699,6 @@
                         <abbr>q̃</abbr>
                         <expan>q[uae]</expan>
                     </choice>stione.</ab>
-                <lb facs="#z_tr_1_tl_22" n="22" />
-                <ab>QUeritur. secundo. <choice>
-                        <orig>utrum</orig>
-                        <reg>vtrum</reg>
-                    </choice> homo habens vene</ab>
-                <lb facs="#z_tr_1_tl_23" n="23" />
-                <ab>num <choice>
-                        <orig>vel</orig>
-                        <reg>uel</reg>
-                    </choice> <choice>
-                        <orig>complexionem</orig>
-                        <reg>
-                            <choice>
-                                <abbr>completionẽ</abbr>
-                                <expan>complectione(m)</expan>
-                            </choice>
-                        </reg>
-                    </choice>
-                    venenosam sit in latitu</ab>
-                <lb facs="#z_tr_1_tl_24" n="24" />
-                <ab>dine sanitatis <choice>
-                        <abbr>⁊</abbr>
-                        <expan>(et)</expan>
-                    </choice> <choice>
-                        <abbr>vr̃</abbr>
-                        <expan>v[i]r(um)</expan>
-                    </choice> <choice>
-                        <abbr>qd̑</abbr>
-                        <expan>q[uo]d</expan>
-                    </choice> non <choice>
-                        <abbr>quoniã</abbr>
-                        <expan>quonia(m)</expan>
-                    </choice> <choice>
-                        <abbr>illd̑</abbr>
-                        <expan>ill[u]d</expan>
-                    </choice> <choice>
-                        <abbr>qd̑</abbr>
-                        <expan>q[uo]d</expan>
-                    </choice> <choice>
-                        <abbr>p̱du</abbr>
-                        <expan>venenu(m)</expan>
-                    </choice></ab>
-                <lb facs="#z_tr_1_tl_25" n="25" />
-                <ab><choice>
-                        <abbr>cit</abbr>
-                        <expan>venenu(m)</expan>
-                    </choice> hominem ad
-                    corruptionem <choice>
-                        <abbr>⁊</abbr>
-                        <expan>(et)</expan>
-                    </choice> mortem <choice>
-                        <abbr>nõ</abbr>
-                        <expan>no(n)</expan>
-                    </choice></ab>
-                <lb facs="#z_tr_1_tl_26" n="26" />
-                <ab>tenet illum intra latitudinem sanitatis. <choice>
-                        <abbr>sȝ</abbr>
-                        <expan>s(ed)</expan>
-                    </choice> <choice>
-                        <abbr>ve</abbr>
-                        <expan>venenu(m)</expan>
-                    </choice></ab>
-                <lb facs="#z_tr_1_tl_27" n="27" />
-                <ab><choice>
-                        <abbr>nenũ</abbr>
-                        <expan>venenu(m)</expan>
-                    </choice> est huius modiigitur <choice>
-                        <abbr>⁊c̏</abbr>
-                        <expan>(et\u0020cetera)</expan>
-                    </choice>. major ē nota
-                    minor eſt auice</ab>
-                <lb facs="#z_tr_1_tl_28" n="28" />
-                <ab>ne fenſecūda pͥmi. cap. xv. dicentis. <choice>
-                        <abbr>⁊</abbr>
-                        <expan>(et)</expan>
-                    </choice> illd̓ eſt qͣrtus gradus</ab>
-                <lb facs="#z_tr_1_tl_29" n="29" />
-                <ab>ut illd̓ ad mortificādū ꝑueniat <choice>
-                        <abbr>⁊</abbr>
-                        <expan>(et)</expan>
-                    </choice> corrūpēduꝫ <choice>
-                        <abbr>⁊</abbr>
-                        <expan>(et)</expan>
-                    </choice> hec quid̓ ē ꝓ</ab>
-                <lb facs="#z_tr_1_tl_30" n="30" />
-                <ab>pietas medicinarū venenoſarū <choice>
-                        <abbr>⁊</abbr>
-                        <expan>(et)</expan>
-                    </choice> ē illd̓ qd̓ exiſtit ꝑ
-                    calitate</ab>
-                <lb facs="#z_tr_1_tl_31" n="31" />
-                <ab>cūtota uero ſui ſuſtātia mortificans ē venenū. ex quibus a¬</ab>
-                <lb facs="#z_tr_1_tl_32" n="32" />
-                <ab>paret euidēter qd̓ ſiue ſit venenom ꝑmanifeſtā calitatem ſi¬</ab>
-                <lb facs="#z_tr_1_tl_33" n="33" />
-                <ab>ue ꝑ ocultā ſenper eſt corruptiuum <choice>
-                        <abbr>⁊</abbr>
-                        <expan>(et)</expan>
-                    </choice> deſtrutiuum vite <choice>
-                        <abbr>⁊</abbr>
-                        <expan>(et)</expan>
-                    </choice> e¬</ab>
             </div>
         </body>
     </text>

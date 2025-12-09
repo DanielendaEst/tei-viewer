@@ -41,8 +41,8 @@
         </fileDesc>
         <encodingDesc>
             <p>Digital edition for research and display purposes. Converted from PAGE-XML with full
-                semantic markup including abbreviations, corrections, regularisations, numbers,
-                person names, place names, references, and text styling.</p>
+                semantic markup including abbreviations, corrections, regularisations, and
+                person names.</p>
         </encodingDesc>
         <profileDesc>
             <langUsage>
@@ -307,11 +307,11 @@
                 <lb facs="#z_r_tl_5" n="5" />
                 <ab>Novena pregunta: indaga de qué constitución y edad deben</ab>
                 <lb facs="#z_r_tl_6" n="6" />
-                <ab> ser tales cuerpos aojadores.</ab>
+                <ab>ser tales cuerpos aojadores.</ab>
                 <lb facs="#z_r_tl_7" n="7" />
                 <ab>Décima pregunta: ¿por qué razón autores célebres como Galeno, Avicena,</ab>
                 <lb facs="#z_r_tl_8" n="8" />
-                <ab>Rasis y otros no escribieron sobre el aojo?</ab>
+                <ab>Razis y otros no escribieron sobre el aojamiento?</ab>
                 <lb facs="#z_r_99_tl_1" n="9" />
                 <ab>Se indaga primero si en el cuerpo humano puede</ab>
                 <lb facs="#z_r_99_tl_2" n="10" />
@@ -328,7 +328,7 @@
                 <ab>manifiesta ni por una propiedad oculta; de modo que el resto se infiere. La
                     primera</ab>
                 <lb facs="#z_r_99_tl_11" n="16" />
-                <ab>premisa es de Avicena, sexta parte del cuarto capítulo, y también de Averroes,
+                <ab>premisa es de Avicena, sexta [fen], cuarto capítulo, y también de Averroes,
                     en el cuarto del Colliget.</ab>
                 <lb facs="#z_r_99_tl_12" n="17" />
                 <ab>La segunda se prueba solo en cuanto a la primera parte. Puesto que por una
@@ -364,10 +364,10 @@
                 <ab>de los granos preparados para contaminar y, en especial, lentejas. También la
                     sangre</ab>
                 <lb facs="#z_r_99_tl_25" n="30" />
-                <ab> de la persona pelirroja, extraída principalmente en el momento de la sangradura
+                <ab>de la persona pelirroja, extraída principalmente en el momento de la sangradura
                     es veneno para</ab>
                 <lb facs="#z_r_99_tl_26" n="31" />
-                <ab>quien la bebe como prueba el consejero en el opúsculo De venenis. De igual
+                <ab>quien la bebe, como prueba el consejero en el opúsculo De venenis. De igual
                     manera,</ab>
                 <lb facs="#z_r_99_tl_27" n="32" />
                 <ab>la sangre de la menstruación o del leproso, al beberse, vuelve a las personas

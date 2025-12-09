@@ -41,8 +41,8 @@
         </fileDesc>
         <encodingDesc>
             <p>Digital edition for research and display purposes. Converted from PAGE-XML with full
-                semantic markup including abbreviations, corrections, regularisations, numbers,
-                person names, place names, references, and text styling.</p>
+                semantic markup including abbreviations, corrections, regularisations, and
+                person names.</p>
         </encodingDesc>
         <profileDesc>
             <langUsage>
@@ -529,7 +529,7 @@
                         <abbr>ã</abbr>
                         <expan>a(m)</expan>
                     </choice>. <persName
-                        firstname="Arnau">arnaldus</persName> in libe<choice>
+                        firstname="Arnau de Vilanova">arnaldus</persName> in libe<choice>
                         <orig>l</orig>
                         <reg>ll</reg>
                     </choice>o <choice>
@@ -758,14 +758,12 @@
                         <expan>e[n]</expan>
                     </choice>dat.</ab>
                 <lb facs="#z_tr_1_tl_26" n="26" />
-                <ab>It<persName ref="https://www.wikidata.org/wiki/Q185126" firstname="Mithridates"
-                        continued="true">
+                <ab>It
                         <choice>
                             <abbr>ẽ</abbr>
                             <expan>e[m]</expan>
                         </choice>
-                    </persName>
-                    per art<choice>
+                   per art<choice>
                         <abbr>ẽ</abbr>
                         <expan>e(m)</expan>
                     </choice> p<choice>
@@ -778,14 +776,13 @@
                         <abbr>d̑</abbr>
                         <expan>d(e)</expan>
                     </choice> <persName
-                        ref="https://www.wikidata.org/wiki/Q185126" firstname="Mithridates"
-                        continued="true">m<choice>
+                        firstname="Mithridates">m<choice>
                             <orig>e</orig>
                             <reg>i</reg>
                         </choice>trida</persName></ab>
                 <lb facs="#z_tr_1_tl_27" n="27" />
-                <ab><persName ref="https://www.wikidata.org/wiki/Q185126" firstname="Mithridates"
-                        continued="true">te rege</persName> ergo <choice>
+                <ab><persName firstname="Mithridates"
+                        >te rege</persName> ergo <choice>
                         <abbr>p̱</abbr>
                         <expan>p(er)</expan>
                     </choice> art<choice>
@@ -893,13 +890,13 @@
                     </choice> <choice>
                         <abbr>d̑</abbr>
                         <expan>d(e)</expan>
-                    </choice> rege alf<choice>
+                    </choice> <persname firstname="Alfonso V de Portugal (?)">rege alf<choice>
                         <abbr>õ</abbr>
                         <expan>o[n]</expan>
                     </choice>so portugal<choice>
                         <abbr>ẽ</abbr>
                         <expan>e[n]</expan>
-                    </choice>se</ab>
+                    </choice>se</persname></ab>
                 <lb facs="#z_tr_1_tl_31" n="31" />
                 <ab><choice>
                         <abbr>q̱</abbr>

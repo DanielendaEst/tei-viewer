@@ -41,8 +41,8 @@
         </fileDesc>
         <encodingDesc>
             <p>Digital edition for research and display purposes. Converted from PAGE-XML with full
-                semantic markup including abbreviations, corrections, regularisations, numbers,
-                person names, place names, references, and text styling.</p>
+                semantic markup including abbreviations, corrections, regularisations, and
+                person names.</p>
         </encodingDesc>
         <profileDesc>
             <langUsage>
@@ -291,30 +291,6 @@
                 <ab>puede colegirse que en el cuerpo humano puede encontrarse veneno y,</ab>
                 <lb facs="#z_tr_1_tl_21" n="21" />
                 <ab>por tanto, una constitución venenosa. Y esto a propósito de la primera pregunta.</ab>
-                <lb facs="#z_tr_1_tl_22" n="22" />
-                <ab />
-                <lb facs="#z_tr_1_tl_23" n="23" />
-                <ab />
-                <lb facs="#z_tr_1_tl_24" n="24" />
-                <ab />
-                <lb facs="#z_tr_1_tl_25" n="25" />
-                <ab />
-                <lb facs="#z_tr_1_tl_26" n="26" />
-                <ab />
-                <lb facs="#z_tr_1_tl_27" n="27" />
-                <ab />
-                <lb facs="#z_tr_1_tl_28" n="28" />
-                <ab />
-                <lb facs="#z_tr_1_tl_29" n="29" />
-                <ab />
-                <lb facs="#z_tr_1_tl_30" n="30" />
-                <ab />
-                <lb facs="#z_tr_1_tl_31" n="31" />
-                <ab />
-                <lb facs="#z_tr_1_tl_32" n="32" />
-                <ab />
-                <lb facs="#z_tr_1_tl_33" n="33" />
-                <ab />
             </div>
         </body>
     </text>

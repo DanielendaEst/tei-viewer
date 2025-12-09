@@ -41,8 +41,8 @@
         </fileDesc>
         <encodingDesc>
             <p>Digital edition for research and display purposes. Converted from PAGE-XML with full
-                semantic markup including abbreviations, corrections, regularisations, numbers,
-                person names, place names, references, and text styling.</p>
+                semantic markup including abbreviations, corrections, regularisations, and
+                person names.</p>
         </encodingDesc>
         <profileDesc>
             <langUsage>
@@ -327,9 +327,9 @@
                 <lb facs="#z_r_tl_2" n="2" />
                 <ab>doctor y médico del rey y de la reina,</ab>
                 <lb facs="#z_r_tl_3" n="3" />
-                <ab>nuestros señores inicia felizmente.</ab>
+                <ab>nuestros señores, inicia felizmente.</ab>
                 <lb facs="#z_tr_3_tl_1" n="4" />
-                <ab>Interrogado en varias ocasiones acerca de la fascinación, callé,</ab>
+                <ab>Interrogado en varias ocasiones acerca del mal de ojo, callé,</ab>
                 <lb facs="#z_tr_3_tl_2" n="5" />
                 <ab>según aprendí de Sócrates, quien decía: podrás hablar entonces de la mejor</ab>
                 <lb facs="#z_tr_3_tl_3" n="6" />
@@ -356,7 +356,7 @@
                 <ab>que la concedían como un asunto natural. Sin embargo, deseoso de saber lo que es
                     natural para los hombres,</ab>
                 <lb facs="#z_tr_3_tl_13" n="15" />
-                <ab> no desistí de todo intento de investigación. Pues aprendí algunas cosas de los</ab>
+                <ab>no desistí de todo intento de investigación. Pues aprendí algunas cosas de los</ab>
                 <lb facs="#z_tr_3_tl_14" n="16" />
                 <ab>antiguos; otras encontré no por algún ingenio mío sino por intervención del
                     Espíritu Santo,</ab>
@@ -391,10 +391,10 @@
                 <lb facs="#z_tr_3_tl_27" n="29" />
                 <ab>Tercera pregunta: si una persona puede envenenar a otra a través de la vista</ab>
                 <lb facs="#z_tr_3_tl_28" n="30" />
-                <ab>Cuarta pregunta: si el aojo puede producirse de otro modo que no sea a través de
+                <ab>Cuarta pregunta: si el aojamiento puede producirse de otro modo que no sea a través de
                     la vista.</ab>
                 <lb facs="#z_tr_3_tl_29" n="31" />
-                <ab>Quinta pregunta: si cualquier cuerpo humano es susceptible de aojo.</ab>
+                <ab>Quinta pregunta: si cualquier cuerpo humano es susceptible de aojamiento.</ab>
                 <lb facs="#z_tr_3_tl_30" n="32" />
                 <ab>Sexta pregunta: si el portador de veneno puede aojar otros animales</ab>
                 <lb facs="#z_tr_3_tl_31" n="33" />

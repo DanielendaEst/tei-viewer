@@ -41,8 +41,8 @@
         </fileDesc>
         <encodingDesc>
             <p>Digital edition for research and display purposes. Converted from PAGE-XML with full
-                semantic markup including abbreviations, corrections, regularisations, numbers,
-                person names, place names, references, and text styling.</p>
+                semantic markup including abbreviations, corrections, regularisations, and
+                person names.</p>
         </encodingDesc>
         <profileDesc>
             <langUsage>
@@ -306,12 +306,11 @@
                         <expan>fe(bres)</expan>
                     </choice> generari posse mortales</ab>
                 <lb facs="#z_tr_1_tl_4" n="4" />
-                <ab><persName firstname="Averroes">
+                <ab>
                         <choice>
                             <abbr>tñ</abbr>
                             <expan>t[ame]n</expan>
                         </choice>
-                    </persName>
                     ut vol<choice>
                         <abbr>ũ</abbr>
                         <expan>u[n]</expan>
@@ -443,10 +442,10 @@
                 <ab>patet de pue<choice>
                         <orig>l</orig>
                         <reg>ll</reg>
-                    </choice>a nutrita napello missa ad A<choice>
+                    </choice>a nutrita napello missa ad <persname firstname="Alejandro Magno">A<choice>
                         <sic>l</sic>
                         <corr>le</corr>
-                    </choice>xandrum per re</ab>
+                    </choice>xandrum</persname> per re</ab>
                 <lb facs="#z_tr_1_tl_16" n="16" />
                 <ab>ginam <choice>
                         <orig>i</orig>
@@ -463,10 +462,10 @@
                     </choice>efe<choice>
                         <sic>r</sic>
                         <corr>rt</corr>
-                    </choice> Aristot<choice>
+                    </choice> <persname firstname="Aristóteles">Aristot<choice>
                         <orig>i</orig>
                         <reg>e</reg>
-                    </choice>les in libello <choice>
+                    </choice>les</persname> in libello <choice>
                         <abbr>d̑</abbr>
                         <expan>d(e)</expan>
                     </choice> secretis secre</ab>
@@ -486,10 +485,10 @@
                     </choice> <choice>
                         <abbr>p̃ȝ</abbr>
                         <expan>p(robatur)</expan>
-                    </choice> teste. <choice>
+                    </choice> teste. <persname firstname="Galeno"><choice>
                         <abbr>Gal</abbr>
                         <expan>Galeno</expan>
-                    </choice>. <choice>
+                    </choice>.</persname> <choice>
                         <abbr>3̊</abbr>
                         <expan>(tertio)</expan>
                     </choice> de si<choice>
@@ -511,7 +510,7 @@
                         <expan>d(e)</expan>
                     </choice> muliere <choice>
                         <abbr>q̃</abbr>
-                        <expan>q(uæ)</expan>
+                        <expan>q(uae)</expan>
                     </choice> <choice>
                         <abbr>p̱</abbr>
                         <expan>p(er)</expan>
@@ -559,10 +558,10 @@
                     </choice> <choice>
                         <abbr>p̱</abbr>
                         <expan>p(er)</expan>
-                    </choice> <choice>
+                    </choice> <persname firstname="Avicena"><choice>
                         <abbr>auic̋</abbr>
                         <expan>avic(enam)</expan>
-                    </choice></ab>
+                    </choice></persname></ab>
                 <lb facs="#z_tr_1_tl_20" n="20" />
                 <ab>se<choice>
                         <sic>s</sic>
@@ -572,7 +571,7 @@
                         <expan>q[ua]</expan>
                     </choice>rti. de puella <choice>
                         <abbr>q̃</abbr>
-                        <expan>q(uæ)</expan>
+                        <expan>q(uae)</expan>
                     </choice> nutrita fuit nap<choice>
                         <sic>o</sic>
                         <corr>e</corr>
@@ -661,7 +660,7 @@
                         <expan>[et]</expan>
                     </choice> generari. <choice>
                         <abbr>sȝ</abbr>
-                        <expan>s[i]q(uis)</expan>
+                        <expan>s(ed)</expan>
                     </choice> c<choice>
                         <abbr>ũ</abbr>
                         <expan>u(m)</expan>
@@ -796,10 +795,10 @@
                     </choice>di. <choice>
                         <abbr>ñȝ</abbr>
                         <expan>n(ec)</expan>
-                    </choice> ratio averro<choice>
+                    </choice> ratio <persname firstname="Averroes">averro<choice>
                         <orig>yȝ</orig>
                         <reg>is</reg>
-                    </choice> a<choice>
+                    </choice></persname> a<choice>
                         <orig>s</orig>
                         <reg>ss</reg>
                     </choice>erens o<choice>

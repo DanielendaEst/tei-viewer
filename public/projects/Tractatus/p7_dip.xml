@@ -41,8 +41,8 @@
         </fileDesc>
         <encodingDesc>
             <p>Digital edition for research and display purposes. Converted from PAGE-XML with full
-                semantic markup including abbreviations, corrections, regularisations, numbers,
-                person names, place names, references, and text styling.</p>
+                semantic markup including abbreviations, corrections, regularisations, and
+                person names.</p>
         </encodingDesc>
         <profileDesc>
             <langUsage>
@@ -325,7 +325,11 @@
                         <expan>(m)</expan>
                     </choice> te</ab>
                 <lb facs="#z_tr_1_tl_5" n="5" />
-                <ab>ste. <persName firstname="Galeno">ga</persName>. 3ª c<choice>
+                <ab>ste. <persName firstname="Galeno"><choice>
+                    <abbr>ga.</abbr>
+                <expan>Galeno</expan></choice></persName> <choice>
+                    <abbr>3ª</abbr>
+                    <expan>tertia</expan></choice> c<choice>
                         <abbr>õ</abbr>
                         <expan>o[m]</expan>
                     </choice>ple<choice>
@@ -386,13 +390,13 @@
                     </choice>i<choice>
                         <abbr>ã</abbr>
                         <expan>a(m)</expan>
-                    </choice> teste a<choice>
+                    </choice> teste <persname firstname="Avicena">a<choice>
                         <sic>n</sic>
                         <corr>u</corr>
                     </choice>i<choice>
-                        <abbr>c̋</abbr>
+                        <abbr>c̋.</abbr>
                         <expan>c(ena)</expan>
-                    </choice>. <choice>
+                    </choice></persname> <choice>
                         <abbr>vij°</abbr>
                         <expan>septimo</expan>
                     </choice> a<choice>
@@ -825,18 +829,18 @@
                     </choice> <choice>
                         <abbr>p̃ȝ</abbr>
                         <expan>p(robatur)</expan>
-                    </choice> per A<choice>
+                    </choice> per <persname firstname="Avicena">A<choice>
                         <orig>u</orig>
                         <reg>v</reg>
                     </choice>ic<choice>
                         <abbr>ẽ</abbr>
                         <expan>e[n]</expan>
-                    </choice>a. libro <choice>
+                    </choice>a.</persname> libro <choice>
                         <abbr>⁊</abbr>
                         <expan>[et]</expan>
                     </choice> fe<choice>
                         <sic>ns</sic>
-                        <corr>n\u0020s</corr>
+                        <corr>n s</corr>
                     </choice>upe</ab>
                 <lb facs="#z_tr_1_tl_29" n="29" />
                 <ab>rius a<choice>

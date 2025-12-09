@@ -41,8 +41,8 @@
         </fileDesc>
         <encodingDesc>
             <p>Digital edition for research and display purposes. Converted from PAGE-XML with full
-                semantic markup including abbreviations, corrections, regularisations, numbers,
-                person names, place names, references, and text styling.</p>
+                semantic markup including abbreviations, corrections, regularisations, and
+                person names.</p>
         </encodingDesc>
         <profileDesc>
             <langUsage>
@@ -323,12 +323,12 @@
             <div type="transcription" xml:lang="lat">
                 <pb n="1" facs="#p1" />
                 <lb facs="#z_r_tl_1" n="1" />
-                <ab>TRactatus de fascinatione editus a didaco Al<choice>
+                <ab>TRactatus de fascinatione editus a didaco <persname firstname="Diego Álvarez Chanca">Al<choice>
                         <sic>u</sic>
                         <corr>v</corr>
-                    </choice>ari</ab>
+                    </choice>ari</persname></ab>
                 <lb facs="#z_r_tl_2" n="2" />
-                <ab>chanca doctore at<choice>
+                <ab><persname firstname="Diego Álvarez Chanca">chanca</persname> doctore at<choice>
                         <abbr>qȝ</abbr>
                         <expan>q(ue)</expan>
                     </choice> medico Regis regin<choice>
@@ -364,7 +364,7 @@
                         <corr>e</corr>
                     </choice>. obmu</ab>
                 <lb facs="#z_tr_3_tl_2" n="5" />
-                <ab>tui doctus a socrate dice<choice>
+                <ab>tui doctus a <persname firstname="Sócrates">socrate</persname> dice<choice>
                         <sic>u</sic>
                         <corr>n</corr>
                     </choice>te. t<choice>

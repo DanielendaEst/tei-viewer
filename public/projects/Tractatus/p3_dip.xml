@@ -41,8 +41,8 @@
         </fileDesc>
         <encodingDesc>
             <p>Digital edition for research and display purposes. Converted from PAGE-XML with full
-                semantic markup including abbreviations, corrections, regularisations, numbers,
-                person names, place names, references, and text styling.</p>
+                semantic markup including abbreviations, corrections, regularisations, and
+                person names.</p>
         </encodingDesc>
         <profileDesc>
             <langUsage>
@@ -378,12 +378,12 @@
                     </choice>re auctores famosi. <choice>
                         <abbr>vȝ</abbr>
                         <expan>v[erbi]g(ratia)</expan>
-                    </choice> Galienus A<choice>
+                    </choice> <persname firstname="Galeno">Galienus</persname> <persname firstname="Avicena">A<choice>
                         <orig>u</orig>
                         <reg>v</reg>
-                    </choice>icena</ab>
+                    </choice>icena</persname></ab>
                 <lb facs="#z_r_tl_8" n="8" />
-                <ab>Rasis <choice>
+                <ab><persname firstname="Al-Razis">Rasis</persname><choice>
                         <abbr>⁊</abbr>
                         <expan>[et]</expan>
                     </choice> a<choice>
@@ -490,13 +490,13 @@
                 <ab><choice>
                         <orig>j</orig>
                         <reg>i</reg>
-                    </choice>or est A<choice>
+                    </choice>or est <persname firstname="Avicena">A<choice>
                         <orig>u</orig>
                         <reg>v</reg>
                     </choice>icen<choice>
                         <orig>e</orig>
                         <reg>ae</reg>
-                    </choice>. se<choice>
+                    </choice></persname>. se<choice>
                         <sic>s</sic>
                         <corr>x</corr>
                     </choice>ta. <choice>
@@ -511,13 +511,13 @@
                     </choice>i<choice>
                         <abbr>ã</abbr>
                         <expan>a(m)</expan>
-                    </choice> A<choice>
+                    </choice> <persname firstname="Averroes">A<choice>
                         <orig>u</orig>
                         <reg>v</reg>
                     </choice>erro<choice>
                         <orig>yȝ</orig>
                         <reg>is</reg>
-                    </choice> colliget. <choice>
+                    </choice></persname> colliget. <choice>
                         <abbr>q̃</abbr>
                         <expan>q[ua]</expan>
                     </choice>rto. mi</ab>
@@ -710,10 +710,10 @@
                     </choice> <choice>
                         <abbr>p̱</abbr>
                         <expan>p(er)</expan>
-                    </choice> <choice>
+                    </choice> <persname firstname="Avicena"><choice>
                         <abbr>auic̋</abbr>
                         <expan>auic(enam)</expan>
-                    </choice>.</ab>
+                    </choice></persname>.</ab>
                 <lb facs="#z_r_99_tl_22" n="27" />
                 <ab>se<choice>
                         <sic>s</sic>
@@ -727,7 +727,7 @@
                     </choice>to <choice>
                         <abbr>cap</abbr>
                         <expan>cap[itulo]</expan>
-                    </choice>. iij. <choice>
+                    </choice>. <choice><abbr>iij</abbr><expan>tertia</expan></choice> <choice>
                         <orig>v</orig>
                         <reg>u</reg>
                     </choice>bi dicit <choice>
@@ -820,7 +820,10 @@
                         <abbr>ẽ</abbr>
                         <expan>e(m)</expan>
                     </choice> libello de venenis.
-                    similliter:</ab>
+                    simi<choice>
+                        <orig>ll</orig>
+                        <reg>l</reg>
+                    </choice>iter:</ab>
                 <lb facs="#z_r_99_tl_27" n="32" />
                 <ab><choice>
                         <abbr>.san.</abbr>
@@ -837,10 +840,16 @@
                 <ab>t<choice>
                         <abbr>ũ</abbr>
                         <expan>u(m)</expan>
-                    </choice> ⁊ lunaticu<choice>
+                    </choice> <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> lunaticu<choice>
                         <abbr>ȝ</abbr>
                         <expan>(m)</expan>
-                    </choice> ⁊ maleficiat<choice>
+                    </choice> <choice>
+                        <abbr>⁊</abbr>
+                        <expan>[et]</expan>
+                    </choice> maleficiat<choice>
                         <abbr>ũ</abbr>
                         <expan>u(m)</expan>
                     </choice> sec<choice>
